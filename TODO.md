@@ -10,3 +10,7 @@
     - [ ] Rectangle renderer (go around the center making the pen size progressively smaller)
     - [ ] Image renderer (like the text renderer, but doesn't automatically space them out)
 - [ ] Windows (designed by the *Design Team*, use above renderers to achieve appropriate results)
+
+## Apps
+- [ ] Create a component handler
+- [ ] Create Ember (.mbr) as a scripting language for the apps
