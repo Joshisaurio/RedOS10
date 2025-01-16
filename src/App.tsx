@@ -1,6 +1,7 @@
 import { Blocks, Users, Globe, Terminal } from 'lucide-react';
-import { FaDiscord } from 'react-icons/fa';
-import User from './user'
+import { FaDiscord, FaGithub } from 'react-icons/fa';
+import User from './user';
+import { FaPowerOff } from 'react-icons/fa6';
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
                 <Blocks size={20} />
                 <span className="font-medium">Scratch</span>
               </a>
+
               <a
                 href="https://discord.gg/FrXEK2Yq"
                 target="_blank"
@@ -67,15 +69,48 @@ function App() {
                 <FaDiscord size={20} />
                 <span className="font-medium">Discord</span>
               </a>
+
               <a
-                href="https://discord.gg/FrXEK2Yq"
+                href="https://github.com/Joshisaurio/RedOS10"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-6 py-3 bg-[#EF4444] rounded-xl hover:translate-y-[-2px] transition-all duration-300 shadow-lg hover:shadow-[#5865F2]/25 text-white"
+                className="flex items-center gap-2 px-6 py-3 bg-[#999999] rounded-xl hover:translate-y-[-2px] transition-all duration-300 shadow-lg hover:shadow-[#5865F2]/25 text-white"
+              >
+                <FaGithub size={20} />
+                <span className="font-medium">Github</span>
+              </a>
+
+              <a
+                href="#team"
+                // target="_blank"
+                className="flex items-center gap-2 px-6 py-3 bg-[#449A44] rounded-xl hover:translate-y-[-2px] transition-all duration-300 shadow-lg hover:shadow-[#5865F2]/25 text-white"
               >
                 <Users size={20} />
                 <span className="font-medium">Team</span>
               </a>
+
+              <a
+                href="#os"
+                // target="_blank"
+                className="flex items-center gap-2 px-6 py-3 bg-[#EF4444] rounded-xl hover:translate-y-[-2px] transition-all duration-300 shadow-lg hover:shadow-[#5865F2]/25 text-white"
+              >
+                <FaPowerOff size={20} />
+                <span className="font-medium">Red OS</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Iframe Section with glassmorphism */}
+          <div className="mt-16 mb-20" id="os">
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-red-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+              <div className="relative aspect-[960/720] w-full bg-black/50 backdrop-blur-sm rounded-2xl p-1 shadow-2xl">
+                <iframe
+                  src="https://ekmand.dev"
+                  className="w-full h-full rounded-xl"
+                  title="ekmand.dev"
+                />
+              </div>
             </div>
           </div>
 
@@ -89,7 +124,7 @@ function App() {
           <div className="flex flex-col items-center">
             {/* Team Info */}
             <div className="mt-6 text-center">
-              <h1 className="text-5xl font-bold text-red-500">
+              <h1 className="text-5xl font-bold text-red-500" id="team">
                 Team
               </h1>
 
@@ -104,10 +139,30 @@ function App() {
                 <User name='CaptainEterk (leader)' scratchLink='https://scratch.mit.edu/users/CaptainEterk/'></User>
                 <User name='Enden24' scratchLink='https://scratch.mit.edu/users/enden24/'></User>
                 <User name='SpieleTyp' scratchLink='https://scratch.mit.edu/users/SpieleTyp/'></User>
-                <User name='Fuzzee_animations' scratchLink='https://scratch.mit.edu/users/Fuzzee_animations/'></User>
-                <User name='chez_muffin_boi' scratchLink='https://scratch.mit.edu/users/chez_muffin_boi/'></User>
+                <User name='Chez_muffin_boi' scratchLink='https://scratch.mit.edu/users/chez_muffin_boi/'></User>
                 <User name='JLCitrus007' scratchLink='https://scratch.mit.edu/users/JLCitrus007/'></User>
                 <User name='Alastrantia' scratchLink='https://scratch.mit.edu/users/Alastrantia/'></User>
+                <User name='-Happyx' scratchLink='https://scratch.mit.edu/users/-Happyx/'></User>
+                <User name='Eeoo2beeboo' scratchLink='https://scratch.mit.edu/users/eeoo2beeboo'></User>
+                <User name='Rewamd' scratchLink='https://scratch.mit.edu/users/rewamd'></User>
+                <User name='Fuzzee_animations' scratchLink='https://scratch.mit.edu/users/Fuzzee_animations/'></User>
+                <User name='Prof_TiLo ' scratchLink='https://scratch.mit.edu/users/Prof_TiLo /'></User>
+              </div>
+
+              <div id="designers">
+                <p className="text-xl text-gray-500 mt-3 font-semibold">Designers</p>
+                <User name='Muzlovescereal (leader)' scratchLink='https://scratch.mit.edu/users/muzlovescereal'></User>
+                <User name='Jialing' scratchLink='https://scratch.mit.edu/users/Jialing'></User>
+                <User name='Zelria' scratchLink='https://scratch.mit.edu/users/Zelria'></User>
+                <User name='Rewamd' scratchLink='https://scratch.mit.edu/users/rewamd'></User>
+                <User name='Fuzzee_animations' scratchLink='https://scratch.mit.edu/users/Fuzzee_animations/'></User>
+              </div>
+
+              <div id="musicians">
+                <p className="text-xl text-gray-500 mt-3 font-semibold">Musicians</p>
+                <User name='Alchemy-Coder (leader)' scratchLink='https://scratch.mit.edu/users/Alchemy-Coder'></User>
+                <User name='Muzlovescereal' scratchLink='https://scratch.mit.edu/users/muzlovescereal'></User>
+                <User name='Eeoo2beeboo' scratchLink='https://scratch.mit.edu/users/eeoo2beeboo'></User>
               </div>
             </div>
           </div>
