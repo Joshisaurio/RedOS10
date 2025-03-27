@@ -25,7 +25,7 @@ def app_base(text: str) -> list:
     return [text]
 ```
 
-The decorator `@methode("app.request")` tells the server that this function can be called with the **ApID** `app.request`. You have to use the same name as in Scratch. How you name the function doesn't matter.
+The decorator `@methode("app.request")` tells the server that this function can be called with the **AppID** `app.request`. You have to use the same name as in Scratch. How you name the function doesn't matter.
 
 If you separate the parameters with `§`, you also have to add these parameters to the function.
 
