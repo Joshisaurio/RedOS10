@@ -12,9 +12,8 @@ from io import BytesIO
 from PIL import Image
 import random
 import string
-import json
 
-LOG_TO_FILE = False
+LOG_TO_FILE = True
 
 if LOG_TO_FILE:
     if not os.path.exists("logs"):
