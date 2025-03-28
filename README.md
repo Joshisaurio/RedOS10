@@ -19,7 +19,7 @@ The request tries to send three times with a delay of 3 seconds. Usually the ser
 ## Python
 
 Basic methode:
-```
+``` python
 @methode("base")
 def app_base(text: str) -> list:
     return [text]
@@ -42,3 +42,14 @@ You should test your app in the [turbowarp editor](https://turbowarp.org/editor)
 **Before you upload the project to Scratch, remove this sprite!**
 
 Also, use a custom project id. In the *(☁ Variables)* sprite you have to set `project id` and in the python code `PROJECT_ID` to the same value (this can also be a string). If you don't do this there might be interference with the actual project.
+
+## Storage
+
+The server can store data to files using the `utilities.Storage` class. This class works like a normal `dict`, but it also saves the data to a file in specified time intervals:
+
+``` python
+data = utilities.Storage("saves/data.json", intervall_sec=60) # the second parameter is optional
+
+# use like a normal dict
+data["key"] = "value"
+```

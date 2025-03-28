@@ -10,11 +10,19 @@ import traceback
 import requests
 from io import BytesIO
 from PIL import Image
+import random
+import string
+import json
 
-LOG_TO_FILE = True
+LOG_TO_FILE = False
 
 if LOG_TO_FILE:
+    if not os.path.exists("logs"):
+        os.makedirs("logs")
     server_log_file = open("logs/server.log", "a")
+
+if not os.path.exists("saves"):
+    os.makedirs("saves")
 
 def log_server(text):
     print_str = f"{utilities.get_now_str()} {text}"
@@ -30,6 +38,9 @@ def error_server():
 log_server("server started")
 
 PROJECT_ID = "1153014815"
+
+VERIFICATION_ID = "1153014815"
+verification_project: scratchattach.Project = utilities.dont_print(scratchattach.get_project, VERIFICATION_ID)
 
 cloud = scratchattach.get_tw_cloud(PROJECT_ID, purpose="Red OS 10", contact="https://scratch.mit.edu/users/KROKOBIL")
 events = cloud.events()
@@ -61,6 +72,81 @@ def app_base(text: str) -> list:
 def app_system_ping(text: str) -> list:
     return [text]
 
+users = utilities.Storage("saves/users.json")
+
+@methode("system.login")
+def app_system_login(username: str, password: str) -> list:
+    username = username.lower()
+    user_data = users.get(username, None)
+    if not user_data:
+        return [f"user '{username}' does not exist"]
+    user_password = user_data.get("password", None)
+    if not user_password:
+        return [f"user '{username}' does not have a password"]
+    if password != user_password:
+        return [f"wrong password"]
+    return [user_data["username"]]
+
+@methode("system.signup")
+def app_system_signup(username: str, password: str) -> list:
+    if len(password) < 3:
+        return [f"password has to have at least 3 digits"]
+    username = username.lower()
+    try:
+        user: scratchattach.User = utilities.dont_print(scratchattach.get_user, username)
+    except scratchattach.utils.exceptions.UserNotFound:
+        return ["user not found"]
+    user_data = users.get(username, None)
+    if user_data: return ["user already exists", user_data["username"]]
+    
+    users[username] = {"username": user.username, "password": password}
+    return [user.username]
+
+@methode("system.reset_password")
+def app_system_reset_password(username: str, password: str) -> list:
+    if len(password) < 3:
+        return [f"password has to have at least 3 digits"]
+    username = username.lower()
+    try:
+        user: scratchattach.User = utilities.dont_print(scratchattach.get_user, username)
+    except scratchattach.utils.exceptions.UserNotFound:
+        return ["user not found"]
+    user_data = users.get(username, None)
+    if not user_data:
+        return ["user has no account"]
+    
+    users[username]["password"] = password
+    return [user.username]
+
+@methode("system.get_verification")
+def app_system_get_verification(username: str) -> list:
+    username = username.lower()
+    try:
+        user: scratchattach.User = utilities.dont_print(scratchattach.get_user, username)
+    except scratchattach.utils.exceptions.UserNotFound:
+        return ["user not found"]
+    user_data = users.get(username, None)
+    if not user_data:
+        return ["user has no account"]
+    
+    verification_code = ''.join(random.choices(string.ascii_letters + string.digits, k=40))
+    users[username.lower()]["verification_code"] = verification_code
+    return [user.username, verification_project.url, verification_code]
+
+@methode("system.check_verification")
+def app_system_checkverification(username: str) -> list:
+    username = username.lower()
+    user_data = users.get(username, None)
+    if not user_data:
+        return [f"user '{username}' does not exist"]
+    verification_code = users[username].get("verification_code", None)
+    if not verification_code:
+        return [f"user '{username}' does not have a verification code"]
+    has_commented = list(filter(lambda x : x.author_name.lower() == user_data["username"].lower() and x.content == verification_code, verification_project.comments())) != []
+    if not has_commented:
+        return [f"user '{username}' didn't comment the correct code"]
+    return [username]
+
 pfp_cache = {}
 @methode("pfp")
 def app_pfp(username: str) -> list:
@@ -69,7 +155,7 @@ def app_pfp(username: str) -> list:
     if cache_result:
         return [encoder.Number(cache_result)]
     try:
-        user = utilities.dont_print(scratchattach.get_user, username)
+        user: scratchattach.User = utilities.dont_print(scratchattach.get_user, username)
     except scratchattach.utils.exceptions.UserNotFound:
         return ["user not found"]
     
@@ -132,7 +218,7 @@ def app_weather(city_name: str) -> list:
         weather_description
     ]
 
-storage: dict = {}
+storage = utilities.Storage("saves/storage.json")
 @methode("storage.set")
 def app_storage_set(key: str, value: str) -> list:
     storage[key.lower()] = value
@@ -186,7 +272,8 @@ def shutdown() -> None:
     events.stop()
     cloud.disconnect()
     stop_event.set()
-    # log_server("saving...")
+    log_server("saving...")
+    utilities.save_all_storage_instances()
     log_server("server stopped")
     if LOG_TO_FILE:
         server_log_file.close()
