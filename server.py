@@ -254,7 +254,11 @@ if n is None or d is None:
     shutdown()
     quit()
 
-n_len = len(str(n))
+n_len = len(n)
+
+n = int(n)
+d = int(d)
+
 
 first_message = True
 first_message_time = None
@@ -278,7 +282,6 @@ def on_set(e):
             for i in range(0, len(e.value), n_len):
                 code += str(pow(int(e.value[i:i+n_len]), d, n))[1:]
             values = encoder.decode(code)
-            print(values)
             if len(values) < 3: return
             RequestID = values[0]
             AppID = values[1]
@@ -298,7 +301,7 @@ def on_set(e):
             
         except Exception as e:
             error_server()
-            # stop_event.set() # Stops the server if an error occurred 
+            # stop_event.set() # Stops the server if an error occurred
 
 @events.event
 def on_reconnect():
