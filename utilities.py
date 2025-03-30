@@ -4,20 +4,22 @@ import io
 import os
 import json
 import threading
-from collections import UserDict
 
-start_date = datetime(2000, 1, 1)
+start_date = datetime(2000, 1, 1, tzinfo=timezone.utc)
 
 FORMAT = "%Y-%m-%d %H:%M:%S"
 
-# def get_days_since_2000(date_str: str):
-# 	return datetime.strptime(date_str, FORMAT) - start_date.total_seconds() / (24 * 60 * 60)
+def get_days_since_2000():
+	return (datetime.now(timezone.utc) - start_date).total_seconds() / (24 * 60 * 60)
 
 def get_date_str(days_since_2000):
 	return (start_date + timedelta(days=float(days_since_2000))).replace(microsecond=0).strftime(FORMAT)
 
 def get_now_str():
 	return datetime.now(timezone.utc).replace(microsecond=0).strftime(FORMAT)
+
+def get_second_diff(days_since_2000):
+    return (datetime.now(timezone.utc) - (start_date + timedelta(days=float(days_since_2000)))).seconds
 
 
 def dont_print(func, *args, **kwargs):
@@ -84,3 +86,9 @@ def save_all_storage_instances():
     for instance in all_storage_instances:
         if isinstance(instance, Storage):
             instance.save_directly()
+
+def hash(number_str, B=31, M=100000000000031):
+    hash_value = 0
+    for digit in number_str:
+        hash_value = (hash_value * B + int(digit)) % M
+    return hash_value

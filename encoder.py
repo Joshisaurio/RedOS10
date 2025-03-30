@@ -1,4 +1,4 @@
-chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz !\"#$%&'()*+,-./0123456789:;<=>?@[\\]^_`{|}~"
+CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz !\"#$%&'()*+,-./0123456789:;<=>?@[\\]^_`{|}~"
 
 class Number:
     length: int
@@ -17,8 +17,10 @@ def decode(code: str) -> list[str]:
         if (index == 0):
             values.append(text)
             text = ""
+        elif index >= len(CHARS):
+            text += "?"
         else:
-            text += chars[index-1]
+            text += CHARS[index-1]
         i += 2
     return values
 
@@ -26,7 +28,7 @@ def encode_text(text) -> str:
     text = str(text)
     code = ""
     for char in text:
-        number = chars.find(char)+1
+        number = CHARS.find(char)+1
         if (number > 0):
             if (number < 10):
                 code += "0"

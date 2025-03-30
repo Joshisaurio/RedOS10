@@ -53,3 +53,11 @@ data = utilities.Storage("saves/data.json", intervall_sec=60) # the second param
 # use like a normal dict
 data["key"] = "value"
 ```
+
+## Security
+
+All requests from the project are encrypted meaning only the server can read them.
+All responses from the server are public, but the project can verify that they are from the server.
+Every message also has a timestamp that is valid for 15 seconds.
+
+Passwords are stored as hashes.
