@@ -4,6 +4,8 @@ import io
 import os
 import json
 import threading
+from profanityfilter import ProfanityFilter
+import re
 
 start_date = datetime(2000, 1, 1, tzinfo=timezone.utc)
 
@@ -33,15 +35,15 @@ def dont_print(func, *args, **kwargs):
 
 class Storage(dict):
     filename: str
-    intervall_sec: int
+    interval_sec: timedelta
 
     _last_save_time: datetime = None
     _save_timer: threading.Timer = None
 
-    def __init__(self, filename: str, intervall_sec: int = 60, *args, **kwargs):
+    def __init__(self, filename: str, interval_sec: int = 60, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.filename = filename
-        self.intervall_sec = timedelta(seconds=intervall_sec)
+        self.interval_sec = timedelta(seconds=interval_sec)
         self.load()
         all_storage_instances.append(self)
     
@@ -60,12 +62,11 @@ class Storage(dict):
         self._save_timer = None
 
     def save(self):
-        current_time = datetime.now()
-        if self._last_save_time is None or current_time - self._last_save_time > self.intervall_sec:
+        if self._last_save_time is None or datetime.now() - self._last_save_time > self.interval_sec:
             self.save_directly()
         else:
             if self._save_timer is None:
-                _delayed_save_timer = threading.Timer(self.intervall_sec.total_seconds(), self.save_directly)
+                _delayed_save_timer = threading.Timer(self.interval_sec.total_seconds(), self.save_directly)
                 _delayed_save_timer.start()
     
     def __setitem__(self, key, value):
@@ -92,3 +93,60 @@ def hash(number_str, B=31, M=100000000000031):
     for digit in number_str:
         hash_value = (hash_value * B + int(digit)) % M
     return hash_value
+
+
+pf = ProfanityFilter(no_word_boundaries=False)
+pf.append_words(["profanitycheck"])
+
+def is_profane(text: str):
+    for char in "!\"#$%&'()*+,-./0123456789:;<=>?@[\\]^_`{|}~":
+        text = text.replace(char, "")
+    text = re.sub(r'\b(\w)\s+(?=\w\b)', r'\1', text)
+
+    if pf.is_profane(text): return True
+
+    return False
+
+class RequestManager:
+    _requests: dict
+    _interval: timedelta
+    _count: int
+
+    def __init__(self, interval_sec: int = 60):
+        self._requests = {}
+        self._interval = timedelta(seconds=interval_sec)
+        self._count = 0
+    
+    def check(self, data):
+        self._count += 1
+        if self._count > 100:
+            self._clean_up()
+            self._count = 0
+        old_time, old_response = self._requests.get(data, (None, None))
+        now = datetime.now()
+        if old_time is not None:
+            if now - datetime.fromtimestamp(old_time) < self._interval:
+                return old_response
+        self._requests[data] = (int(now.timestamp()), False)
+        return None
+
+    def set(self, data, response):
+        self._count += 1
+        if self._count > 100:
+            self._clean_up()
+            self._count = 0
+        old_time, _ = self._requests.get(data, (None, None))
+        now = datetime.now()
+        if old_time is not None:
+            if now - datetime.fromtimestamp(old_time) < self._interval:
+                return
+        self._requests[data] = (int(now.timestamp()), response)
+
+    def _clean_up(self):
+        now = datetime.now()
+        delete = []
+        for data, (old_time, _) in self._requests.items():
+            if now - datetime.fromtimestamp(old_time) > self._interval:
+                delete.append(data)
+        for data in delete:
+            del self._requests[data]

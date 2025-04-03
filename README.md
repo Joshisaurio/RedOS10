@@ -14,7 +14,7 @@ The **cloud.Request** block sends a request to the server and waits for an answe
 
 The response from the server is saved to the **cloud.Answers** list.
 
-The request tries to send three times with a delay of 3 seconds. Usually the server responds in around 0.5 seconds.
+The request tries to send five times with a delay of 3 seconds. Usually the server responds in around 0.5 seconds.
 
 ## Python
 
@@ -57,7 +57,43 @@ data["key"] = "value"
 ## Security
 
 All requests from the project are encrypted meaning only the server can read them.
-All responses from the server are public, but the project can verify that they are from the server.
+All responses from the server are encrypted with a short one time pad and the project can verify that they are from the server.
 Every message also has a timestamp that is valid for 15 seconds.
 
 Passwords are stored as hashes.
+
+The rsa encryption keys can be generated with [rsa.py](rsa.py).
+
+## LLM Chat Bot
+
+The server can send messages to a large language model (llm). This service is totally free and has no request limit.
+
+When a user asks this chat bot a question, it will also get some general information stored in [llm-context.txt](llm-context.txt).
+
+If the question is profane, the user is banned for 10 minutes from asking llm or discord.
+
+## Discord Bot
+
+The server has a connection to discord and can send and receive messages. It is not yet connected to the Red OS 10 Server.
+
+To send a message to discord, the user needs a verified account. The server posts the question in a channel. If someone responds to that message, it will be sent back to the user (not yet implemented).
+
+The server reacts with:
+- ✅ if it received your response
+- 🖋 if you edited the response
+- ❌ if your message is profane
+
+If the question is profane, the user is banned for 10 minutes from asking llm or discord.
+
+The bot has also some basic commands:
+- `$ping` is a simple ping test
+- `$stats` returns how many users are registered
+
+## Env Variables
+
+There are some environment variables that have to be set before the server starts:
+- `RSA_N`: part of the public and private key for rsa encryption
+- `RSA_D`: part of the private key for rsa encryption
+- `DISCORD_TOKEN`: token for the discord bot
+- `LLM_TOKEN`: token for the chat bot api
+- `WEATHER_TOKEN`: token for the weather api

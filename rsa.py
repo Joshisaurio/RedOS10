@@ -20,7 +20,7 @@ def generate_rsa_keys(bits=256):
 
 
 if __name__ == "__main__":
-    public_key, private_key = generate_rsa_keys(512)
+    public_key, private_key = generate_rsa_keys(256)
     print("n (public + private):", public_key[1])
     print("e (public):", public_key[0])
     print("d (private):", private_key[0])
