@@ -125,7 +125,7 @@ def app_system_signup(username: str, password: str) -> list:
     if user_data: raise ReturnError("user already exists", user_data["username"])
 
     password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-    users[username] = {"username": user.username, "password": password_hash, "created": utilities.get_now_str()}
+    users[username.lower()] = {"username": user.username, "password": password_hash, "created": utilities.get_now_str()}
     return [user.username]
 
 @methode("system.reset_password")
