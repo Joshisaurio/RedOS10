@@ -4,8 +4,6 @@ import utilities
 from time import time, sleep
 import threading
 import os
-import scratchattach.eventhandlers
-import scratchattach.eventhandlers.cloud_events
 import traceback
 import requests
 from io import BytesIO
@@ -18,6 +16,7 @@ import asyncio
 from datetime import datetime, timedelta
 import json
 import math
+import subprocess
 
 LOG_TO_FILE = True
 
@@ -96,7 +95,7 @@ def login(username: str, password: str) -> dict:
     user_data = get_user_data(username)
     user_password = user_data.get("password")
     if not user_password:
-        raise ReturnError(f"user '{user_data["username"]}' does not have a password")
+        raise ReturnError(f"user '{user_data['username']}' does not have a password")
     is_correct = bcrypt.checkpw(password.encode(), user_password.encode())
     if not is_correct:
         raise ReturnError(f"wrong password")
@@ -104,7 +103,7 @@ def login(username: str, password: str) -> dict:
 
 def check_verified(user_data: dict) -> None:
     if not user_data.get("verified"):
-        raise ReturnError(f"user '{user_data["username"]}' is not verified")
+        raise ReturnError(f"user '{user_data['username']}' is not verified")
 
 def check_ban(user_data: dict) -> None:
     if user_data.get("ban"):
@@ -251,7 +250,7 @@ def app_discord_post(username: str, password: str, text: str) -> list:
     check_verified(user_data)
     check_ban(user_data)
     if utilities.is_profane(text):
-        log_server(f"Profane message to discord by {user_data["username"]}: {text}")
+        log_server(f"Profane message to discord by {user_data['username']}: {text}")
         user_data["ban"] = (datetime.now() + timedelta(minutes=10)).strftime(utilities.FORMAT)
         user_data["ban_reason"] = "Profane message to discord"
         raise ReturnError("profane")
@@ -281,7 +280,7 @@ def app_llm_post(username: str, password: str, text: str) -> list:
     user_data = login(username, password)
     check_ban(user_data)
     if utilities.is_profane(text):
-        log_server(f"Profane message to llm by {username}: {text}")
+        log_server(f"Profane message to llm by {user_data['username']}: {text}")
         user_data["ban"] = (datetime.now() + timedelta(minutes=10)).strftime(utilities.FORMAT)
         user_data["ban_reason"] = "Profane message to llm"
         raise ReturnError("profane")
@@ -335,7 +334,7 @@ LLM_TOKEN = os.getenv("LLM_TOKEN")
 WEATHER_TOKEN = os.getenv("WEATHER_TOKEN")
 
 if RSA_N is None or RSA_D is None or DISCORD_TOKEN is None:
-    log_server(f"No env variables set ({", ".join([name for name, var in {"RSA_N": RSA_N, "RSA_D": RSA_D, "DISCORD_TOKEN": DISCORD_TOKEN, "LLM_TOKEN": LLM_TOKEN, "WEATHER_TOKEN": WEATHER_TOKEN}.items() if var is None])})")
+    log_server(f"No env variables set ({', '.join([name for name, var in {'RSA_N': RSA_N, 'RSA_D': RSA_D, 'DISCORD_TOKEN': DISCORD_TOKEN, 'LLM_TOKEN': LLM_TOKEN, 'WEATHER_TOKEN': WEATHER_TOKEN}.items() if var is None])})")
     shutdown()
     quit()
 
@@ -481,7 +480,6 @@ def run_discord_bot():
 
 
 def send_discord_message(username, text):
-    """Sendet eine Nachricht an den Kanal aus dem Hauptthread."""
     if not discord_client.is_ready():
         log_server("Bot ist noch nicht bereit!")
         return
@@ -490,7 +488,7 @@ def send_discord_message(username, text):
         channel = discord_client.get_channel(CHANNEL_ID) or await discord_client.fetch_channel(CHANNEL_ID)
         
         msg_text = f"*{username}:*\n{text}"
-        msg = await channel.send(msg_text)  # Nachricht senden
+        msg = await channel.send(msg_text)
 
         discord_messages[str(msg.id)] = {"username": username, "text": text, "responses": {}}
         return msg.id
@@ -507,29 +505,59 @@ discord_thread.start()
 with open("llm-context.txt", "r") as file:
     context = file.read()
 
+def get_version(command):
+    try:
+        result = subprocess.run([command, '--version'], capture_output=True, text=True)
+        output = result.stdout.strip() or result.stderr.strip()
+        version_str = output.split()[1]
+        return tuple(map(int, version_str.split('.')))
+    except Exception:
+        return None
+
+python_version = get_version("python")
+python3_version = get_version("python3")
+
+if not python_version and python3_version:
+    PYTHON_CMD = "python3"
+elif python_version and not python3_version:
+    PYTHON_CMD = "python"
+elif python_version and python3_version:
+    PYTHON_CMD = "python3" if python3_version > python_version else "python"
+else:
+    log_server("no python cmd available")
+    shutdown()
+    quit()
+
+llm_env = os.environ.copy()
+llm_env["LLM_TOKEN"] = LLM_TOKEN
+llm_env["LLM_CONTEXT"] = context
+
 def send_llm_message(username, text):
-    response = requests.post(
-        url="https://openrouter.ai/api/v1/chat/completions",
-        headers={
-            "Authorization": f"Bearer {LLM_TOKEN}",
-            "Content-Type": "application/json",
-        },
-        data=json.dumps({
-            "model": "deepseek/deepseek-chat-v3-0324:free",
-                "messages": [
-                    {"role": "system", "content": context},
-                    {"role": "user", "content": text}
-                ],
-                "max_tokens": 200
-        })
-    ).json()
+    try:
+        result = subprocess.run(
+            [PYTHON_CMD, "llm_worker.py", text],
+            env=llm_env,
+            capture_output=True,
+            text=True,
+            timeout=20
+        )
 
-    answer = response["choices"][0]["message"]["content"]
-    id = response["id"]
+        if result.returncode != 0:
+            log_server("Error: " + result.stderr.strip())
+            raise ReturnError("Error: " + result.stderr.strip())
 
-    llm_messages[id] = {"username": username, "text": text, "responses": {id: {"username": "[LLM]", "text": answer}}}
+        response = json.loads(result.stdout.strip())
 
-    return (id, answer)
+        answer = response["choices"][0]["message"]["content"]
+        id = response["id"]
+
+        llm_messages[id] = {"username": username, "text": text, "responses": {id: {"username": "[LLM]", "text": answer}}}
+
+        return (id, answer)
+    except subprocess.TimeoutExpired:
+        raise ReturnError("Timeout")
+    except json.JSONDecodeError:
+        raise ReturnError("JSONDecodeError")
 
 ### cloud var loop ###
 

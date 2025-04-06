@@ -60,7 +60,7 @@ def encode_one_time_pad(text, one_time_pad: str):
             code += str((int(digit) + CHARS.find(one_time_pad[i]))%10)
             i = (i + 1) % len(one_time_pad)
         return Number(code)
-    text = unidecode(demoji.replace(str(text)))
+    text = unidecode(demoji.replace(str(text))).replace("\n", "\\n")
     for char in text:
         code += CHARS[(CHARS.find(char) + CHARS.find(one_time_pad[i]))%len(CHARS)]
         i = (i + 1) % len(one_time_pad)
