@@ -178,7 +178,6 @@ def app_pfp(username: str) -> list:
     size: int = 90
 
     url = f"https://uploads.scratch.mit.edu/get_image/user/{user.id}_{size}x{size}.png"
-    # url = user.icon_url
     response = requests.get(url)
 
     image = Image.open(BytesIO(response.content))
@@ -212,10 +211,9 @@ request_count = 0
 @methode("weather")
 def app_weather(city_name: str) -> list:
     global request_count
-    api_key = "fb75fdcd2acd464022981570513a2c3c"
     base_url = "http://api.openweathermap.org/data/2.5/weather"
 
-    complete_url = f"{base_url}?appid={api_key}&q={city_name}&units=metric"
+    complete_url = f"{base_url}?appid={WEATHER_TOKEN}&q={city_name}&units=metric"
     request_count += 1
     response = requests.get(complete_url)
     answer: dict = response.json()
@@ -242,7 +240,7 @@ def app_storage_set(key: str, value: str) -> list:
 def app_storage_get(key: str) -> list:
     return [storage.get(key.lower(), "")]
 
-discord_messages = utilities.Storage("saves/discord.json", 5)
+discord_messages = utilities.Storage("saves/discord.json")
 @methode("discord.post")
 def app_discord_post(username: str, password: str, text: str) -> list:
     username = username.lower()
@@ -273,7 +271,7 @@ def app_discord_list(username: str, password: str) -> list:
         discord_list.append(discord_messages.get(str(message_id), {}).get("text", "None"))
     return discord_list
 
-llm_messages = utilities.Storage("saves/llm.json", 5)
+llm_messages = utilities.Storage("saves/llm.json")
 @methode("llm.post")
 def app_llm_post(username: str, password: str, text: str) -> list:
     username = username.lower()
@@ -424,7 +422,7 @@ discord_client = discord.Client(intents=intents)
 
 bot_loop = asyncio.new_event_loop()
 
-CHANNEL_ID = 1355881514772070520
+CHANNEL_ID = 1358447901365501962
 
 @discord_client.event
 async def on_ready():
@@ -487,7 +485,7 @@ def send_discord_message(username, text):
     async def send():
         channel = discord_client.get_channel(CHANNEL_ID) or await discord_client.fetch_channel(CHANNEL_ID)
         
-        msg_text = f"*{username}:*\n{text}"
+        msg_text = f"{text}\n-# {username}"
         msg = await channel.send(msg_text)
 
         discord_messages[str(msg.id)] = {"username": username, "text": text, "responses": {}}

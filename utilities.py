@@ -40,7 +40,7 @@ class Storage(dict):
     _last_save_time: datetime = None
     _save_timer: threading.Timer = None
 
-    def __init__(self, filename: str, interval_sec: int = 60, *args, **kwargs):
+    def __init__(self, filename: str, interval_sec: int = 10, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.filename = filename
         self.interval_sec = timedelta(seconds=interval_sec)
