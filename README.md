@@ -41,14 +41,14 @@ The server will probably running constantly and it won't be updated very often. 
 You should test your app in the [turbowarp editor](https://turbowarp.org/editor). You need the [(☁ Variables)](CloudVariables.sprite3) sprite for turbowarp editor cloud variable connection.
 **Before you upload the project to Scratch, remove this sprite!**
 
-Also, use a custom project id. In the *(☁ Variables)* sprite you have to set `project id` and in the python code `PROJECT_ID` to the same value (this can also be a string). If you don't do this there might be interference with the actual project.
+In the *(☁ Variables)* sprite you have to set `project id` to an id that the server is connected to. You can get a list of all conencted projects by posting `$project get` in the support channel of our discord server.
 
 ## Storage
 
 The server can store data to files using the `utilities.Storage` class. This class works like a normal `dict`, but it also saves the data to a file in specified time intervals:
 
 ``` python
-data = utilities.Storage("saves/data.json", intervall_sec=60) # the second parameter is optional
+data = utilities.Storage("saves/data.json", intervall_sec=10) # the second parameter is optional
 
 # use like a normal dict
 data["key"] = "value"
@@ -86,8 +86,11 @@ The server reacts with:
 If the question is profane, the user is banned for 10 minutes from asking llm or discord.
 
 The bot has also some basic commands:
-- `$ping` is a simple ping test
-- `$stats` returns how many users are registered
+- `$help` – Displays this help message
+- `$ping <message>` – Echoes back your message
+- `$stats` – Shows the number of registered users
+- `$project get` – Lists all connected projects
+- `$project add <project-id>` – Connects a new project with the given ID
 
 ## Env Variables
 

@@ -23,6 +23,8 @@ def get_now_str():
 def get_second_diff(days_since_2000):
     return (datetime.now(timezone.utc) - (start_date + timedelta(days=float(days_since_2000)))).seconds
 
+def from_timestamp(timestamp: str):
+    return datetime.strptime(timestamp, FORMAT).replace(tzinfo=timezone.utc)
 
 def dont_print(func, *args, **kwargs):
     stdout_backup = sys.stdout  # Backup des originalen stdout
@@ -32,12 +34,48 @@ def dont_print(func, *args, **kwargs):
     finally:
         sys.stdout = stdout_backup  # Wiederherstellen von stdout
 
+class StorageBase(dict):
 
-class Storage(dict):
+    parent: "StorageBase"
+
+    def __init__(self, value: dict = {}, parent: "StorageBase" = None, *args, **kwargs):
+        super().__init__(value, *args, **kwargs)
+        if parent:
+            self.filename = "StorageBase"
+            self.parent = parent
+        else:
+            if not isinstance(self, Storage):
+                raise ValueError("parent should not be None")
+            self.parent = self
+    
+    def load(self):
+        for key, value in self.items():
+            if isinstance(value, dict) and not isinstance(value, StorageBase):
+                value = StorageBase(value=value, parent=self)
+                self[key] = value
+                value.load()
+
+    def save(self):
+        self.parent.save()
+
+    def __setitem__(self, key, value):
+        if isinstance(value, dict) and not isinstance(value, StorageBase):
+            value = StorageBase(value=value, parent=self)
+        super().__setitem__(key, value)
+        self.save()
+
+    def __delitem__(self, key):
+        super().__delitem__(key)
+        self.save()
+
+    def update(self, *args, **kwargs):
+        super().update(*args, **kwargs)
+        self.save()
+
+class Storage(StorageBase):
     filename: str
     interval_sec: timedelta
 
-    _last_save_time: datetime = None
     _save_timer: threading.Timer = None
 
     def __init__(self, filename: str, interval_sec: int = 10, *args, **kwargs):
@@ -52,34 +90,19 @@ class Storage(dict):
             if os.path.exists(self.filename):
                 with open(self.filename, "r") as file:
                     self.update(json.load(file))
+                    super().load()
         except (FileNotFoundError, json.decoder.JSONDecodeError):
             self.update({})
     
     def save_directly(self):
         with open(self.filename, "w") as file:
             json.dump(self, file)
-        self._last_save_time = datetime.now()
         self._save_timer = None
 
     def save(self):
-        if self._last_save_time is None or datetime.now() - self._last_save_time > self.interval_sec:
-            self.save_directly()
-        else:
-            if self._save_timer is None:
-                _delayed_save_timer = threading.Timer(self.interval_sec.total_seconds(), self.save_directly)
-                _delayed_save_timer.start()
-    
-    def __setitem__(self, key, value):
-        super().__setitem__(key, value)
-        self.save()
-
-    def __delitem__(self, key):
-        super().__delitem__(key)
-        self.save()
-
-    def update(self, *args, **kwargs):
-        super().update(*args, **kwargs)
-        self.save()
+        if self._save_timer is None:
+            self._save_timer = threading.Timer(self.interval_sec.total_seconds(), self.save_directly)
+            self._save_timer.start()
 
 all_storage_instances: list[Storage] = []
 
@@ -135,12 +158,7 @@ class RequestManager:
         if self._count > 100:
             self._clean_up()
             self._count = 0
-        old_time, _ = self._requests.get(data, (None, None))
-        now = datetime.now()
-        if old_time is not None:
-            if now - datetime.fromtimestamp(old_time) < self._interval:
-                return
-        self._requests[data] = (int(now.timestamp()), response)
+        self._requests[data] = (int(datetime.now().timestamp()), response)
 
     def _clean_up(self):
         now = datetime.now()

@@ -13,7 +13,7 @@ import string
 import bcrypt
 import discord
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
 import math
 import subprocess
@@ -41,13 +41,8 @@ def error_server():
 
 log_server("server started")
 
-PROJECT_ID = "1153014815"
-
-VERIFICATION_ID = "1153014815"
+VERIFICATION_ID = "1161277366"
 verification_project: scratchattach.Project = utilities.dont_print(scratchattach.get_project, VERIFICATION_ID)
-
-cloud = scratchattach.get_tw_cloud(PROJECT_ID, purpose="Red OS 10", contact="https://scratch.mit.edu/users/KROKOBIL")
-events = cloud.events()
 
 var_queue = []
 
@@ -107,14 +102,26 @@ def check_verified(user_data: dict) -> None:
 
 def check_ban(user_data: dict) -> None:
     if user_data.get("ban"):
-        last_ban = datetime.strptime(user_data["ban"], utilities.FORMAT) - datetime.now()
+        last_ban = utilities.from_timestamp(user_data["ban"]) - datetime.now(timezone.utc)
         if last_ban > timedelta():
             raise ReturnError(f"banned for {math.ceil(last_ban.seconds/60)} minutes")
+
+def get_verification(user_data: dict) -> dict:
+    verification = user_data.get("verification")
+    if not verification:
+        raise ReturnError(f"user '{user_data['username']}' does not have a verification code")
+    if datetime.now(timezone.utc) - utilities.from_timestamp(verification["timestamp"]) > timedelta(minutes=10):
+        raise ReturnError(f"user '{user_data['username']}' does not have an active verification code")
+    return verification
+
+def return_login_data(user_data: dict) -> list:
+    return [user_data["username"], user_data.get("verified", False)] + app_pfp(user_data["username"]) + get_settings(user_data)
 
 @methode("system.login")
 def app_system_login(username: str, password: str) -> list:
     user_data = login(username, password)
-    return [user_data["username"], user_data.get("verified", False)]
+    user_data["last_login"] = utilities.get_now_str()
+    return return_login_data(user_data)
 
 @methode("system.signup")
 def app_system_signup(username: str, password: str) -> list:
@@ -125,38 +132,50 @@ def app_system_signup(username: str, password: str) -> list:
     if user_data: raise ReturnError("user already exists", user_data["username"])
 
     password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-    users[username.lower()] = {"username": user.username, "password": password_hash, "created": utilities.get_now_str()}
-    return [user.username]
+    users[username.lower()] = {"username": user.username, "password": password_hash, "created": utilities.get_now_str(), "last_login": utilities.get_now_str()}
+    return return_login_data(users[username.lower()])
 
 @methode("system.reset_password")
-def app_system_reset_password(username: str, password: str) -> list:
+def app_system_reset_password(username: str, password: str, private_code: str) -> list:
     if len(password) < 3:
         raise ReturnError(f"password has to have at least 3 digits")
-    user = get_scratch_user(username)
     user_data = get_user_data(username)
+    verification = get_verification(user_data)
+
+    if not verification["private"] == private_code:
+        raise ReturnError("wrong private code")
     
     password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
     user_data["password"] = password_hash
-    return [user.username]
+    return return_login_data(user_data)
 
 @methode("system.get_verification")
 def app_system_get_verification(username: str) -> list:
-    user = get_scratch_user(username)
     user_data = get_user_data(username)
     
-    verification_code = ''.join(random.choices(string.ascii_letters + string.digits, k=40))
-    user_data["verification_code"] = verification_code
-    return [user.username, verification_project.url, verification_code]
+    verification_code_public = ''.join(random.choices(string.ascii_letters + string.digits, k=40))
+    verification_code_private = ''.join(random.choices(string.ascii_letters + string.digits, k=40))
+    user_data["verification"] = {"public": verification_code_public, "private": verification_code_private, "timestamp": utilities.get_now_str()}
+    return [user_data["username"], verification_project.url, verification_code_public, verification_code_private]
 
 @methode("system.check_verification")
 def app_system_check_verification(username: str) -> list:
     user_data = get_user_data(username)
-    verification_code = user_data.get("verification_code")
-    if not verification_code:
-        raise ReturnError(f"user '{username}' does not have a verification code")
-    has_commented = list(filter(lambda x : x.author_name.lower() == user_data["username"].lower() and x.content == verification_code, verification_project.comments())) != []
+    verification = get_verification(user_data)
+
+    has_commented = False
+    other_users = []
+    for comment in verification_project.comments():
+        if comment.content.count(verification["public"]):
+            if comment.author_name.lower() == user_data["username"].lower():
+                has_commented = True
+            elif not comment.author_name in other_users:
+                other_users.append(comment.author_name)
     if not has_commented:
-        raise ReturnError(f"user '{username}' didn't comment the correct code")
+        if len(other_users) == 0:
+            raise ReturnError(f"user '{username}' didn't comment the correct code")
+        else:
+            raise ReturnError(f"comment with '{username}' and not with {', '.join(other_users)}")
     user_data["verified"] = True
     return [username]
 
@@ -169,8 +188,7 @@ pfp_cache = {}
 @methode("pfp")
 def app_pfp(username: str) -> list:
     global pfp_cache
-    username = username.lower()
-    cache_result = pfp_cache.get(username)
+    cache_result = pfp_cache.get(username.lower())
     if cache_result:
         return [encoder.Number(cache_result)]
     user = get_scratch_user(username)
@@ -207,6 +225,29 @@ def app_pfp(username: str) -> list:
     pfp_cache[username.lower()] = response
     return [encoder.Number(response)]
 
+@methode("set_settings")
+def app_set_settings(username: str, password: str, *args) -> list:
+    user_data = login(username, password)
+    if not user_data.get("settings"):
+        user_data["settings"] = {}
+    i = 0
+    while i+1 < len(args):
+        user_data["settings"][args[i]] = args[i+1]
+        i += 2
+    return [username]
+
+def get_settings(user_data: dict) -> list:
+    settings = []
+    for key, value in user_data.get("settings", {}).items():
+        settings.append(key)
+        settings.append(value)
+    return settings
+
+@methode("get_settings")
+def app_get_settings(username: str, password: str) -> list:
+    user_data = login(username, password)
+    return get_settings(user_data)
+
 request_count = 0
 @methode("weather")
 def app_weather(city_name: str) -> list:
@@ -230,16 +271,6 @@ def app_weather(city_name: str) -> list:
         weather_description
     ]
 
-storage = utilities.Storage("saves/storage.json")
-@methode("storage.set")
-def app_storage_set(key: str, value: str) -> list:
-    storage[key.lower()] = value
-    return []
-
-@methode("storage.get")
-def app_storage_get(key: str) -> list:
-    return [storage.get(key.lower(), "")]
-
 discord_messages = utilities.Storage("saves/discord.json")
 @methode("discord.post")
 def app_discord_post(username: str, password: str, text: str) -> list:
@@ -249,7 +280,7 @@ def app_discord_post(username: str, password: str, text: str) -> list:
     check_ban(user_data)
     if utilities.is_profane(text):
         log_server(f"Profane message to discord by {user_data['username']}: {text}")
-        user_data["ban"] = (datetime.now() + timedelta(minutes=10)).strftime(utilities.FORMAT)
+        user_data["ban"] = (datetime.now(timezone.utc) + timedelta(minutes=10)).replace(microsecond=0).strftime(utilities.FORMAT)
         user_data["ban_reason"] = "Profane message to discord"
         raise ReturnError("profane")
     message_id = send_discord_message(user_data["username"], text)
@@ -279,7 +310,7 @@ def app_llm_post(username: str, password: str, text: str) -> list:
     check_ban(user_data)
     if utilities.is_profane(text):
         log_server(f"Profane message to llm by {user_data['username']}: {text}")
-        user_data["ban"] = (datetime.now() + timedelta(minutes=10)).strftime(utilities.FORMAT)
+        user_data["ban"] = (datetime.now(timezone.utc) + timedelta(minutes=10)).replace(microsecond=0).strftime(utilities.FORMAT)
         user_data["ban_reason"] = "Profane message to llm"
         raise ReturnError("profane")
     message_id, answer = send_llm_message(user_data["username"], text)
@@ -313,8 +344,9 @@ is_shutdown = False
 def shutdown():
     global is_shutdown
     if is_shutdown: return
-    events.stop()
-    cloud.disconnect()
+    for id in general["projects"]:
+        events[id].stop()
+        cloud[id].disconnect()
     stop_event.set()
     log_server("saving...")
     utilities.save_all_storage_instances()
@@ -345,73 +377,92 @@ RSA_D = int(RSA_D)
 
 response_manager = utilities.RequestManager()
 
-@events.event
-def on_set(e):
-    if ("TO SERVER " in e.var):
-        cloud_value = e.value
-        old_response = response_manager.check(cloud_value)
-        if old_response:
-            var_queue.append(old_response)
-            return
-        if old_response == False:
-            return
-        response = []
-        try:
-            code = ""
-            for i in range(0, len(cloud_value), n_len):
-                code += str(pow(int(cloud_value[i:i+n_len]), RSA_D, RSA_N))[1:]
-            values = encoder.decode(code)
-            if len(values) < 4: return
-            RequestID = values[0]
-            AppID = values[1]
-            Timestamp = values[2]
+def create_on_set(id):
+    def on_set(e):
+        if ("TO SERVER " in e.var):
+            cloud_value = e.value
+            old_response = response_manager.check(cloud_value)
+            if old_response:
+                var_queue.append((id, old_response))
+                return
+            if old_response == False:
+                return
+            response = []
             try:
-                Timestamp = float(Timestamp)
-            except ValueError:
-                return
-            if abs(utilities.get_second_diff(Timestamp)) > 15: # 15 seconds
-                return
-            OneTimePad = values[3]
-            parameters = values[4:]
-            response.append(f"@{AppID}:{RequestID}")
-
-            func = methodes.get(AppID)
-            if func:
+                code = ""
+                for i in range(0, len(cloud_value), n_len):
+                    code += str(pow(int(cloud_value[i:i+n_len]), RSA_D, RSA_N))[1:]
+                values = encoder.decode(code)
+                if len(values) < 4: return
+                RequestID = values[0]
+                AppID = values[1]
+                Timestamp = values[2]
                 try:
-                    result = func(*parameters)
-                    status = 1
-                except (ReturnError, TypeError) as e:
-                    result = list(e.args)
-                    if len(result) == 0: result = ["error"]
+                    Timestamp = float(Timestamp)
+                except ValueError:
+                    return
+                if abs(utilities.get_second_diff(Timestamp)) > 15: # 15 seconds
+                    return
+                OneTimePad = values[3]
+                parameters = values[4:]
+                response.append(f"@{AppID}:{RequestID}")
+
+                func = methodes.get(AppID)
+                if func:
+                    try:
+                        result = func(*parameters)
+                        status = 1
+                    except (ReturnError, TypeError) as e:
+                        result = list(e.args)
+                        if len(result) == 0: result = ["error"]
+                        status = 0
+                else:
+                    result = [f"invalid AppID {AppID}"]
                     status = 0
-            else:
-                result = [f"invalid AppID {AppID}"]
-                status = 0
-            
-            response.append(utilities.get_days_since_2000())
-            response.append(status)
-            result_encoded_otp = [encoder.encode_one_time_pad(element, OneTimePad) for element in result]
-            response.extend(result_encoded_otp)
-            encoded = encoder.encode(response)
-            encoded += "." + str(pow(utilities.hash(encoded), RSA_D, RSA_N))
-            var_queue.append(encoded)
-            response_manager.set(cloud_value, encoded)
-            
-        except Exception as e:
-            error_server()
-            # stop_event.set() # Stops the server if an error occurred
+                
+                response.append(utilities.get_days_since_2000())
+                response.append(status)
+                result_encoded_otp = [encoder.encode_one_time_pad(element, OneTimePad) for element in result]
+                response.extend(result_encoded_otp)
+                encoded = encoder.encode(response)
+                encoded += "." + str(pow(utilities.hash(encoded), RSA_D, RSA_N))
+                var_queue.append((id, encoded))
+                response_manager.set(cloud_value, encoded)
+                
+            except Exception as e:
+                error_server()
+                # stop_event.set() # Stops the server if an error occurred
+    return on_set
 
-@events.event
-def on_reconnect():
-    log_server("turbowarp reconnect")
+def create_on_reconnect(id):
+    def on_reconnect():
+        log_server(f"turbowarp reconnect: {id}")
+    return on_reconnect
 
-@events.event
-def on_ready():
-    log_server("turbowarp is ready")
+def create_on_ready(id):
+    def on_ready():
+        log_server(f"turbowarp is ready: {id}")
+    return on_ready
 
-events.running = True
-events._thread = threading.Thread(target=events._updater, args=(), daemon=True)
-events._thread.start()
+cloud = {}
+events = {}
+
+def add_project(id):
+    cloud[id] = scratchattach.get_tw_cloud(id, purpose="Red OS 10", contact="https://scratch.mit.edu/users/KROKOBIL")
+    events[id] = cloud[id].events()
+    create_on_ready(id)
+    events[id].event(create_on_ready(id))
+    events[id].event(create_on_reconnect(id))
+    events[id].event(create_on_set(id))
+    events[id].running = True
+    events[id]._thread = threading.Thread(target=events[id]._updater, args=(), daemon=True)
+    events[id]._thread.start()
+
+general = utilities.Storage("saves/general.json")
+if general.get("projects") is None:
+    general["projects"] = []
+for id in general["projects"]:
+    add_project(id)
 
 ### discord connection ###
 
@@ -438,13 +489,43 @@ async def on_message(message: discord.Message):
     async def respond(text: str):
         await message.channel.send(text, reference=message, mention_author=False)
     
+    if message.channel.id != CHANNEL_ID:
+        await respond(f"for safety reasons you can only use this bot here: <#{CHANNEL_ID}>")
+        return
+    
     if len(message.content) >= 2 and message.content[0] == "$":
-        split = message.content[1:].split()
-        match split[0]:
-            case "ping":
-                await respond(" ".join(split))
-            case "stats":
-                await respond(f"users: {len(users)}")
+        try:
+            split = message.content[1:].split()
+            match split[0]:
+                case "help":
+                    await respond(
+                        "**Available Commands:**\n"
+                        "* `$help` – Displays this help message\n"
+                        "* `$ping <message>` – Echoes back your message\n"
+                        "* `$stats` – Shows the number of registered users\n"
+                        "* `$project get` – Lists all connected projects\n"
+                        "* `$project add <project-id>` – Connects a new project with the given ID\n"
+                    )
+                case "ping":
+                    await respond(" ".join(split))
+                case "stats":
+                    await respond(f"users: {len(users)}")
+                case "project":
+                    match split[1]:
+                        case "get": await respond(str(general["projects"]))
+                        case "add":
+                            if split[2] in general["projects"]:
+                                await respond(f"project with id `{split[2]}` is already connected")
+                            elif len(general["projects"]) >= 10:
+                                await respond(f"maximum number of projects is already reached: 10")
+                            else:
+                                general["projects"].append(split[2])
+                                general.save()
+                                add_project(split[2])
+                                await respond(f"added project with id `{split[2]}`")
+
+        except IndexError:
+            await respond("missing arguments")
 
     # response to question
     if message.reference and str(message.reference.message_id) in discord_messages:
@@ -565,7 +646,8 @@ try:
     while not stop_event.is_set():
         if len(var_queue) > 0:
             if time() > last_set + 0.1:
-                cloud.set_var(f"FROM SERVER {var_count + 1}", var_queue.pop(0))
+                id, value = var_queue.pop(0)
+                cloud[id].set_var(f"FROM SERVER {var_count + 1}", value)
                 last_set = time()
                 var_count = (var_count + 1) % 4
         sleep(0.1)
