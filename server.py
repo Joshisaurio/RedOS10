@@ -40,8 +40,8 @@ def error_server():
     log_server(f"Error:\n{traceback.format_exc()}")
 
 log_server("server started")
-
-VERIFICATION_ID = "1161277366"
+ 
+VERIFICATION_ID = "1153014815"
 verification_project: scratchattach.Project = utilities.dont_print(scratchattach.get_project, VERIFICATION_ID)
 
 var_queue = []
@@ -192,37 +192,46 @@ def app_pfp(username: str) -> list:
     if cache_result:
         return [encoder.Number(cache_result)]
     user = get_scratch_user(username)
-    
-    size: int = 90
+
+    size: int = 64
+    colors: int = 99
 
     url = f"https://uploads.scratch.mit.edu/get_image/user/{user.id}_{size}x{size}.png"
     response = requests.get(url)
+    image = Image.open(BytesIO(response.content)).resize((size, size), Image.LANCZOS).convert("RGBA")
 
-    image = Image.open(BytesIO(response.content))
-    image = image.resize((size, size), Image.LANCZOS)
-    image = image.convert("RGBA")
     background = Image.new("RGB", image.size, (255, 255, 255))
     background.paste(image, mask=image.split()[3])
-    image = background
+    image = background.convert("P", palette=Image.ADAPTIVE, colors=colors)
+
+    def color2str(rgb):
+        color_str = ""
+        for channel in (rgb[0], rgb[1], rgb[2]):
+            color_str += "{:02d}".format(int(round(float(channel)/255*99)))
+        return color_str
 
     pixel_list = list(image.getdata())
+    palette = image.getpalette()
+    pixel_set = [color2str(tuple(palette[i:i+3])) for i in range(0, colors*3, 3)]
+    index_len = int(math.log10(len(pixel_set)))+1
 
     response = ""
+    response += str(index_len)
+    response += str(len(pixel_set))
+    response += "".join(pixel_set)
+
     last_pixel = None
     count = 0
     for pixel in pixel_list:
-        color_str = ""
-        for color in (pixel[0], pixel[1], pixel[2]):
-            color_str += "{:02d}".format(int(round(float(color)/255*99)))
-        if color_str == last_pixel and count < 99:
+        color_idx = f"{pixel:0{index_len}d}".format(pixel)
+        if color_idx == last_pixel and count < 9:
             count += 1
         else:
             if last_pixel != None:
-                response += "{:02d}".format(count) + last_pixel
-            last_pixel = color_str
+                response += "{:01d}".format(count) + last_pixel
+            last_pixel = color_idx
             count = 0
-    response += "{:02d}".format(count) + color_str
-    pfp_cache[username.lower()] = response
+    response += "{:01d}".format(count) + color_idx
     return [encoder.Number(response)]
 
 @methode("set_settings")
@@ -341,12 +350,15 @@ stop_event = threading.Event()
 
 is_shutdown = False
 
+general = None
+
 def shutdown():
     global is_shutdown
     if is_shutdown: return
-    for id in general["projects"]:
-        events[id].stop()
-        cloud[id].disconnect()
+    if general:
+        for id, _ in general["projects"]:
+            events[id].stop()
+            cloud[id].disconnect()
     stop_event.set()
     log_server("saving...")
     utilities.save_all_storage_instances()
@@ -387,13 +399,12 @@ def create_on_set(id):
                 return
             if old_response == False:
                 return
-            response = []
             try:
                 code = ""
                 for i in range(0, len(cloud_value), n_len):
                     code += str(pow(int(cloud_value[i:i+n_len]), RSA_D, RSA_N))[1:]
                 values = encoder.decode(code)
-                if len(values) < 4: return
+                if len(values) < 5: return
                 RequestID = values[0]
                 AppID = values[1]
                 Timestamp = values[2]
@@ -403,9 +414,9 @@ def create_on_set(id):
                     return
                 if abs(utilities.get_second_diff(Timestamp)) > 15: # 15 seconds
                     return
-                OneTimePad = values[3]
+                one_time_pad = int(values[3])
                 parameters = values[4:]
-                response.append(f"@{AppID}:{RequestID}")
+                header = [f"@{AppID}:{RequestID}"]
 
                 func = methodes.get(AppID)
                 if func:
@@ -420,11 +431,12 @@ def create_on_set(id):
                     result = [f"invalid AppID {AppID}"]
                     status = 0
                 
-                response.append(utilities.get_days_since_2000())
-                response.append(status)
-                result_encoded_otp = [encoder.encode_one_time_pad(element, OneTimePad) for element in result]
-                response.extend(result_encoded_otp)
-                encoded = encoder.encode(response)
+                meta_data = [utilities.get_days_since_2000(), status]
+                encoded_result = []
+                for element in meta_data + result:
+                    code, one_time_pad = encoder.encode_one_time_pad(element, one_time_pad)
+                    encoded_result.append(code)
+                encoded = encoder.encode(header + encoded_result)
                 encoded += "." + str(pow(utilities.hash(encoded), RSA_D, RSA_N))
                 var_queue.append((id, encoded))
                 response_manager.set(cloud_value, encoded)
@@ -448,9 +460,9 @@ cloud = {}
 events = {}
 
 def add_project(id):
+    log_server(f"turbowarp add: {id}")
     cloud[id] = scratchattach.get_tw_cloud(id, purpose="Red OS 10", contact="https://scratch.mit.edu/users/KROKOBIL")
     events[id] = cloud[id].events()
-    create_on_ready(id)
     events[id].event(create_on_ready(id))
     events[id].event(create_on_reconnect(id))
     events[id].event(create_on_set(id))
@@ -458,10 +470,17 @@ def add_project(id):
     events[id]._thread = threading.Thread(target=events[id]._updater, args=(), daemon=True)
     events[id]._thread.start()
 
+def remove_project(id):
+    log_server(f"turbowarp remove: {id}")
+    events[id].stop()
+    cloud[id].disconnect()
+    del events[id]
+    del cloud[id]
+
 general = utilities.Storage("saves/general.json")
 if general.get("projects") is None:
     general["projects"] = []
-for id in general["projects"]:
+for id, _ in general["projects"]:
     add_project(id)
 
 ### discord connection ###
@@ -489,9 +508,11 @@ async def on_message(message: discord.Message):
     async def respond(text: str):
         await message.channel.send(text, reference=message, mention_author=False)
     
-    if message.channel.id != CHANNEL_ID:
-        await respond(f"for safety reasons you can only use this bot here: <#{CHANNEL_ID}>")
-        return
+    async def unsecure() -> bool:
+        if message.channel.id != CHANNEL_ID:
+            await respond(f"for safety reasons you can only use this command here: <#{CHANNEL_ID}>")
+            return True
+        return False
     
     if len(message.content) >= 2 and message.content[0] == "$":
         try:
@@ -505,6 +526,8 @@ async def on_message(message: discord.Message):
                         "* `$stats` – Shows the number of registered users\n"
                         "* `$project get` – Lists all connected projects\n"
                         "* `$project add <project-id>` – Connects a new project with the given ID\n"
+                        "* `$project remove <project-id>` – Removes the project\n"
+                        "* `$project lock <project-id>` – Locks the project, so it cannot be removed. Only use this command for the official project. A lock can only be removed manually by KROKOBIL when the server restarts!\n"
                     )
                 case "ping":
                     await respond(" ".join(split))
@@ -512,17 +535,55 @@ async def on_message(message: discord.Message):
                     await respond(f"users: {len(users)}")
                 case "project":
                     match split[1]:
-                        case "get": await respond(str(general["projects"]))
+                        case "get":
+                            response = ""
+                            for id, locked in general["projects"]:
+                                if locked:
+                                    response += f"* `{id}` 🔒\n"
+                                else:
+                                    response += f"* `{id}`\n"
+                            if response == "":
+                                await respond("*No projects connected*")
+                            else:
+                                await respond(response)
                         case "add":
+                            if await unsecure(): return
                             if split[2] in general["projects"]:
                                 await respond(f"project with id `{split[2]}` is already connected")
                             elif len(general["projects"]) >= 10:
                                 await respond(f"maximum number of projects is already reached: 10")
                             else:
-                                general["projects"].append(split[2])
+                                general["projects"].append((split[2], False))
                                 general.save()
                                 add_project(split[2])
                                 await respond(f"added project with id `{split[2]}`")
+                        case "remove":
+                            if await unsecure(): return
+                            idx = 0
+                            for id, _ in general["projects"]:
+                                if id == split[2]: break
+                                idx += 1
+                            else:
+                                await respond(f"project with id `{split[2]}` is not connected")
+                                return
+                            if general["projects"][idx][1]:
+                                await respond(f"project with id `{split[2]}` is locked")
+                                return
+                            remove_project(split[2])
+                            del general["projects"][idx]
+                            general.save()
+                            await respond(f"removed project with id `{split[2]}`")
+                        case "lock":
+                            if await unsecure(): return
+                            idx = 0
+                            for id, _ in general["projects"]:
+                                if id == split[2]: break
+                                idx += 1
+                            else:
+                                await respond(f"project with id `{split[2]}` is not connected")
+                                return
+                            general["projects"][idx] = (split[2], True)
+                            await respond(f"locked project with id `{split[2]}`")
 
         except IndexError:
             await respond("missing arguments")
@@ -647,7 +708,8 @@ try:
         if len(var_queue) > 0:
             if time() > last_set + 0.1:
                 id, value = var_queue.pop(0)
-                cloud[id].set_var(f"FROM SERVER {var_count + 1}", value)
+                if id in cloud:
+                    cloud[id].set_var(f"FROM SERVER {var_count + 1}", value)
                 last_set = time()
                 var_count = (var_count + 1) % 4
         sleep(0.1)

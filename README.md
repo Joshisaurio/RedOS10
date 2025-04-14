@@ -74,14 +74,14 @@ If the question is profane, the user is banned for 10 minutes from asking llm or
 
 ## Discord Bot
 
-The server has a connection to discord and can send and receive messages. It is not yet connected to the Red OS 10 Server.
+The server has a connection to discord and can send and receive messages.
 
-To send a message to discord, the user needs a verified account. The server posts the question in a channel. If someone responds to that message, it will be sent back to the user (not yet implemented).
+To send a message from the project to discord, the user needs a verified account. The server posts the question in a channel. If someone responds to that message, it will be sent back to the user (not yet implemented).
 
 The server reacts with:
 - ✅ if it received your response
 - 🖋 if you edited the response
-- ❌ if your message is profane
+- ❌ if your answer is profane
 
 If the question is profane, the user is banned for 10 minutes from asking llm or discord.
 
@@ -91,6 +91,10 @@ The bot has also some basic commands:
 - `$stats` – Shows the number of registered users
 - `$project get` – Lists all connected projects
 - `$project add <project-id>` – Connects a new project with the given ID
+- `$project remove <project-id>` – Removes the project
+- `$project lock <project-id>` – Locks the project, so it cannot be removed. Only use this command for the official project. A lock can only be removed manually by KROKOBIL when the server restarts!
+
+You can use some commands in a DM to the bot.
 
 ## Env Variables
 

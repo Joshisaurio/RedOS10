@@ -51,17 +51,19 @@ def encode(values: list) -> str:
         code += "00"
     return code
 
-def encode_one_time_pad(text, one_time_pad: str):
+def next_otp(one_time_pad: int) -> int:
+    return (65432101 * one_time_pad + 12345) % 137657191
+
+def encode_one_time_pad(text: str|Number, one_time_pad: int) -> tuple[str|Number, int]:
     code = ""
-    i = 0
     if isinstance(text, Number):
         code = ""
         for digit in text.value:
-            code += str((int(digit) + CHARS.find(one_time_pad[i]))%10)
-            i = (i + 1) % len(one_time_pad)
-        return Number(code)
+            code += str((int(digit) + one_time_pad)%10)
+            one_time_pad = next_otp(one_time_pad)
+        return Number(code), one_time_pad
     text = unidecode(demoji.replace(str(text))).replace("\n", "\\n")
     for char in text:
-        code += CHARS[(CHARS.find(char) + CHARS.find(one_time_pad[i]))%len(CHARS)]
-        i = (i + 1) % len(one_time_pad)
-    return code
+        code += CHARS[(CHARS.find(char) + one_time_pad)%len(CHARS)]
+        one_time_pad = next_otp(one_time_pad)
+    return code, one_time_pad
