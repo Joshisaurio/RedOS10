@@ -91,9 +91,12 @@ def login(username: str, password: str) -> dict:
     user_password = user_data.get("password")
     if not user_password:
         raise ReturnError(f"user '{user_data['username']}' does not have a password")
-    is_correct = bcrypt.checkpw(password.encode(), user_password.encode())
+    is_correct = bcrypt.checkpw(password.lower().encode(), user_password.encode())
     if not is_correct:
-        raise ReturnError(f"wrong password")
+        if bcrypt.checkpw(password.encode(), user_password.encode()):
+            user_data.get("password") = bcrypt.hashpw(password.lower().encode(), bcrypt.gensalt()).decode()
+        else:
+            raise ReturnError(f"wrong password")
     return user_data
 
 def check_verified(user_data: dict) -> None:
@@ -131,7 +134,7 @@ def app_system_signup(username: str, password: str) -> list:
     user_data = users.get(username.lower())
     if user_data: raise ReturnError("user already exists", user_data["username"])
 
-    password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    password_hash = bcrypt.hashpw(password.lower().encode(), bcrypt.gensalt()).decode()
     users[username.lower()] = {"username": user.username, "password": password_hash, "created": utilities.get_now_str(), "last_login": utilities.get_now_str()}
     return return_login_data(users[username.lower()])
 
@@ -412,7 +415,7 @@ def create_on_set(id):
                     Timestamp = float(Timestamp)
                 except ValueError:
                     return
-                if abs(utilities.get_second_diff(Timestamp)) > 15: # 15 seconds
+                if abs(utilities.get_second_diff(Timestamp)) > 30:
                     return
                 one_time_pad = int(values[3])
                 parameters = values[4:]

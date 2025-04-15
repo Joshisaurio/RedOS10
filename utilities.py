@@ -21,7 +21,7 @@ def get_now_str():
 	return datetime.now(timezone.utc).replace(microsecond=0).strftime(FORMAT)
 
 def get_second_diff(days_since_2000):
-    return (datetime.now(timezone.utc) - (start_date + timedelta(days=float(days_since_2000)))).seconds
+    return (datetime.now(timezone.utc) - (start_date + timedelta(days=float(days_since_2000)))).total_seconds()
 
 def from_timestamp(timestamp: str):
     return datetime.strptime(timestamp, FORMAT).replace(tzinfo=timezone.utc)
