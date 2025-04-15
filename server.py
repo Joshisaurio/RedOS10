@@ -212,7 +212,7 @@ def app_pfp(username: str) -> list:
 
     pixel_list = list(image.getdata())
     palette = image.getpalette()
-    pixel_set = [color2str(tuple(palette[i:i+3])) for i in range(0, colors*3, 3)]
+    pixel_set = [color2str(tuple(palette[i:i+3])) for i in range(0, len(palette), 3)]
     index_len = int(math.log10(len(pixel_set)))+1
 
     response = ""
