@@ -94,7 +94,7 @@ def login(username: str, password: str) -> dict:
     is_correct = bcrypt.checkpw(password.lower().encode(), user_password.encode())
     if not is_correct:
         if bcrypt.checkpw(password.encode(), user_password.encode()):
-            user_data.get("password") = bcrypt.hashpw(password.lower().encode(), bcrypt.gensalt()).decode()
+            user_data["password"] = bcrypt.hashpw(password.lower().encode(), bcrypt.gensalt()).decode()
         else:
             raise ReturnError(f"wrong password")
     return user_data
