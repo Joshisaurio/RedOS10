@@ -551,15 +551,17 @@ async def on_message(message: discord.Message):
                                 await respond(response)
                         case "add":
                             if await unsecure(): return
-                            if split[2] in general["projects"]:
-                                await respond(f"project with id `{split[2]}` is already connected")
-                            elif len(general["projects"]) >= 10:
+                            for id, _ in general["projects"]:
+                                if id == split[2]:
+                                    await respond(f"project with id `{split[2]}` is already connected")
+                                    return
+                            if len(general["projects"]) >= 10:
                                 await respond(f"maximum number of projects is already reached: 10")
-                            else:
-                                general["projects"].append((split[2], False))
-                                general.save()
-                                add_project(split[2])
-                                await respond(f"added project with id `{split[2]}`")
+                                return
+                            general["projects"].append((split[2], False))
+                            general.save()
+                            add_project(split[2])
+                            await respond(f"added project with id `{split[2]}`")
                         case "remove":
                             if await unsecure(): return
                             idx = 0
