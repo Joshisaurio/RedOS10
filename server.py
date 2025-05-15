@@ -136,6 +136,8 @@ def app_system_signup(username: str, password: str) -> list:
 
     password_hash = bcrypt.hashpw(password.lower().encode(), bcrypt.gensalt()).decode()
     users[username.lower()] = {"username": user.username, "password": password_hash, "created": utilities.get_now_str(), "last_login": utilities.get_now_str()}
+    if len(users.keys()) in [100, 500, 1000, 5000, 10000]:
+        log_server(f"!!! Welcome our {len(users.keys())}th user: {user.username}")
     return return_login_data(users[username.lower()])
 
 @methode("system.reset_password")
@@ -316,7 +318,7 @@ def app_discord_list(username: str, password: str) -> list:
 
 llm_messages = utilities.Storage("saves/llm.json")
 @methode("llm.post")
-def app_llm_post(username: str, password: str, text: str) -> list:
+def app_llm_post(username: str, password: str, text: str, new_conversation: str = "0") -> list:
     username = username.lower()
     user_data = login(username, password)
     check_ban(user_data)
@@ -325,12 +327,16 @@ def app_llm_post(username: str, password: str, text: str) -> list:
         user_data["ban"] = (datetime.now(timezone.utc) + timedelta(minutes=10)).replace(microsecond=0).strftime(utilities.FORMAT)
         user_data["ban_reason"] = "Profane message to llm"
         raise ReturnError("profane")
-    message_id, answer = send_llm_message(user_data["username"], text)
+    
     llm = user_data.get("llm")
     if llm is None:
         user_data["llm"] = []
         llm = user_data["llm"]
-    llm.append(message_id)
+        new_conversation = "1"
+    if new_conversation == "1" or new_conversation.lower() == "true":
+        llm.append([])
+    message_id, answer = send_llm_message(user_data["username"], text, llm[-1])
+    llm[-1].append(message_id)
     return [answer]
 
 @methode("llm.list")
@@ -675,12 +681,19 @@ else:
 
 llm_env = os.environ.copy()
 llm_env["LLM_TOKEN"] = LLM_TOKEN
-llm_env["LLM_CONTEXT"] = context
 
-def send_llm_message(username, text):
+def send_llm_message(username, text, conversation_ids):
     try:
+        conversation = [{"role": "system", "content": context}]
+        for message_id in conversation_ids:
+            message = llm_messages.get(str(message_id))
+            if message:
+                conversation.append({"role": "user", "content": message["text"]})
+                conversation.append({"role": "assistant", "content": message["answer"]})
+        conversation.append({"role": "user", "content": text})
+
         result = subprocess.run(
-            [PYTHON_CMD, "llm_worker.py", text],
+            [PYTHON_CMD, "llm_worker.py", json.dumps(conversation)],
             env=llm_env,
             capture_output=True,
             text=True,
@@ -693,10 +706,13 @@ def send_llm_message(username, text):
 
         response = json.loads(result.stdout.strip())
 
+        if response.get("error"):
+            error_server(response.get("message"))
+            raise ReturnError("Error, probably rate limit exceeded")
         answer = response["choices"][0]["message"]["content"]
         id = response["id"]
 
-        llm_messages[id] = {"username": username, "text": text, "responses": {id: {"username": "[LLM]", "text": answer}}}
+        llm_messages[id] = {"username": username, "text": text, "answer": answer}
 
         return (id, answer)
     except subprocess.TimeoutExpired:

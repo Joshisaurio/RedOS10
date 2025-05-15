@@ -44,7 +44,7 @@ class StorageBase(dict):
             self.filename = "StorageBase"
             self.parent = parent
         else:
-            if not isinstance(self, Storage):
+            if not isinstance(self, StorageBase):
                 raise ValueError("parent should not be None")
             self.parent = self
     

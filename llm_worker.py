@@ -5,17 +5,16 @@ import json
 
 def main():
     token = os.environ.get("LLM_TOKEN")
-    context = os.environ.get("LLM_CONTEXT")
 
-    if not token or not context:
-        print("Fehlende Umgebungsvariablen: LLM_TOKEN oder LLM_CONTEXT", file=sys.stderr)
+    if not token:
+        print("No env variables set: LLM_TOKEN", file=sys.stderr)
         sys.exit(1)
 
     if len(sys.argv) < 2:
-        print("Benutzereingabe fehlt", file=sys.stderr)
+        print("Missing user input", file=sys.stderr)
         sys.exit(1)
 
-    user_text = sys.argv[1]
+    conversation = json.loads(sys.argv[1])
 
     try:
         response = requests.post(
@@ -25,11 +24,8 @@ def main():
                 "Content-Type": "application/json",
             },
             data=json.dumps({
-                "model": "deepseek/deepseek-chat-v3-0324:free",
-                "messages": [
-                    {"role": "system", "content": context},
-                    {"role": "user", "content": user_text}
-                ],
+                "model": "meta-llama/llama-4-maverick:free",
+                "messages": conversation,
                 "max_tokens": 200
             })
         )
