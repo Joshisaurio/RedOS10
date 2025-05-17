@@ -4,6 +4,7 @@ import utilities
 from time import time, sleep
 import threading
 import os
+import sys
 import traceback
 import requests
 from io import BytesIO
@@ -361,6 +362,10 @@ is_shutdown = False
 
 general = None
 
+def restart():
+    shutdown()
+    os.execv(sys.executable, [sys.executable] + sys.argv)
+
 def shutdown():
     global is_shutdown
     if is_shutdown: return
@@ -502,6 +507,7 @@ discord_client = discord.Client(intents=intents)
 bot_loop = asyncio.new_event_loop()
 
 CHANNEL_ID = 1358447901365501962
+ADMIN_ID = 1140159421557780510
 
 @discord_client.event
 async def on_ready():
@@ -518,8 +524,14 @@ async def on_message(message: discord.Message):
         await message.channel.send(text, reference=message, mention_author=False)
     
     async def unsecure() -> bool:
-        if message.channel.id != CHANNEL_ID:
+        if message.channel.id != CHANNEL_ID and message.author.id != ADMIN_ID:
             await respond(f"for safety reasons you can only use this command here: <#{CHANNEL_ID}>")
+            return True
+        return False
+    
+    async def admin() -> bool:
+        if message.author.id != ADMIN_ID:
+            await respond(f"for safety reasons only the admin can use this command: <@{ADMIN_ID}>")
             return True
         return False
     
@@ -536,7 +548,7 @@ async def on_message(message: discord.Message):
                         "* `$project get` – Lists all connected projects\n"
                         "* `$project add <project-id>` – Connects a new project with the given ID\n"
                         "* `$project remove <project-id>` – Removes the project\n"
-                        "* `$project lock <project-id>` – Locks the project, so it cannot be removed. Only use this command for the official project. A lock can only be removed manually by KROKOBIL when the server restarts!\n"
+                        "* `$project lock <project-id>` – Locks the project, so it cannot be removed. Only use this command for the official project. A lock can only be removed by KROKOBIL!\n"
                     )
                 case "ping":
                     await respond(" ".join(split))
@@ -595,7 +607,29 @@ async def on_message(message: discord.Message):
                                 return
                             general["projects"][idx] = (split[2], True)
                             await respond(f"locked project with id `{split[2]}`")
+                        case "unlock":
+                            if await admin(): return
+                            idx = 0
+                            for id, _ in general["projects"]:
+                                if id == split[2]: break
+                                idx += 1
+                            else:
+                                await respond(f"project with id `{split[2]}` is not connected")
+                                return
+                            general["projects"][idx] = (split[2], False)
+                            await respond(f"unlocked project with id `{split[2]}`")
 
+                case "shutdown":
+                    if await admin(): return
+                    await respond("The server is now shutting down safely.")
+                    log_server("shut down by discord message")
+                    shutdown()
+                case "restart":
+                    if await admin(): return
+                    await respond("The server is now restarting safely.")
+                    log_server("restart by discord message")
+                    restart()
+                
         except IndexError:
             await respond("missing arguments")
 
@@ -684,6 +718,8 @@ llm_env["LLM_TOKEN"] = LLM_TOKEN
 
 def send_llm_message(username, text, conversation_ids):
     try:
+        if len(conversation_ids) > 5:
+            conversation_ids = conversation_ids[-5:]
         conversation = [{"role": "system", "content": context}]
         for message_id in conversation_ids:
             message = llm_messages.get(str(message_id))
@@ -707,7 +743,7 @@ def send_llm_message(username, text, conversation_ids):
         response = json.loads(result.stdout.strip())
 
         if response.get("error"):
-            error_server(response.get("message"))
+            log_server(response)
             raise ReturnError("Error, probably rate limit exceeded")
         answer = response["choices"][0]["message"]["content"]
         id = response["id"]

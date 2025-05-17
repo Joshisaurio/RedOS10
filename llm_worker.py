@@ -18,16 +18,17 @@ def main():
 
     try:
         response = requests.post(
-            url="https://openrouter.ai/api/v1/chat/completions",
+            url="https://router.huggingface.co/nscale/v1/chat/completions",
             headers={
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json",
             },
-            data=json.dumps({
-                "model": "meta-llama/llama-4-maverick:free",
+            json={
+                "model": "meta-llama/Llama-3.3-70B-Instruct",
                 "messages": conversation,
-                "max_tokens": 200
-            })
+                "max_tokens": 200,
+                "stream": False
+            }
         )
         response.raise_for_status()
 
