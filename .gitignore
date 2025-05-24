@@ -2,3 +2,4 @@ __pycache__
 saves
 logs
 .DS_Store
+apps/apps.preinstalled.txt
