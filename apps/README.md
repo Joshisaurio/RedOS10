@@ -302,9 +302,19 @@ Inherited from `Label`
 Constructor:
 - `button()`
 - `button(text)`
-- `button(text, fontSize)`
-- `button(text, fontSize, align)`
-- `button(text, fontSize, align, wrap)`
+- `button(text, onClick)`
+
+## Switch
+
+Inherited from `Label`
+
+Constructor:
+- `switch()`
+- `switch(text)`
+- `switch(text, onClick)`
+
+Attrbutes:
+- `state` 0 or 1
 
 ## Costume
 
@@ -335,6 +345,7 @@ Attributes:
 - `os.time_seconds_str` the time as displayed on the desktop but with seconds
 - `os.dayssince2000`
 - `os.timezone` timezone as UTC offset
+- `os.delta` time since the last frame in seconds
 - `os.music_song_id` current song
 - `os.music_progress` time in seconds
 - `os.music_length` length of current song in seconds
