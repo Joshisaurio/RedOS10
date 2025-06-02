@@ -2,7 +2,7 @@ def init() {
     global window = window()
     window.x = -500
 
-    global chat = vcontainer()
+    global chat = vScrollContainer()
     chat.margin(10)
     chat.marginBottom = 35
 

@@ -50,14 +50,14 @@ if (condition) {
 }
 ```
 
-### While
+## While
 ```python
 while (condition) {
     ...
 }
 ```
 
-### Functions
+## Functions
 ```python
 def example(param1, param2) {
     return value
@@ -66,7 +66,7 @@ def example(param1, param2) {
 example("Hello", "World")
 ```
 
-## Operators
+# Operators
 
 Numbers:
 - `+` addition
@@ -230,9 +230,30 @@ Constructor:
 - `hContainer()`
 - `vContainer()`
 
+## HScrollContainer, VScrollContainer
+
+Inherited from `Container`
+
+Constructor:
+- `hScrollContainer()`
+- `vScrollContainer()`
+
 Methodes:
 - `scrollDown()` for hContainer it scrolls to the right
 - `scrollUp()` for hContainer it scrolls to the left
+
+# Tabs
+
+Inherited from `Container`
+
+Constructor:
+- `tabs()`
+
+Attributes:
+- `tab` index starting by 1 (0 for no tab)
+
+Methodes:
+- `add(element, tabName)`
 
 ## Label
 
@@ -274,6 +295,17 @@ Methodes:
 - `scrollDown()` for hContainer it scrolls to the right
 - `scrollUp()` for hContainer it scrolls to the left
 
+## Button
+
+Inherited from `Label`
+
+Constructor:
+- `button()`
+- `button(text)`
+- `button(text, fontSize)`
+- `button(text, fontSize, align)`
+- `button(text, fontSize, align, wrap)`
+
 ## Costume
 
 Inherited from `Container`
@@ -299,9 +331,16 @@ Attributes:
 - `os.minute`
 - `os.second`
 - `os.millisecond`
-- `os.timestr` the time as displayed on the desktop
+- `os.time_str` the time as displayed on the desktop
+- `os.time_seconds_str` the time as displayed on the desktop but with seconds
 - `os.dayssince2000`
 - `os.timezone` timezone as UTC offset
+- `os.music_song_id` current song
+- `os.music_progress` time in seconds
+- `os.music_length` length of current song in seconds
+- `os.music_name` name of current song
+- `os.music_interpreter` interpreter of current song
+- `os.music_is_playing`
 
 Methodes:
 - `os.print(text)` log to the debugger
@@ -309,3 +348,7 @@ Methodes:
 - `os.error(text)` log error to the debugger
 - `os.ask_draco(prompt, callback)` calls the local assistant, when finished the callback function is called
 - `os.ask_llm(prompt, callback)` calls the large language model via python server and api, when finished the callback function is called
+- `os.music_start(song_id)` plays the song from the beginning
+- `os.music_stop()` pauses the music
+- `os.music_play()` continues the music
+- `os.music_toggle()` pauses or continues the music

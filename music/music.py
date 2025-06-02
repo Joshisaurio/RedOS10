@@ -9,16 +9,16 @@ if os.environ["PATH"].count(path) == 0:
 from pydub import AudioSegment
 
 def apply_equal_power_fade(segment: AudioSegment, fade_duration_ms: int, mode: str = "in") -> AudioSegment:
-    # In numpy umwandeln
+    # convert to numpy
     samples = np.array(segment.get_array_of_samples()).astype(np.float32)
 
-    # Für Stereo → [L, R, L, R, ...] → aufsplitten
+    # split for stereo
     if segment.channels == 2:
         samples = samples.reshape((-1, 2))
 
     fade_samples = int(segment.frame_rate * fade_duration_ms / 1000)
 
-    # Fading-Hüllkurve berechnen
+    # calculate fading envelope
     t = np.linspace(0, 1, fade_samples)
     if mode == "in":
         curve = np.sin(t * (np.pi / 2))
@@ -27,7 +27,7 @@ def apply_equal_power_fade(segment: AudioSegment, fade_duration_ms: int, mode: s
     else:
         raise ValueError("mode must be 'in' or 'out'")
 
-    # Fading anwenden
+    # apply fading
     if segment.channels == 1:
         if mode == "in":
             samples[:fade_samples] *= curve
@@ -41,7 +41,7 @@ def apply_equal_power_fade(segment: AudioSegment, fade_duration_ms: int, mode: s
             samples[-fade_samples:, 0] *= curve
             samples[-fade_samples:, 1] *= curve
 
-    # Zurück in AudioSegment
+    # back to AudioSegment
     samples = samples.astype(np.int16).flatten()
     new_seg = segment._spawn(samples.tobytes())
     return new_seg
