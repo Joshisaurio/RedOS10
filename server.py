@@ -18,6 +18,7 @@ from datetime import datetime, timedelta, timezone
 import json
 import math
 import subprocess
+import aiohttp
 
 LOG_TO_FILE = True
 
@@ -524,8 +525,8 @@ async def on_message(message: discord.Message):
         return
     
     # commands
-    async def respond(text: str):
-        await message.channel.send(text, reference=message, mention_author=False)
+    async def respond(text: str, file: discord.File = None):
+        await message.channel.send(text, reference=message, mention_author=False, file=file)
     
     async def unsecure() -> bool:
         if message.channel.id != CHANNEL_ID and message.author.id != ADMIN_ID:
@@ -553,12 +554,13 @@ async def on_message(message: discord.Message):
                         "* `$project add <project-id>` – Connects a new project with the given ID\n"
                         "* `$project remove <project-id>` – Removes the project\n"
                         "* `$project lock <project-id>` – Locks the project, so it cannot be removed. Only use this command for the official project. A lock can only be removed by KROKOBIL!\n"
+                        "* `$music <song-name>` (append mp3 file) – Split the mp3 file in small parts\n"
                     )
                 case "ping":
                     await respond(" ".join(split))
                 case "stats":
                     await respond(f"users: {len(users)}")
-                case "project":
+                case "project" | "projects":
                     match split[1]:
                         case "get":
                             response = ""
@@ -633,6 +635,41 @@ async def on_message(message: discord.Message):
                     await respond("The server is now restarting safely.")
                     log_server("restart by discord message")
                     restart()
+                
+                case "music" | "song":
+                    song_name = split[1].split(".")[0].lower().replace(" ", "-")
+                    if len(message.attachments) == 0:
+                        await respond(f"Please append mp3 file")
+                        return
+                    attachment = message.attachments[0]
+                    save_path = os.path.join('music/songs', song_name + ".mp3")
+                    os.makedirs("music", exist_ok=True)
+                    os.makedirs("music/songs", exist_ok=True)
+                    async with aiohttp.ClientSession() as session:
+                        async with session.get(attachment.url) as resp:
+                            if resp.status == 200:
+                                with open(save_path, 'wb') as f:
+                                    f.write(await resp.read())
+                                log_server(f"saved: {save_path}")
+                            else:
+                                log_server(f"download failed: {resp.status}")
+                    await respond(f"Processing {song_name} ...")
+
+                    result = subprocess.run(
+                        [PYTHON_CMD, "music/music.py", song_name],
+                        capture_output=True,
+                        text=True,
+                        timeout=300
+                    )
+
+                    if result.returncode != 0:
+                        log_server("Error: " + result.stderr.strip())
+                        await respond("Error: " + result.stderr.strip())
+                        return
+                    
+                    output = result.stdout.strip()
+
+                    await respond(f"Success:\n```\n{output}\n```", discord.File(f"music/songs/{song_name}.zip"))
                 
         except IndexError:
             await respond("missing arguments")
