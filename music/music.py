@@ -112,7 +112,7 @@ def main():
     print(total_duration_ms/1000)
     print("index of first timestamp of this song in music.text")
     print("index of last empty item of this song in music.text")
-    print(name.replace("-", " ").capitalize())
+    print(name.replace("-", " ").title())
     print("Interpreter")
 
 
