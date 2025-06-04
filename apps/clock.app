@@ -15,9 +15,14 @@ def init() {
     tab1.add(title)
 
     global time_label = label("", 16, 0.5)
+    time_label.monospace = true
     time_label.margin("")
     time_label.marginBottom = 44
     tab1.add(time_label)
+
+    clock_canvas = costume("#clock", 96)
+    clock_canvas.margin(30, 0, 70)
+    tab1.add(clock_canvas)
 
     time_mode = switch("Use 24-hour time")
     time_mode.margin(8)
@@ -36,8 +41,13 @@ def init() {
     global timer_is_running = false
 
     global timer_label = Label("00:00:00", 16, 0.5)
-    timer_label.margin("")
+    timer_label.monospace = true
+    timer_label.margin(0, "", 14)
     tab2.add(timer_label)
+
+    global timer_canvas = costume("#timer", 112)
+    timer_canvas.margin(28, 0, 48)
+    tab2.add(timer_canvas)
 
     // Buttons
     buttons = hcontainer()
@@ -67,6 +77,7 @@ def init() {
     global stopwatch_is_running = false
 
     global stopwatch_label = label("00:00:00.00", 28, 0.5)
+    stopwatch_label.monospace = true
     stopwatch_label.margin(28, 8, "")
     tab3.add(stopwatch_label)
 
@@ -119,6 +130,8 @@ def frame() {
         stopwatch += os.delta
     }
     stopwatch_label.text = time_to_format(stopwatch)
+
+    timer_canvas.data = timer
 }
 
 def time_to_format(time) {
@@ -177,6 +190,7 @@ def stopwatch_lap() {
     lap.add(lapCountLabel)
     
     lapTimeLabel = label(stopwatch_label.text)
+    lapTimeLabel.monospace = true
     lapTimeLabel.align = 1
     lapTimeLabel.margin("", 4, "", "")
     lap.add(lapTimeLabel)
