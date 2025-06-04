@@ -10,11 +10,11 @@ Then add it to the music/songs folder
 
 ## Python
 
-Rund the [music.py](music.py) file and enter the song name like this without file extension: `song-name`. It takes some time. It outputs five more lines.
+Use the discord bot to split the mp3 music file.
 
 ## Scratch
 
-Go to the Music sprite to the Sounds tab and upload all mp3 files in the music/songs/song-name folder.
+Go to the Music sprite to the Sounds tab and upload all mp3 files from the zip file.
 
 Show the list music.songs and add all six lines from the python code.
 
