@@ -175,6 +175,8 @@ These functions are called by the os:
 
 Methodes:
 - `add(element)` adds another element as a child
+- `delete()`
+- `delete_children()`
 
 ## Window
 

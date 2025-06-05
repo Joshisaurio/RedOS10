@@ -17,7 +17,7 @@ def init() {
     global time_label = label("", 16, 0.5)
     time_label.monospace = true
     time_label.margin("")
-    time_label.marginBottom = 44
+    time_label.marginBottom = 40
     tab1.add(time_label)
 
     clock_canvas = costume("#clock", 96)
@@ -203,4 +203,5 @@ def stopwatch_reset() {
     stopwatch_is_running = false
     stopwatch = 0
     stopwatch_button_toggle.text = "Start"
+    laps.delete_children()
 }
