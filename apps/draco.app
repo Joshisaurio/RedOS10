@@ -1,6 +1,6 @@
 def init() {
-    global window = window()
-    window.x = -500
+    global window = window(212, 276)
+    window.pos(-494, -138)
 
     global chat = vScrollContainer()
     chat.margin(10)

@@ -37,6 +37,14 @@ global score = 0
 
 # Structures
 
+## Comments
+
+You can write comments like this:
+```
+// This is a comment
+# This is also a comment
+```
+
 ## If
 ```python
 if (condition) {
@@ -167,6 +175,8 @@ These functions are called by the os:
 
 Methodes:
 - `add(element)` adds another element as a child
+- `delete()`
+- `delete_children()`
 
 ## Window
 
@@ -271,6 +281,7 @@ Attributes:
 - `fontSize`
 - `align`
 - `wrap`
+- `monospace`
 
 Methodes:
 - `scrollDown()` for hContainer it scrolls to the right
@@ -302,9 +313,19 @@ Inherited from `Label`
 Constructor:
 - `button()`
 - `button(text)`
-- `button(text, fontSize)`
-- `button(text, fontSize, align)`
-- `button(text, fontSize, align, wrap)`
+- `button(text, onClick)`
+
+## Switch
+
+Inherited from `Label`
+
+Constructor:
+- `switch()`
+- `switch(text)`
+- `switch(text, onClick)`
+
+Attrbutes:
+- `state` 0 or 1
 
 ## Costume
 
@@ -316,14 +337,20 @@ Constructor:
 - `costume(costume, scale)`
 
 Attrbutes:
-- `costume` name of the costume in the `Render` sprite
+- `costume` name of the costume in the `Render` sprite (can also be `"#something"` to draw something defined in Scratch: Render Sprite => Canvas Function)
 - `scale` the displayed size is `size` * `scale`
+- `data` if you need to transfer some data to the canvas function in Scratch: Render Sprite => Canvas Function
 
 # OS Interaction
 
 The os object has some attributes and methodes to interact with the project.
 
-Attributes:
+## Debugger
+- `os.print(text)` log to the debugger
+- `os.warn(text)` log warning to the debugger
+- `os.error(text)` log error to the debugger
+
+## Time:
 - `os.year`
 - `os.month`
 - `os.date`
@@ -335,6 +362,13 @@ Attributes:
 - `os.time_seconds_str` the time as displayed on the desktop but with seconds
 - `os.dayssince2000`
 - `os.timezone` timezone as UTC offset
+- `os.delta` time since the last frame in seconds
+
+## Music
+- `os.music_start(song_id)` plays the song from the beginning
+- `os.music_stop()` pauses the music
+- `os.music_play()` continues the music
+- `os.music_toggle()` pauses or continues the music
 - `os.music_song_id` current song
 - `os.music_progress` time in seconds
 - `os.music_length` length of current song in seconds
@@ -342,13 +376,22 @@ Attributes:
 - `os.music_interpreter` interpreter of current song
 - `os.music_is_playing`
 
-Methodes:
-- `os.print(text)` log to the debugger
-- `os.warn(text)` log warning to the debugger
-- `os.error(text)` log error to the debugger
-- `os.ask_draco(prompt, callback)` calls the local assistant, when finished the callback function is called
-- `os.ask_llm(prompt, callback)` calls the large language model via python server and api, when finished the callback function is called
-- `os.music_start(song_id)` plays the song from the beginning
-- `os.music_stop()` pauses the music
-- `os.music_play()` continues the music
-- `os.music_toggle()` pauses or continues the music
+## Cloud
+when finished the callback function is called
+- `os.ask_draco(prompt, callback)` calls the local assistant
+- `os.ask_llm(prompt, callback)` calls the large language model via python server and api
+- `os.save_all(callback)` saves all settings to the server
+
+## Filesystem
+- `os.read_file(path)`
+- `os.write_file(path, content)`
+- `os.delete_file(path)`
+- `os.duplicate_file(path, new_name)`
+- `os.move_file(path, to_folder)`
+- `os.rename_file(path, new_name)`
+- `os.list_file(path)` (returns a string representation of the list, because we don't have lists yet)
+- `os.add_folder(path, name)`
+- `os.delete_folder(path)`
+- `os.duplicate_folder(path, new_name)`
+- `os.move_folder(path, to_folder)`
+- `os.rename_folder(path, new_name)`
