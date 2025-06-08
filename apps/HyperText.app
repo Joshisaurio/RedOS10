@@ -1,37 +1,72 @@
-// vars "w_[window name]":                       windows
+// var "window":                                 window
 // vars "w_[window name]_main":                  window main container
 // vars with "w_[window name]_[ui element name]: ui elements
 
+
+//on start of the app
 def init() {
+    global window = window(100, 150)
+
+    //vars for smooth scaling
+    global resize = true
+    global target_size_x = 250
+    global target_size_y = 310
+    global actual_size_x = 100
+    global actual_size_y = 150
+
+    //color variables
     global primary_color = "#FF4060"
-    //#203EC7 is blue
     global background_brighter = "#1A1818"
+
     os.print("HyperText running")
     open_start_window()
 }
+//every frame
+def frame() {
+    resize()
+}
 
+//set the resize paramters
+def start_resize(size_x, size_y) {
+    resize = true
+    target_size_x = size_x
+    target_size_y = size_y
+}
+//calculate and set the windows smooth size
+def resize() {
+    if (resize == true) {
+        actual_size_x = actual_size_x + (target_size_x - actual_size_x) * 0.3
+        actual_size_y = actual_size_y + (target_size_y - actual_size_y) * 0.3
+        if (round(actual_size_x) == target_size_x) {
+            actual_size_x = target_size_x
+            if (round(actual_size_y) == target_size_y) {
+                actual_size_y = target_size_y
+                resize = false
+            }
+        }
+        window.size(actual_size_x, actual_size_y)
+        window.center()
+    }
+}
+
+//when the newfile button is clicked in start window
 def w_start_newfile() {
     open_newfile_window()
 }
+//when the openfile button is clicked in start window
 def w_start_openfile() {
     open_openfile_window
 }
-def w_newfile_filename_input(string) {
-    w_editor_filename = string
-}
+//when the create buttons is clicked in newfile window
 def w_newfile_create() {
-    os.print("Editor starting")
-    w_start.delete_children()
-    w_start.delete()
-    w_newfile.delete_children()
-    w_newfile.delete()
+
     open_editor_window()
 }
 
-
+//the start window is opened when app is started
 def open_start_window() {
-    global w_start = window(250, 310)
-    w_start.center()
+    window.delete_children()
+    start_resize(250, 310)
     w_start_main = container()
 
     w_start_recentlabel = title("Recent Files:")
@@ -62,11 +97,12 @@ def open_start_window() {
     w_start_buttons.add(w_start_open_button)
     w_start_main.add(w_start_buttons)
 
-    w_start.add(w_start_main) 
+    window.add(w_start_main)
 }
+//the newfile window is opened when user wants to create a new file
 def open_newfile_window() {
-    global w_newfile = window(150, 160)
-    w_newfile.center()
+    window.delete_children()
+    start_resize(155, 170)
 
     w_newfile_main = container()
     w_newfile_createtitle = title("Create New File:")
@@ -115,11 +151,12 @@ def open_newfile_window() {
     w_newfile_buttons.add(w_newfile_cancel)
     w_newfile_main.add(w_newfile_buttons)
 
-    w_newfile.add(w_newfile_main)
+    window.add(w_newfile_main)
 }
+//the real editor window
 def open_editor_window() {
-    global w_editor = window(420, 300)
-    w_editor.center()
+    window.delete_children()
+    start_resize(435, 300)
     w_editor_tabs = tabs()
 
     w_editor_editmain = container()
@@ -140,8 +177,7 @@ def open_editor_window() {
 
     w_editor_tabs.add(w_editor_settingsmain, "Settings")
 
-    w_editor.add(w_editor_tabs)
-
+    window.add(w_editor_tabs)
 }
 
 def title(text) {
