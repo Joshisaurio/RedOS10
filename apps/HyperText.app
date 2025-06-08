@@ -21,11 +21,11 @@ def w_newfile_filename_input(string) {
 }
 def w_newfile_create() {
     os.print("Editor starting")
-    open_editor_window()
     w_start.delete_children()
     w_start.delete()
     w_newfile.delete_children()
     w_newfile.delete()
+    open_editor_window()
 }
 
 
@@ -123,12 +123,21 @@ def open_editor_window() {
     w_editor_tabs = tabs()
 
     w_editor_editmain = container()
+
     w_editor_editfiletitle = title("Edit " + w_editor_filename + ".app:")
     w_editor_editfiletitle.margin(10, 10, "")
     w_editor_editmain.add(w_editor_editfiletitle)
+
+    w_editor_editscriptcontainer = container()
+    w_editor_editscriptcontainer.margin(30, 10, 10)
+    w_editor_editscriptcontainer.theme = background_brighter
+    w_editor_editscriptcontainer.height = "fill"
+    w_editor_editmain.add(w_editor_editscriptcontainer)
+
     w_editor_tabs.add(w_editor_editmain, "Edit " + w_editor_filename + ".app")
 
     w_editor_settingsmain = container()
+
     w_editor_tabs.add(w_editor_settingsmain, "Settings")
 
     w_editor.add(w_editor_tabs)
@@ -139,4 +148,8 @@ def title(text) {
     title = label(text, 15)
     title.margin(10, 10, "")
     return title
+}
+
+def onClose() {
+
 }
