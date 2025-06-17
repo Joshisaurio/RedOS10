@@ -23,6 +23,10 @@ def init() {
     theme_title = label("Theme", 12)
     home_vbox.add(theme_title)
 
+    global test_title = label("Test", 11)
+    test_title.text = os.theme
+    home_vbox.add(test_title)
+
     theme_container = hContainer()
     theme_container.minWidth = 200
     theme_container.minHeight = 45
@@ -30,14 +34,14 @@ def init() {
     theme_container.marginX(0, 0)
     home_vbox.add(theme_container)
 
-    theme_dark = button("Dark mode")
+    theme_dark = button("Dark mode", "enable_dark_mode")
     theme_dark.minHeight = 45
     theme_dark.minWidth = 60
     theme_dark.shrink()
     theme_dark.margin("5","5","5","0")
     theme_container.add(theme_dark)
 
-    theme_light = button("Light mode")
+    theme_light = button("Light mode", "enable_light_mode")
     theme_light.minHeight = 45
     theme_light.minWidth = 60
     theme_light.shrink()
@@ -46,7 +50,7 @@ def init() {
     // theme_light.theme = light_theme_color
     theme_container.add(theme_light)
 
-    theme_scheduled = button("Scheduled mode")
+    theme_scheduled = button("Scheduled mode", "enable_scheduled_mode")
     theme_scheduled.minHeight = 45
     theme_scheduled.minWidth = 60
     theme_scheduled.shrink()
@@ -61,13 +65,13 @@ def init() {
     vol_container.marginX(0, 0)
     home_vbox.add(vol_container)
 
-    vol_off = button("Volume off")
+    vol_off = button("Volume off", "volume_off")
     vol_off.minHeight = 20
     vol_off.minWidth = 60
     vol_off.margin("5","5","5","0")
     vol_container.add(vol_off)
 
-    vol_on = button("Volume on")
+    vol_on = button("Volume on", "volume_on")
     vol_on.minHeight = 20
     vol_on.minWidth = 60
     vol_on.margin("5","5","5","0")
@@ -80,7 +84,7 @@ def init() {
     data_label.wrap = 1
     home_vbox.add(data_label)
 
-    data_button = button("Save")
+    data_button = button("Save", "save_data")
     data_button.minWidth = 66
     data_button.minHeight = 16
     data_button.shrink()
@@ -94,15 +98,40 @@ def init() {
     window.add(tabs)
 }
 
+def frame() {
+    test_title.text = os.theme_string
+}
 
 def enable_dark_mode() {
-
+    os.set_theme("dark")
+    os.print("Switched theme to dark")
 }
 
 def enable_light_mode() {
-
+    os.set_theme("light")
+    os.print("Switched theme to light")
 }
 
 def enable_scheduled_mode() {
+    os.set_theme("scheduled")
+    os.print("Switched theme to scheduled")
+}
 
+def volume_off {
+    os.set_volume(0)
+    os.print("Set volume to 0")
+}
+
+def volume_on {
+    os.set_volume(100)
+    os.print("Set volume to 100")
+}
+
+def save_data {
+    os.print("Saving data...")
+    os.save_all(data_saved)
+}
+
+def data_saved {
+    os.print("Sata saved")
 }
