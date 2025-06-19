@@ -363,6 +363,35 @@ The os object has some attributes and methodes to interact with the project.
 - `os.dayssince2000`
 - `os.timezone` timezone as UTC offset
 - `os.delta` time since the last frame in seconds
+- `os.fps` returns frames per second of the OS
+- `os.full_hours` returns 0 or 1, if 1 the OS will display time in 24-hour format.
+- `os.theme` returns "Dark", "Light", or "Scheduled"
+- `os.theme_string` returns theme name, so "dark"
+- `os.background` or `os.bg` returns wallpaper name (as of 2.10, "BG1-3")
+- `os.volume` returns volume level
+- `os.username` returns username of the current account
+- `os.guest` returns 1 if user is guest
+- `os.turbowarp` returns 1 if the project is running in Turbowarp
+
+## Settings
+- `os.set_background(str)` or `os.set_wallpaper(str)` or `os.set_bg(str)` sets the wallpaper
+- `os.set_theme(str)` sets the theme
+- `os.set_volume(number)` sets the volume (0-100)
+- `os.set_full_hours(number)` sets if 24-hour format should be used, 0 or 1
+- `os.save_all()` saves all settings to the server
+
+## Effects
+- `os.get_effect(number)` gets an effect value (0-1)
+- `os.set_effect(number)` sets an effect value (0-1)
+### Available effects
+- `1. Show FPS`
+- `2. Show Delta`
+- `3. Show AnimTime`
+- `4. Show mouse trail`
+- `5. Enable click effect`
+- `6. Show seconds`
+- `7. Show pre-installed apps list`
+-# These are the current effects as of v2.10. **DO NOT REORDER**, they rely on their index.
 
 ## Music
 - `os.music_start(song_id)` plays the song from the beginning
