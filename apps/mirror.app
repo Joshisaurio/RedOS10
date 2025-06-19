@@ -1,6 +1,7 @@
 def init() {
     global window = window()
     window.center()
+    window.mode = "camera"
 
     global warning = label("", 25)
     warning.margin(10)

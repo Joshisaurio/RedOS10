@@ -171,6 +171,11 @@ These functions are called by the os:
     - `0` for one line without wrap
     - `1` for  multiple lines with wrap
 
+- **mode** of window:
+    - `""`
+    - `"no resize"`
+    - `"camera"`
+
 ## Element
 
 Methodes:
@@ -192,11 +197,16 @@ Attributes:
 - `y`
 - `width`
 - `height`
+- `minWidth`
+- `minHeight`
+- `mode`
 
 Methodes:
 - `pos(x, y)`
 - `size(size)` size*size
 - `size(width, height)`
+- `minSize(size)` size*size
+- `minSize(width, height)`
 - `center()`
 
 ## Container
@@ -282,10 +292,6 @@ Attributes:
 - `align`
 - `wrap`
 - `monospace`
-
-Methodes:
-- `scrollDown()` for hContainer it scrolls to the right
-- `scrollUp()` for hContainer it scrolls to the left
 
 ## Input
 
