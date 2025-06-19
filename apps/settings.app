@@ -28,11 +28,12 @@ def init() {
 
     // THEMES
     theme_title = label("Theme", 12)
+    theme_title.marginTop = 10
     home_vbox.add(theme_title)
 
-    global test_title = label("Test", 11)
-    test_title.text = os.theme
-    home_vbox.add(test_title)
+    // global test_title = label("Test", 11)
+    // test_title.text = os.theme
+    // home_vbox.add(test_title)
 
     theme_container = hContainer()
     theme_container.minWidth = 200
@@ -65,6 +66,7 @@ def init() {
     // VOLUME //
     
     volume_title = label("Volume", 12)
+    volume_title.marginTop = 10
     home_vbox.add(volume_title)
 
     vol_container = hContainer()
@@ -87,6 +89,7 @@ def init() {
     // SAVE DATA
 
     data_title = label("Save Data", 12)
+    data_title.marginTop = 10
     home_vbox.add(data_title)
 
     data_label = label("Save your data to the cloud to pick up where you left off on the next startup!", 11)
@@ -131,6 +134,7 @@ def init() {
 
     // THEMES
     cust_theme_title = label("Theme", 12)
+    cust_theme_title.marginTop = 10
     cust_vbox.add(cust_theme_title)
 
     cust_theme_container = hContainer()
@@ -165,8 +169,9 @@ def init() {
 
     // WALLPAPER
 
-    cust_theme_title = label("Wallpaper", 12)
-    cust_vbox.add(cust_theme_title)
+    cust_wallpaper_title = label("Wallpaper", 12)
+    cust_wallpaper_title.marginTop = 10
+    cust_vbox.add(cust_wallpaper_title)
 
     cust_bg_container = hContainer()
     cust_bg_container.minWidth = 200
@@ -196,23 +201,187 @@ def init() {
     cust_bgThree.margin("5","5","5","0")
     cust_bg_container.add(cust_bgThree)
 
-    options_label = label("Options", 11)
-    cust_vbox.add(options_label)
+    // OTHER OPTIONS
 
-    global trail_effect = switch("Enable mouse trail")
+    cust_options_label = label("Other", 11)
+    cust_options_label.marginTop = 10
+    cust_vbox.add(cust_options_label)
+
+    global fullHours = switch("Use 24-Hour time", "toggleFullHours")
+    fullHours.state = os.get_effect(4)
+    cust_vbox.add(fullHours)
+
+    global showSeconds = switch("Show seconds", "toggleEffectSix")
+    showSeconds.state = os.get_effect(6)
+    cust_vbox.add(showSeconds)
+
+    global trail_effect = switch("Enable mouse trail", "toggleEffectFour")
     trail_effect.state = os.get_effect(4)
     cust_vbox.add(trail_effect)
 
-    global click_effect = switch("Enable click effect")
+    global click_effect = switch("Enable click effect", "toggleEffectFive")
     click_effect.state = os.get_effect(5)
     cust_vbox.add(click_effect)
+    
+    ////////////
+    // SYSTEM //
+    ////////////
+
+    tab3 = container()
+    tabs.add(tab3, "System")
+
+    sys_vbox = vScrollContainer()
+    sys_vbox.minWidth = 200
+    sys_vbox.minHeight = 600
+    sys_vbox.fill()
+    sys_vbox.margin(10)
+    tab3.add(sys_vbox)
+
+    sys_title = label("System", 13)
+    sys_vbox.add(sys_title)
+
+    // VOLUME //
+    
+    sys_vol_title = label("Volume", 12)
+    sys_vol_title.marginTop = 10
+    sys_vbox.add(sys_vol_title)
+
+    sys_vol_container = hContainer()
+    sys_vol_container.size("fill", "shrink")
+    sys_vol_container.marginX(0, 0)
+    sys_vbox.add(sys_vol_container)
+
+    global sys_vol_off = button("Volume off", "volume_off")
+    sys_vol_off.minHeight = 20
+    sys_vol_off.minWidth = 60
+    sys_vol_off.margin("5","5","5","0")
+    sys_vol_container.add(sys_vol_off)
+
+    global sys_vol_on = button("Volume on", "volume_on")
+    sys_vol_on.minHeight = 20
+    sys_vol_on.minWidth = 60
+    sys_vol_on.margin("5","5","5","0")
+    sys_vol_container.add(sys_vol_on)
+
+    // OTHER OPTIONS
+
+    sys_option_title = label("Developer options", 12)
+    sys_option_title.marginTop = 10
+    sys_vbox.add(sys_option_title)
+
+    global showFps = switch("Show FPS", "toggleEffectOne")
+    showFps.state = os.get_effect(1)
+    sys_vbox.add(showFps)
+
+    global showDelta = switch("Show deltaTime", "toggleEffectTwo")
+    showDelta.state = os.get_effect(2)
+    sys_vbox.add(showDelta)
+
+    global showAnimTime = switch("Show animTime", "toggleEffectThree")
+    showAnimTime.state = os.get_effect(3)
+    sys_vbox.add(showAnimTime)
+
+    global showPreinstalled = switch("Show pre-installed apps list", "toggleEffectSeven")
+    showPreinstalled.state = os.get_effect(7)
+    sys_vbox.add(showPreinstalled)
+
+    // SAVE DATA
+
+    sys_data_title = label("Save Data", 12)
+    sys_data_title.marginTop = 10
+    sys_vbox.add(sys_data_title)
+
+    sys_data_label = label("Save your data to the cloud to pick up where you left off on the next startup!", 11)
+    if (os.guest == 1) {
+        sys_data_label.text = "Please log in to save your data to the cloud"
+    }
+    sys_data_label.wrap = 1
+    sys_vbox.add(sys_data_label)
+
+    global sys_data_button = button("Save", "save_data")
+    sys_data_button.minWidth = 66
+    sys_data_button.minHeight = 16
+    sys_data_button.shrink()
+    if (os.guest == 0) {
+        sys_data_button.theme = "#FF4060"
+    } else {
+        sys_data_button.theme = 0.2
+    }
+    sys_data_button.marginX("", 0)
+    sys_vbox.add(sys_data_button)
+
+
+    ///////////
+    // ABOUT //
+    ///////////
+
+    tab4 = container()
+    tabs.add(tab4, "About")
+
+    info_vbox = vScrollContainer()
+    info_vbox.minWidth = 200
+    info_vbox.minHeight = 600
+    info_vbox.fill()
+    info_vbox.margin(10)
+    tab4.add(info_vbox)
+
+    info_title = label("About Red OS", 13)
+    info_vbox.add(info_title)
+
+    info_sys_title = label("System information", 12)
+    info_sys_title.marginTop = 10
+    info_sys_title.wrap = 1
+    info_vbox.add(info_sys_title)
+
+    info_sys_round = label("Red OS - Round 5 edition", 11)
+    info_sys_turbowarp = label("Running on Scratch", 11)
+    if (os.turbowarp == 1) {
+        info_sys_turbowarp.text = "Running on Turbowarp"
+    }
+    info_sys_account = label("Account: Guest", 11)
+    if (os.guest == 0) {
+        info_sys_account.text = "Account: " + os.username
+    }
+    info_sys_language = label("Powered by RedScript", 11)
+
+    info_sys_round.wrap = 1
+    info_sys_turbowarp.wrap = 1
+    info_sys_account.wrap = 1
+    info_sys_language.wrap = 1
+
+    info_vbox.add(info_sys_round)
+    info_vbox.add(info_sys_turbowarp)
+    info_vbox.add(info_sys_account)
+    info_vbox.add(info_sys_language)
+
+
+    info_soft_title = label("Software", 12)
+    info_soft_title.marginTop = 10
+    info_soft_title.wrap = 1
+    info_vbox.add(info_soft_title)
+
+    info_soft_version = label("Red OS v2.10", 11)
+    info_soft_draco = label("Draco v1.2", 11)
+    info_soft_scratch= label("Made with Scratch 3.0", 11)
+
+    info_soft_version.wrap = 1
+    info_soft_draco.wrap = 1
+    info_soft_scratch.wrap = 1
+
+    info_vbox.add(info_soft_version)
+    info_vbox.add(info_soft_draco)
+    info_vbox.add(info_soft_scratch)
+
 
     window.add(tabs)
 }
 
 def frame() {
+    //////////
     // HOME //
-    test_title.text = "Current theme: " + os.theme
+    //////////
+
+    //test_title.text = "Current theme: " + os.theme
 
     if (os.theme == "dark") {
         theme_dark.theme = "#FF4060"
@@ -253,8 +422,10 @@ def frame() {
     }
 
 
-
+    ///////////////////
     // CUSTOMIZATION //
+    ///////////////////
+
     if (os.theme == "dark") {
         cust_theme_dark.theme = "#FF4060"
     } else {
@@ -289,9 +460,75 @@ def frame() {
         cust_bgThree.theme = 0.1
     }
 
+    if (os.get_effect(4)==1) {
+        trail_effect.state = 1
+    } else {
+        trail_effect.state = 0
+    }
+    if (os.get_effect(5)==1) {
+        click_effect.state = 1
+    } else {
+        click_effect.state = 0
+    }
+    if (os.get_effect(6)==1) {
+        showSeconds.state = 1
+    } else {
+        showSeconds.state = 0
+    }
 
-    trail_effect.state = os.get_effect(4)
-    click_effect.state = os.get_effect(5)
+    if (os.full_hours == 1) {
+        fullHours.state = 1
+    } else {
+        fullHours.state = 0
+    }
+
+    ////////////
+    // SYSTEM //
+    ////////////
+
+    if (os.volume==0) {
+        sys_vol_off.theme = "#FF4060"
+    } else {
+        sys_vol_off.theme = 0.1
+    }
+
+    if (os.volume>0) {
+        sys_vol_on.theme = "#FF4060"
+    } else {
+        sys_vol_on.theme = 0.1
+    }
+
+    if (data_state==0) {
+        sys_data_button.text = "Save"
+    } elif (data_state==1) {
+        sys_data_button.text = "Saving..."
+    } elif (data_state==2) {
+        sys_data_button.text = "Saved"
+    }
+
+    if (os.get_effect(1)==1) {
+        showFps.state = 1
+    } else {
+        showFps.state = 0
+    }
+
+    if (os.get_effect(2)==1) {
+        showDelta.state = 1
+    } else {
+        showDelta.state = 0
+    }
+
+    if (os.get_effect(3)==1) {
+        showAnimTime.state = 1
+    } else {
+        showAnimTime.state = 0
+    }
+
+    if (os.get_effect(7)==1) {
+        showPreinstalled.state = 1
+    } else {
+        showPreinstalled.state = 0
+    }
 }
 
 def enable_dark_mode() {
@@ -341,4 +578,68 @@ def bgTwo {
 }
 def bgThree {
     os.set_bg("BG3")
+}
+
+def toggleEffectOne {
+    if (os.get_effect(1)==1) {
+        os.set_effect(1, 0)
+    } else {
+        os.set_effect(1, 1)
+    }
+}
+
+def toggleEffectTwo {
+    if (os.get_effect(2)==1) {
+        os.set_effect(2, 0)
+    } else {
+        os.set_effect(2, 1)
+    }
+}
+
+def toggleEffectThree {
+    if (os.get_effect(3)==1) {
+        os.set_effect(3, 0)
+    } else {
+        os.set_effect(3, 1)
+    }
+}
+
+def toggleEffectFour {
+    if (os.get_effect(4)==1) {
+        os.set_effect(4, 0)
+    } else {
+        os.set_effect(4, 1)
+    }
+}
+
+def toggleEffectFive {
+    if (os.get_effect(5)==1) {
+        os.set_effect(5, 0)
+    } else {
+        os.set_effect(5, 1)
+    }
+}
+
+def toggleEffectSix {
+    if (os.get_effect(6)==1) {
+        os.set_effect(6, 0)
+    } else {
+        os.set_effect(6, 1)
+    }
+}
+
+def toggleEffectSeven {
+    if (os.get_effect(7)==1) {
+        os.set_effect(7, 0)
+    } else {
+        os.set_effect(7, 1)
+    }
+}
+
+def toggleFullHours {
+    if (os.full_hours == 1){
+        os.set_full_hours(0)
+    } else {
+        os.set_full_hours(1)
+    }
 }
