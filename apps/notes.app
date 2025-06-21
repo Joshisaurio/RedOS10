@@ -1,364 +1,54 @@
-// @Joshisaurio's fork of @SpieleTyp's HyperText editor                                                                                                              
-// var "window":                                 window
-// vars "w_[window name]_main":                  window main container
-// vars with "w_[window name]_[ui element name]: ui elements
+// @Joshisaurio's note app
+
+def init () {
+    global window = window()
+    window.center()
+
+    tabs = tabs()
+    tabs.fill()
+    tabs.tab = 1
+
+    //////////
+    // HOME //
+    //////////
+    tab1 = container
+    tabs.add(tab1, "Home")
+
+    ////////////
+    // NOTE 1 //
+    ////////////
+
+    tab2 = container()
+    //tab2.fill()
+    tabs.add(tab2, "Note 1")
+
+    note1container = container()
+    note1container.fill()
+    tab2.add(note1container)
+
+    title1 = label("Note 1", 14)
+    title1.margin(10, 5, "", 10)
+    note1container.add(title1)
+
+    note1 = vscrollcontainer()
+    note1.theme = 0.1
+    note1.margin(30, 5, 5, 5)
+    note1.fill()
+    note1container.add(note1)
+
+    text_field = input("", 12)
+    text_field.wrap = 1
+    //text_field.minHeight = 200
+    //text_field.minWidth = 200
+    text_field.margin(5)
+    text_field.fill()
+    text_field.focus = 1
+    note1.add(text_field)
 
 
-//on start of the app
-def init() {
-    global window = window(100, 150)
-    global window_state = "start"
-
-    //vars for smooth scaling
-    global resize = true
-    global target_size_x = 250
-    global target_size_y = 310
-    global actual_size_x = 100
-    global actual_size_y = 150
-
-    global template_script = "Welcome to the Notes app! (This app is\npowered by @SpieleTyp's HyperText)"
-
-    global project_name = ""
-    global project_content = ""
-    global project_data_file = "project_data.hyp"
-    global project_path = ""
-    global root_path = "red_os/user/Documents" // Suggestion for 
-
-    os.add_folder("red_os/user", "Documents")
-
-    //autosave_interval and timer
-    autosave = 10000 //-1 for no autosaving / 10 secs in ms
-    last_autosave_time = 0 //the time it was last saved
-
-    //color variables
-    global primary_color = "#FF4060"
-    global background_brighter = "#1A1818"
-
-    os.print("Notes app running")
-    open_start_window()
-}
-//every frame
-def frame() {
-    resize()
-    if (window_state == "editor") {
-        os.write_file(project_path + "/" + project_name + ".txt", project_content)
-    } elif (window_state == "start") {
-
-    } elif (window_state == "newfile") {
-
-    } elif (window_state == "openfile") {
-        w_openfile_file_scroll.delete_children()
-        if (os.list_folder("red_os/user/Documents")) {
-            folder_content = ""
-            folder_content = os.list_folder("red_os/user/Documents")
-            os.print(folder_content)
-            os.print(os.list_folder("red_os/user/Documents"))
-            folder_content_idx = 1
-            depth_idx = 0
-            while(folder_content_idx != -1) {
-                folder_part = split_string_into_substring_by_string(folder_content, "^°²³", folder_content_idx)
-                if (folder_part == 1) {
-                    folder_content_idx += 1
-                    folder_part = split_string_into_substring_by_string(folder_content, "^°²³", folder_content_idx)
-                    if (depth_idx == 0) {
-                        content_length = length_of(os.read_file("red_os/user/Documents/" + folder_part + ".txt"))
-                        edit_date = os.read_file("red_os/user/Documents/" + project_data_file)
-                        w_openfile_file_scroll.add(file(folder_part, "red_os/user/Documents", content_length, edit_date))
-                    }
-                    depth_idx += 1
-                } elif (folder_part == 0) {
-                    depth_idx -= 1
-                }
-                folder_content_idx += 1
-                if (split_string_into_substring_by_string(folder_content, "^°²³", folder_content_idx) == "") {
-                    folder_content_idx = -1
-                }
-            }
-        }
-        else {  
-            w_openfile_nofiles = label("No Files")
-            w_openfile_nofiles.margin(30)
-            w_openfile_nofiles.align = 0.5
-            w_openfile_file_scroll.add(w_openfile_nofiles)
-        }
-    }
+    window.add(tabs)
 }
 
-//set the resize paramters
-def start_resize(size_x, size_y) {
-    resize = true
-    target_size_x = size_x
-    target_size_y = size_y
-}
-//calculate and set the windows smooth size
-def resize() {
-    if (resize == true) {
-        actual_size_x = actual_size_x + (target_size_x - actual_size_x) * 0.3
-        actual_size_y = actual_size_y + (target_size_y - actual_size_y) * 0.3
-        if (round(actual_size_x) == target_size_x) {
-            actual_size_x = target_size_x
-            if (round(actual_size_y) == target_size_y) {
-                actual_size_y = target_size_y
-                resize = false
-            }
-        }
-        window.size(actual_size_x, actual_size_y)
-        window.center()
-    }
-}
+def frame () {
 
-//when the newfile button is clicked in start window
-def w_start_newfile() {
-    open_newfile_window()
-}
-//when the openfile button is clicked in start window
-def w_start_openfile() {
-    open_openfile_window()
-}
-//when the create buttons is clicked in newfile window
-def w_newfile_create() {
-    project_name = w_newfile_filename.text
-    project_path = root_path + "/" + project_name
-    os.add_folder(root_path, project_name)
-    last_edited = os.month + "/" + os.date + "/" + os.year
-    os.add_file(project_path, project_data_file, last_edited)
-    if (w_newfile_templateswitch.state == 1) {
-        os.add_file(project_path, project_name + ".txt", template_script)
-        project_content = template_script
-    }
-    else {
-        os.add_file(project_path, project_name + ".txt", license)
-        project_content = license
-    }
-    open_editor_window()
-}
-//when the cancel button is clicked in newfile window
-def w_newfile_cancel() {
-    open_start_window()
-}
-//when a file is clicked in opnefile window
-def w_openfile_fileclicked() {
-    project_content = os.read(project_path + "/" + project_name + ".txt")
-    open_editor_window()
-}
-
-
-//the start window is opened when app is started
-def open_start_window() {
-    window_state = "start"
-    window.delete_children()
-    start_resize(250, 310)
-    w_start_main = container()
-
-    w_start_recentlabel = title("Recent Files:")
-    w_start_main.add(w_start_recentlabel)
-
-    global w_start_recentfiles = vScrollContainer()
-    w_start_recentfiles.margin(35, 10, 45)
-    w_start_recentfiles.height = "fill"
-    w_start_recentfiles.theme = background_brighter
-    w_start_nofiles = label("No Recent Files")
-    w_start_nofiles.margin(30)
-    w_start_nofiles.align = 0.5
-    w_start_recentfiles.add(w_start_nofiles)
-    w_start_main.add(w_start_recentfiles)
-
-    w_start_buttons = hcontainer()
-    w_start_buttons.margin("", 10, 10)
-    w_start_buttons.height = "shrink"
-    w_start_new_button = button("New File", "w_start_newfile")
-    w_start_new_button.marginRight = 5
-    w_start_new_button.minHeight = 25
-    w_start_new_button.theme = primary_color
-    w_start_buttons.add(w_start_new_button)
-    w_start_open_button = button("Open File", "w_start_openfile")
-    w_start_open_button.marginLeft = 5
-    w_start_open_button.theme = primary_color
-    w_start_open_button.minHeight = 25
-    w_start_buttons.add(w_start_open_button)
-    w_start_main.add(w_start_buttons)
-
-    window.add(w_start_main)
-}
-//the openfile window is opened when user wants to choose a file in the redos/user folder
-def open_openfile_window() {
-    window_state = "openfile"
-    window.delete_children()
-    start_resize(200, 250)
-
-    w_openfile_main = container()
-    w_openfile_title = title("All your .txt files:")
-    w_openfile_main.add(w_openfile_title)
-
-    w_openfile_file_container = container()
-    w_openfile_file_container.theme = background_brighter
-    global w_openfile_file_scroll = vScrollContainer()
-    w_openfile_file_scroll.margin(5)
-    w_openfile_file_container.add(w_openfile_file_scroll)
-    w_openfile_file_container.margin(35, 10, 42)
-    w_openfile_file_container.fill()
-    w_openfile_main.add(w_openfile_file_container)
-
-    w_openfile_cancel = button("Cancel", "w_newfile_cancel")
-    w_openfile_cancel.margin("", 10, 10)
-    w_openfile_cancel.theme = primary_color
-    w_openfile_cancel.minHeight = 22
-    w_openfile_main.add(w_openfile_cancel)
-
-    window.add(w_openfile_main)
-}
-//the newfile window is opened when user wants to create a new file
-def open_newfile_window() {
-    window_state = "newfile"
-    window.delete_children()
-    start_resize(155, 170)
-
-    w_newfile_main = container()
-    w_newfile_createtitle = title("Create New File:")
-    w_newfile_main.add(w_newfile_createtitle)
-
-    w_newfile_templateswitchc = container()
-    w_newfile_templateswitchc.margin(35, 10, "")
-    w_newfile_templateswitchc.height = "shrink"
-    w_newfile_templateswitchc.theme = background_brighter
-    global w_newfile_templateswitch = switch("Use Template")
-    w_newfile_templateswitch.margin(3, 8)
-    w_newfile_templateswitchc.add(w_newfile_templateswitch)
-    w_newfile_main.add(w_newfile_templateswitchc)
-
-    w_newfile_filenamec = container()
-    w_newfile_filenamec.margin(63, 10, "")
-    w_newfile_filenamec.height = "shrink"
-    w_newfile_filenamec.theme = background_brighter
-    w_newfile_settingfilename = label("Filename", 9)
-    w_newfile_settingfilename.margin(8, 8, "")
-    w_newfile_filenamec.add(w_newfile_settingfilename)
-    file_name = "my_note_" + round(rand() * 10000)
-    global w_newfile_filename = input(file_name, 10)
-    w_newfile_filename.margin(20, 0, 4, 10)
-    w_newfile_filenamec.add(w_newfile_filename)
-    w_newfile_main.add(w_newfile_filenamec)
-
-    w_newfile_filenameextra = label("(Filename extension will be .txt)", 7)
-    w_newfile_filenameextra.margin(110, 10, "")
-    w_newfile_filenameextra.align = 0.5
-    w_newfile_main.add(w_newfile_filenameextra)
-
-    w_newfile_buttons = hcontainer()
-    w_newfile_buttons.margin("", 10, 10)
-    w_newfile_buttons.height = "shrink"
-    w_newfile_create = button("Create", "w_newfile_create")
-    w_newfile_create.marginRight = 2
-    w_newfile_create.minHeight = 20
-    w_newfile_create.theme = primary_color
-    w_newfile_buttons.add(w_newfile_create)
-    w_newfile_cancel = button("Cancel", "w_newfile_cancel")
-    w_newfile_cancel.marginLeft = 2
-    w_newfile_cancel.theme = primary_color
-    w_newfile_cancel.minHeight = 20
-    w_newfile_buttons.add(w_newfile_cancel)
-    w_newfile_main.add(w_newfile_buttons)
-
-    window.add(w_newfile_main)
-}
-//the real editor window
-def open_editor_window() {
-    window_state = "editor"
-    window.delete_children()
-    start_resize(440, 160*2-28)
-    w_editor_tabs = tabs()
-
-    w_editor_editmain = container()
-
-    w_editor_editfiletitle = title("Edit " + project_name)
-    w_editor_editfiletitle.margin(10, 10, "")
-    w_editor_editmain.add(w_editor_editfiletitle)
-
-    w_editor_editscriptcontainer = container()
-    w_editor_editscriptcontainer.margin(30, 10, 10)
-    w_editor_editscriptcontainer.theme = background_brighter
-    w_editor_editscriptcontainer.height = "fill"
-    global w_editor_editscriptinput = input(project_content, 13, 0, 1)
-    w_editor_editscriptinput.margin(10, 10, "")
-    w_editor_editscriptinput.fill()
-    w_editor_editscriptcontainer.add(w_editor_editscriptinput)
-    w_editor_editmain.add(w_editor_editscriptcontainer)
-
-    w_editor_tabs.add(w_editor_editmain, "Edit")
-
-    w_editor_settingsmain = container()
-
-    w_editor_tabs.add(w_editor_settingsmain, "Settings")
-
-    window.add(w_editor_tabs)
-}
-
-def split_string_into_substring_by_string(string, split_string, substring_idx) {
-    temp = ""
-    substring_idx_i = 0
-    string_i = 1
-    split_string_i = 1
-    while (string_i <= length_of(string)) {
-        while (letter(string_i, string) == letter(split_string_i, split_string)) {
-            string_i += 1
-            if (string_i > length_of(string)) {
-                return temp
-            }
-            split_string_i += 1
-        }
-        if (split_string_i > length_of(split_string)) {
-            substring_idx_i += 1
-            if (substring_idx_i == substring_idx) {
-                return temp
-            }
-            temp = ""
-        }
-        split_string_i = 1
-        temp = temp + letter(string_i, string)
-        string_i += 1
-    }
-    temp = temp + letter(string_i, string)
-    return temp
-}
-
-//returns a preformatted title object
-def title(text) {
-    title = label(text, 15)
-    title.margin(10, 10, "")
-    return title
-}
-
-def file(name, path, number_tokens, last_edited) {
-    container = container()
-    container.onClick = "w_openfile_fileclicked"
-    container.height = 36
-    container.width = "fill"
-    container.theme = 0
-    container.margin(3)
-    namel = label(name, 12)
-    namel.margin(6, 6, "")
-    namel.align = 0
-    container.add(namel)
-    last_editedl = label(last_edited, 12)
-    last_editedl.margin(6, 6, "")
-    last_editedl.align = 1
-    container.add(last_editedl)
-
-    pathl = label(path, 8)
-    pathl.margin("", 6, 6)
-    pathl.align = 0
-    container.add(pathl)
-    number_tokensl = label(str(number_tokens), 8)
-    number_tokensl.margin("", 6, 6)
-    number_tokensl.align = 1
-    container.add(number_tokensl)
-
-    line = container()
-    line.margin("", 0, 0)
-    line.height = 3
-    line.width = "fill"
-    line.theme = primary_color
-    //container.add(line)
-
-    return container
 }

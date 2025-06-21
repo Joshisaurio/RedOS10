@@ -374,6 +374,71 @@ def init() {
 
 
     window.add(tabs)
+
+    info_cred_title = label("Credits", 12)
+    info_cred_title.marginTop = 10
+    info_cred_title.wrap = 1
+    info_vbox.add(info_cred_title)
+
+    cred_leaders_title = label("Team leaders:", 11)
+    cred_josh = label("@Joshisaurio - Leader", 10)
+    cred_citrus = label("Citrus - Leader", 10)
+    cred_kroko = label("@Krokobil - Leader", 10)
+
+    cred_coders_title = label("Coders:", 11)
+    cred_spiel = label("@SpieleTyp - Code Leader", 10)
+    cred_chez = label("@chez_muffin_boi - Coder", 10)
+    cred_nerd = label("Notanerd - Coder", 10)
+
+    cred_designers_title = label("Designers:", 11)
+    cred_muz=label("@muzlovescereal- Design leader", 10)
+    cred_shine=label("Highshine- Designer", 10)
+    
+    cred_formers_title= label("Former members:", 11)
+    cred_patrixx = label("Patrixx - Former leader", 10)
+    cred_eterk = label("@CaptainEterk - Former coder", 10)
+    cred_fuzzee = label("@Fuzzee_animations - Former coder", 10)
+
+    cred_leaders_title.wrap = 1
+    cred_josh.wrap = 1
+    cred_citrus.wrap = 1
+    cred_kroko.wrap = 1
+
+    cred_coders_title.wrap = 1
+    cred_spiel.wrap = 1
+    cred_chez.wrap = 1
+    cred_nerd.wrap = 1
+
+    cred_designers_title.wrap = 1
+    cred_muz.wrap = 1
+    cred_shine.wrap = 1
+
+    cred_formers_title.wrap = 1
+    cred_patrixx.wrap = 1
+    cred_eterk.wrap = 1
+    cred_fuzzee.wrap = 1
+
+    info_vbox.add(cred_leaders_title)
+    info_vbox.add(cred_josh)
+    info_vbox.add(cred_citrus)
+    info_vbox.add(cred_kroko)
+
+    info_vbox.add(cred_coders_title)
+    info_vbox.add(cred_spiel)
+    info_vbox.add(cred_chez)
+    info_vbox.add(cred_nerd)
+
+    info_vbox.add(cred_designers_title)
+    info_vbox.add(cred_muz)
+    info_vbox.add(cred_shine)
+
+    info_vbox.add(cred_formers_title)
+    info_vbox.add(cred_patrixx)
+    info_vbox.add(cred_eterk)
+    info_vbox.add(cred_fuzzee)
+
+
+    window.add(tabs)
 }
 
 def frame() {
