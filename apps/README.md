@@ -171,6 +171,11 @@ These functions are called by the os:
     - `0` for one line without wrap
     - `1` for  multiple lines with wrap
 
+- **mode** of window:
+    - `""`
+    - `"no resize"`
+    - `"camera"`
+
 ## Element
 
 Methodes:
@@ -192,11 +197,16 @@ Attributes:
 - `y`
 - `width`
 - `height`
+- `minWidth`
+- `minHeight`
+- `mode`
 
 Methodes:
 - `pos(x, y)`
 - `size(size)` size*size
 - `size(width, height)`
+- `minSize(size)` size*size
+- `minSize(width, height)`
 - `center()`
 
 ## Container
@@ -283,10 +293,6 @@ Attributes:
 - `wrap`
 - `monospace`
 
-Methodes:
-- `scrollDown()` for hContainer it scrolls to the right
-- `scrollUp()` for hContainer it scrolls to the left
-
 ## Input
 
 Inherited from `Label` and `HContainer`
@@ -364,6 +370,13 @@ The os object has some attributes and methodes to interact with the project.
 - `os.timezone` timezone as UTC offset
 - `os.delta` time since the last frame in seconds
 - `os.fps` returns frames per second of the OS
+
+## Settings
+- `os.set_background(str)` or `os.set_wallpaper(str)` or `os.set_bg(str)` sets the wallpaper
+- `os.set_theme(str)` sets the theme
+- `os.set_volume(number)` sets the volume (0-100)
+- `os.set_full_hours(number)` sets if 24-hour format should be used, 0 or 1
+- `os.save_all()` saves all settings to the server
 - `os.full_hours` returns 0 or 1, if 1 the OS will display time in 24-hour format.
 - `os.theme` returns "Dark", "Light", or "Scheduled"
 - `os.theme_string` returns theme name, so "dark"
@@ -372,13 +385,6 @@ The os object has some attributes and methodes to interact with the project.
 - `os.username` returns username of the current account
 - `os.guest` returns 1 if user is guest
 - `os.turbowarp` returns 1 if the project is running in Turbowarp
-
-## Settings
-- `os.set_background(str)` or `os.set_wallpaper(str)` or `os.set_bg(str)` sets the wallpaper
-- `os.set_theme(str)` sets the theme
-- `os.set_volume(number)` sets the volume (0-100)
-- `os.set_full_hours(number)` sets if 24-hour format should be used, 0 or 1
-- `os.save_all()` saves all settings to the server
 
 ## Effects
 - `os.get_effect(number)` gets an effect value (0-1)
@@ -398,6 +404,9 @@ The os object has some attributes and methodes to interact with the project.
 - `os.music_stop()` pauses the music
 - `os.music_play()` continues the music
 - `os.music_toggle()` pauses or continues the music
+- `os.music_skip()` skips to the next song
+- `os.music_skip_back()` skips to the last song
+- `os.music_set_progress()` time in seconds
 - `os.music_song_id` current song
 - `os.music_progress` time in seconds
 - `os.music_length` length of current song in seconds

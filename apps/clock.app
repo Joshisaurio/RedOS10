@@ -1,6 +1,7 @@
 def init() {
     global window = window()
     window.center()
+    window.minSize(300, 200)
 
     tabs = tabs()
     tabs.fill()
