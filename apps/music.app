@@ -1,6 +1,8 @@
 def init() {
     global num_added_playlists = 0
     global window = window(400, 250)
+    global all_songs_data
+    all_songs_data = "Viva la Vida|Coldplay,Another Brick in the Wall|Pink Floyd,Hotel California|Eagles,Stairway to Heaven|Led Zeppelin,Bohemian Rhapsody|Queen,Smells Like Teen Spirit|Nirvana,Sweet Child O' Mine|Guns N' Roses"
     window.center()
     window.mode = "no resize"
 
@@ -8,6 +10,40 @@ def init() {
     tabs.fill()
     tabs.tab = 1
     window.add(tabs)
+    
+    all_songs_data = "Viva la Vida|Coldplay,Another Brick in the Wall|Pink Floyd,Hotel California|Eagles,Stairway to Heaven|Led Zeppelin,Bohemian Rhapsody|Queen,Smells Like Teen Spirit|Nirvana,Sweet Child O' Mine|Guns N' Roses"
+
+    // --- Playlist status variables ---
+    global pop_playlist_status = "000000000000000000"
+    global rock_playlist_status = "000000000000000000"
+    global rick_playlist_status = "000000000000000000"
+    global generic_playlist_status_1 = "000000000000000000"
+    global generic_playlist_status_2 = "000000000000000000"
+    global generic_playlist_status_3 = "000000000000000000"
+    global generic_playlist_status_4 = "000000000000000000"
+    global generic_playlist_status_5 = "000000000000000000"
+    global generic_playlist_status_6 = "000000000000000000"
+
+    global current_playlist_window = 0
+    global current_playlist_status_var = ""
+    global switch_0 = 0
+    global switch_1 = 0
+    global switch_2 = 0
+    global switch_3 = 0
+    global switch_4 = 0
+    global switch_5 = 0
+    global switch_6 = 0
+    global switch_7 = 0
+    global switch_8 = 0
+    global switch_9 = 0
+    global switch_10 = 0
+    global switch_11 = 0
+    global switch_12 = 0
+    global switch_13 = 0
+    global switch_14 = 0
+    global switch_15 = 0
+    global switch_16 = 0
+    global switch_17 = 0
 
     // Setup Tabs
     tab1 = container()
@@ -329,12 +365,32 @@ def setup_playlists_tab(tab) {
     playlist_row_1.height = 75
     playlists_vbox.add(playlist_row_1)
 
-    add_playlist_preview(playlist_row_1, "music//lost", "open_pop_playlist")
-    add_playlist_preview(playlist_row_1, "music//no", "open_rock_playlist")
-    add_playlist_preview(playlist_row_1, "music//never-gonna-give-you-up", "open_rick_playlist")
+    add_playlist_preview(playlist_row_1, "music//lost", "pop")
+    add_playlist_preview(playlist_row_1, "music//no", "rock")
+    add_playlist_preview(playlist_row_1, "music//never-gonna-give-you-up", "rick")
 }
 
 def frame() {
+    global current_playlist_status_var
+    global switch_0
+    global switch_1
+    global switch_2
+    global switch_3
+    global switch_4
+    global switch_5
+    global switch_6
+    global switch_7
+    global switch_8
+    global switch_9
+    global switch_10
+    global switch_11
+    global switch_12
+    global switch_13
+    global switch_14
+    global switch_15
+    global switch_16
+    global switch_17
+    
     if (os.music_is_playing) {
         play_symbol.costume = "music//pause"
         play_symbol2.costume = "music//pause"
@@ -391,6 +447,30 @@ def frame() {
     if(os.mps_skip_status == 1){
         os.music_set_progress(progress)
         os.music_play()
+    }
+
+    // Update playlist status string if a playlist window is open
+    if (current_playlist_status_var != "") {
+        new_status = ""
+        if (switch_0 != 0) { new_status = new_status + str(switch_0.state) } else { new_status = new_status + "0" }
+        if (switch_1 != 0) { new_status = new_status + str(switch_1.state) } else { new_status = new_status + "0" }
+        if (switch_2 != 0) { new_status = new_status + str(switch_2.state) } else { new_status = new_status + "0" }
+        if (switch_3 != 0) { new_status = new_status + str(switch_3.state) } else { new_status = new_status + "0" }
+        if (switch_4 != 0) { new_status = new_status + str(switch_4.state) } else { new_status = new_status + "0" }
+        if (switch_5 != 0) { new_status = new_status + str(switch_5.state) } else { new_status = new_status + "0" }
+        if (switch_6 != 0) { new_status = new_status + str(switch_6.state) } else { new_status = new_status + "0" }
+        if (switch_7 != 0) { new_status = new_status + str(switch_7.state) } else { new_status = new_status + "0" }
+        if (switch_8 != 0) { new_status = new_status + str(switch_8.state) } else { new_status = new_status + "0" }
+        if (switch_9 != 0) { new_status = new_status + str(switch_9.state) } else { new_status = new_status + "0" }
+        if (switch_10 != 0) { new_status = new_status + str(switch_10.state) } else { new_status = new_status + "0" }
+        if (switch_11 != 0) { new_status = new_status + str(switch_11.state) } else { new_status = new_status + "0" }
+        if (switch_12 != 0) { new_status = new_status + str(switch_12.state) } else { new_status = new_status + "0" }
+        if (switch_13 != 0) { new_status = new_status + str(switch_13.state) } else { new_status = new_status + "0" }
+        if (switch_14 != 0) { new_status = new_status + str(switch_14.state) } else { new_status = new_status + "0" }
+        if (switch_15 != 0) { new_status = new_status + str(switch_15.state) } else { new_status = new_status + "0" }
+        if (switch_16 != 0) { new_status = new_status + str(switch_16.state) } else { new_status = new_status + "0" }
+        if (switch_17 != 0) { new_status = new_status + str(switch_17.state) } else { new_status = new_status + "0" }
+        set_playlist_status(current_playlist_status_var, new_status)
     }
 }
 
@@ -450,12 +530,12 @@ def create_lyrics_line(parent, text, on_click_handler) {
     return word_label
 }
 
-def add_playlist_preview(parent, costume_name, on_click_handler) {
+def add_playlist_preview(parent, costume_name, playlist_name) {
     // Creates a playlist preview element for the Playlists page.
     playlist_container = container()
     playlist_container.margin("","","",15)
     playlist_container.size(70,70)
-    playlist_container.onClick = on_click_handler
+    playlist_container.onClick = "open_playlist_details_" + playlist_name
     parent.add(playlist_container)
 
     playlist_costume = costume(costume_name, 10)
@@ -467,97 +547,256 @@ def add_playlist_preview(parent, costume_name, on_click_handler) {
 // --              PLAYLIST FUNCTIONS               --
 // ---------------------------------------------------
 
-def open_pop_playlist() {
-    pop_window = window(300, 250)
-    pop_window.center()
-    
-    scroll = vScrollContainer()
-    scroll.margin(5)
-    pop_window.add(scroll)
-    
-    create_song_entry(scroll, "diamond-heart", "Diamond Heart", "Alan Walker", "diamond_heart")
-    create_song_entry(scroll, "never-gonna-give-you-up", "Never Gonna Give You Up", "Rick Astley", "never_gonna_give_you_up")
-    create_song_entry(scroll, "hall-of-fame", "Hall of Fame", "The Script", "hall_of_fame")
-    create_song_entry(scroll, "viva-la-vida", "Viva la Vida", "Coldplay", "viva_la_vida")
-    create_song_entry(scroll, "above-the-skies", "Above the Skies", "RedOS-Paulottix", "above_the_skies")
+def open_playlist_details_pop() {
+    open_playlist_details("Pop Playlist", "music//lost", "pop_playlist_status")
 }
-
-def open_rock_playlist() {
-    rock_window = window(300, 250)
-    rock_window.center()
-
-    scroll = vScrollContainer()
-    scroll.margin(5)
-    rock_window.add(scroll)
-
-    create_song_entry(scroll, "lost", "Lost", "Linkin Park", "lost")
-    create_song_entry(scroll, "somewhere-i-belong", "Somewhere I Belong", "Linkin Park", "somewhere_i_belong")
-    create_song_entry(scroll, "nothing-else-matters", "Nothing Else Matters", "Metallica", "nothing_else_matters")
-    create_song_entry(scroll, "hotel-california", "Hotel California", "Eagles", "hotel_california")
-    create_song_entry(scroll, "everything-ends", "Everything Ends", "Architects", "everything_ends")
+def open_playlist_details_rock() {
+    open_playlist_details("Rock Playlist", "music//no", "rock_playlist_status")
 }
-
-def open_rick_playlist() {
-    rick_window = window(300, 250)
-    rick_window.center()
-
-    scroll = vScrollContainer()
-    scroll.margin(5)
-    rick_window.add(scroll)
-
-    create_song_entry(scroll, "never-gonna-give-you-up", "Never Gonna Give You Up", "Rick Astley", "never_gonna_give_you_up")
-    create_song_entry(scroll, "hotel-california", "Hotel California", "Eagles", "hotel_california")
-    create_song_entry(scroll, "viva-la-vida", "Viva la Vida", "Coldplay", "viva_la_vida")
-    create_song_entry(scroll, "hall-of-fame", "Hall of Fame", "The Script", "hall_of_fame")
-    create_song_entry(scroll, "that-bass", "That Bass Will Grow On You", "RedOS-Paulottix", "that_bass")
+def open_playlist_details_rick() {
+    open_playlist_details("Rick Playlist", "music//never-gonna-give-you-up", "rick_playlist_status")
+}
+def open_playlist_details_generic_1() {
+    open_playlist_details("Generic Playlist 1", "music//lost", "generic_playlist_status_1")
+}
+def open_playlist_details_generic_2() {
+    open_playlist_details("Generic Playlist 2", "music//lost", "generic_playlist_status_2")
+}
+def open_playlist_details_generic_3() {
+    open_playlist_details("Generic Playlist 3", "music//lost", "generic_playlist_status_3")
+}
+def open_playlist_details_generic_4() {
+    open_playlist_details("Generic Playlist 4", "music//lost", "generic_playlist_status_4")
+}
+def open_playlist_details_generic_5() {
+    open_playlist_details("Generic Playlist 5", "music//lost", "generic_playlist_status_5")
+}
+def open_playlist_details_generic_6() {
+    open_playlist_details("Generic Playlist 6", "music//lost", "generic_playlist_status_6")
 }
 
 def add_playlist_clicked() {
-    global num_added_playlists += 1
+    global num_added_playlists
+    global playlists_vbox
+    num_added_playlists += 1
+
     if (num_added_playlists == 1) {
-        global playlist_row_2 = hScrollContainer()
+        global playlist_row_2
+        playlist_row_2 = hScrollContainer()
         playlist_row_2.margin(15,10,"",10)
         playlist_row_2.height = 75
         playlists_vbox.add(playlist_row_2)
-        add_playlist_preview(playlist_row_2, "music//lost", "open_generic_playlist_1")
+        add_playlist_preview(playlist_row_2, "music//lost", "generic_1")
     } elif (num_added_playlists == 2) {
-        add_playlist_preview(playlist_row_2, "music//lost", "open_generic_playlist_2")
+        global playlist_row_2
+        add_playlist_preview(playlist_row_2, "music//lost", "generic_2")
     } elif (num_added_playlists == 3) {
-        add_playlist_preview(playlist_row_2, "music//lost", "open_generic_playlist_3")
+        global playlist_row_2
+        add_playlist_preview(playlist_row_2, "music//lost", "generic_3")
     } elif (num_added_playlists == 4) {
-        global playlist_row_3 = hScrollContainer()
+        global playlist_row_3
+        playlist_row_3 = hScrollContainer()
         playlist_row_3.margin(15,10,"",10)
         playlist_row_3.height = 75
         playlists_vbox.add(playlist_row_3)
-        add_playlist_preview(playlist_row_3, "music//lost", "open_generic_playlist_4")
+        add_playlist_preview(playlist_row_3, "music//lost", "generic_4")
     } elif (num_added_playlists == 5) {
-        add_playlist_preview(playlist_row_3, "music//lost", "open_generic_playlist_5")
+        global playlist_row_3
+        add_playlist_preview(playlist_row_3, "music//lost", "generic_5")
     } elif (num_added_playlists == 6) {
-        add_playlist_preview(playlist_row_3, "music//lost", "open_generic_playlist_6")
+        global playlist_row_3
+        add_playlist_preview(playlist_row_3, "music//lost", "generic_6")
     }
 }
 
-def open_generic_playlist_content() {
-    new_playlist_window = window(300, 250)
-    new_playlist_window.center()
+def close_playlist_details_window() {
+    global current_playlist_window
+    global current_playlist_status_var
+    global switch_0
+    global switch_1
+    global switch_2
+    global switch_3
+    global switch_4
+    global switch_5
+    global switch_6
+    global switch_7
+    global switch_8
+    global switch_9
+    global switch_10
+    global switch_11
+    global switch_12
+    global switch_13
+    global switch_14
+    global switch_15
+    global switch_16
+    global switch_17
+    
+    if (current_playlist_window != 0) {
+        current_playlist_window.close()
+    }
 
-    scroll = vScrollContainer()
-    scroll.margin(5)
-    new_playlist_window.add(scroll)
-
-    create_song_entry(scroll, "legends", "Legends", "RedOS-Paulottix", "legends")
-    create_song_entry(scroll, "no", "No Return", "RedOS-Paulottix", "no")
-    create_song_entry(scroll, "gladius", "Gladius Superabit", "Paulottix,SunoAi,Citrus", "gladius")
-    create_song_entry(scroll, "mountains", "Where the Mountain Ends", "RedOS-Paulottix", "mountain")
-    create_song_entry(scroll, "that-bass", "That Bass Will Grow On You", "RedOS-Paulottix", "that_bass")
+    current_playlist_window = 0
+    current_playlist_status_var = ""
+    switch_0 = 0
+    switch_1 = 0
+    switch_2 = 0
+    switch_3 = 0
+    switch_4 = 0
+    switch_5 = 0
+    switch_6 = 0
+    switch_7 = 0
+    switch_8 = 0
+    switch_9 = 0
+    switch_10 = 0
+    switch_11 = 0
+    switch_12 = 0
+    switch_13 = 0
+    switch_14 = 0
+    switch_15 = 0
+    switch_16 = 0
+    switch_17 = 0
 }
 
-def open_generic_playlist_1() { open_generic_playlist_content() }
-def open_generic_playlist_2() { open_generic_playlist_content() }
-def open_generic_playlist_3() { open_generic_playlist_content() }
-def open_generic_playlist_4() { open_generic_playlist_content() }
-def open_generic_playlist_5() { open_generic_playlist_content() }
-def open_generic_playlist_6() { open_generic_playlist_content() }
+def open_playlist_details(playlist_name, cover_image, status_var_name) {
+    global current_playlist_window
+    global current_playlist_status_var
+    global switch_0
+    global switch_1
+    global switch_2
+    global switch_3
+    global switch_4
+    global switch_5
+    global switch_6
+    global switch_7
+    global switch_8
+    global switch_9
+    global switch_10
+    global switch_11
+    global switch_12
+    global switch_13
+    global switch_14
+    global switch_15
+    global switch_16
+    global switch_17
+
+    os.print("music_app: open_playlist_details called for " + playlist_name)
+    current_playlist_window = window(260, 200)
+    current_playlist_window.center()
+    current_playlist_status_var = status_var_name
+
+    title_label = label(playlist_name)
+    title_label.margin(10, "", "", 0)
+    title_label.align = 0.5
+    current_playlist_window.add(title_label)
+
+    songs_container = vScrollContainer()
+    songs_container.margin(55, 10, 50, 10)
+    songs_container.height = 120
+    current_playlist_window.add(songs_container)
+    
+    status_str = get_playlist_status(status_var_name)
+    
+    switch_0 = add_song_with_switch_entry(songs_container, 0, "viva-la-vida", "viva la vida", "Coldplay", status_str)
+    switch_1 = add_song_with_switch_entry(songs_container, 1, "hotel-california", "hotel california", "Eagles", status_str)
+    switch_2 = add_song_with_switch_entry(songs_container, 2, "lost", "lost", "Linkin Park", status_str)
+    switch_3 = add_song_with_switch_entry(songs_container, 3, "nothing-else-matters", "nothing else matters", "Metallica", status_str)
+    switch_4 = add_song_with_switch_entry(songs_container, 4, "somewhere-i-belong", "somewhere i belong", "Linkin Park", status_str)
+    switch_5 = add_song_with_switch_entry(songs_container, 5, "everything-ends", "everything ends", "Architects", status_str)
+    switch_6 = add_song_with_switch_entry(songs_container, 6, "hall-of-fame", "hall of fame", "The Script", status_str)
+    switch_7 = add_song_with_switch_entry(songs_container, 7, "call-of-the-wild", "call of the wild", "Powerwulf", status_str)
+    switch_8 = add_song_with_switch_entry(songs_container, 8, "diamond-heart", "diamond heart", "Alan Walker", status_str)
+    switch_9 = add_song_with_switch_entry(songs_container, 9, "never-gonna-give-you-up", "never gonna give you up", "Rick Astley", status_str)
+    switch_10 = add_song_with_switch_entry(songs_container, 10, "above-the-skies", "Above the skies", "RedOS-Paulottix", status_str)
+    switch_11 = add_song_with_switch_entry(songs_container, 11, "legends", "legends", "RedOS-Paulottix", status_str)
+    switch_12 = add_song_with_switch_entry(songs_container, 12, "gladius", "Gladius Superabit", "Paulottix,SunoAi,Citrus", status_str)
+    switch_13 = add_song_with_switch_entry(songs_container, 13, "mountains", "where the mountain ends", "RedOS-Paulottix", status_str)
+    switch_14 = add_song_with_switch_entry(songs_container, 14, "where_the_mountain_ends_progressive_house_version", "Where the m. ends ph", "RedOS-Paulottix", status_str)
+    switch_15 = add_song_with_switch_entry(songs_container, 15, "no", "No Return", "RedOS-Paulottix", status_str)
+    switch_16 = add_song_with_switch_entry(songs_container, 16, "that-bass", "That Bass will grow on you ig", "RedOS-Paulottix", status_str)
+    switch_17 = add_song_with_switch_entry(songs_container, 17, "gladius-superabit-v2", "Gladius Superabit v2", "RedOS-Paulottix", status_str)
+
+    close_button = button("Close", "close_playlist_details_window")
+    close_button.margin(195, "", 10, "")
+    close_button.align = 0.5
+    current_playlist_window.add(close_button)
+
+    os.print("music_app: finished adding all songs, window should be visible now")
+}
+
+def add_song_with_switch_entry(parent, idx, song_id, song_title, interpreter, status_str) {
+    song_button = button()
+    song_button.margin(5, 5, "", 5)
+    song_button.theme = "#1A1A1A"
+    song_button.height = 20
+    parent.add(song_button)
+
+    song_picture = costume("music//" + song_id, 4)
+    song_picture.margin("", "","", 10)
+    song_picture.size(1)
+    song_button.add(song_picture)
+
+    // Concatenate with extra spaces for separation
+    name_interpreter = song_title + "        " + interpreter
+    name_interpreter_label = label(name_interpreter, 8)
+    name_interpreter_label.margin("", "", "", 0)
+    name_interpreter_label.align = 0.3
+    song_button.add(name_interpreter_label)
+
+    song_switch = switch()
+    song_switch.margin(5, "", "", 220)
+    if (os.get_char(status_str, idx) == "1") {
+        song_switch.state = 1
+    } else {
+        song_switch.state = 0
+    }
+    song_button.add(song_switch)
+    return song_switch
+}
+
+def get_playlist_status(var_name) {
+    global pop_playlist_status
+    global rock_playlist_status
+    global rick_playlist_status
+    global generic_playlist_status_1
+    global generic_playlist_status_2
+    global generic_playlist_status_3
+    global generic_playlist_status_4
+    global generic_playlist_status_5
+    global generic_playlist_status_6
+
+    if (var_name == "pop_playlist_status") { return pop_playlist_status }
+    if (var_name == "rock_playlist_status") { return rock_playlist_status }
+    if (var_name == "rick_playlist_status") { return rick_playlist_status }
+    if (var_name == "generic_playlist_status_1") { return generic_playlist_status_1 }
+    if (var_name == "generic_playlist_status_2") { return generic_playlist_status_2 }
+    if (var_name == "generic_playlist_status_3") { return generic_playlist_status_3 }
+    if (var_name == "generic_playlist_status_4") { return generic_playlist_status_4 }
+    if (var_name == "generic_playlist_status_5") { return generic_playlist_status_5 }
+    if (var_name == "generic_playlist_status_6") { return generic_playlist_status_6 }
+    return "000000000000000000"
+}
+
+def set_playlist_status(var_name, value) {
+    global pop_playlist_status
+    global rock_playlist_status
+    global rick_playlist_status
+    global generic_playlist_status_1
+    global generic_playlist_status_2
+    global generic_playlist_status_3
+    global generic_playlist_status_4
+    global generic_playlist_status_5
+    global generic_playlist_status_6
+
+    if (var_name == "pop_playlist_status") { pop_playlist_status = value }
+    if (var_name == "rock_playlist_status") { rock_playlist_status = value }
+    if (var_name == "rick_playlist_status") { rick_playlist_status = value }
+    if (var_name == "generic_playlist_status_1") { generic_playlist_status_1 = value }
+    if (var_name == "generic_playlist_status_2") { generic_playlist_status_2 = value }
+    if (var_name == "generic_playlist_status_3") { generic_playlist_status_3 = value }
+    if (var_name == "generic_playlist_status_4") { generic_playlist_status_4 = value }
+    if (var_name == "generic_playlist_status_5") { generic_playlist_status_5 = value }
+    if (var_name == "generic_playlist_status_6") { generic_playlist_status_6 = value }
+}
 
 // ---------------------------------------------------
 // --              ORIGINAL FUNCTIONS               --
@@ -619,3 +858,24 @@ def lyrics4(){ os.music_set_progress(os.lyrics_time4)
  os.music_play() }
 def lyrics5(){ os.music_set_progress(os.lyrics_time5)
  os.music_play() }
+
+def add_song_to_playlist_view(parent, song_title, y_offset) {
+    song_label = label(song_title)
+    song_label.margin(y_offset, "", "", 20)
+    parent.add(song_label)
+}
+
+def add_song_with_switch(parent, song_title) {
+    os.print("music_app: adding switch for " + song_title)
+    song_entry_container = container()
+    song_entry_container.height = 30
+    parent.add(song_entry_container)
+
+    song_label = label(song_title)
+    song_label.margin(5, "", "", 10)
+    song_entry_container.add(song_label)
+
+    song_switch = switch()
+    song_switch.margin(5, 10, "", "")
+    song_entry_container.add(song_switch)
+}
