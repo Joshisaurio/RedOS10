@@ -35,6 +35,21 @@ A variable is only defined inside the current function. If you want to create/se
 global score = 0
 ```
 
+# Text Formatting
+
+Strings use the escape character `\`:
+- `"\\"` -> `\`
+- `"\n"` -> new line
+- `"\l"` -> three animated dots
+- `"\m...\m"` -> marker
+- `"\b...\b"` -> **bold**
+- `"\i...\i"` -> ***italic***
+- `"\u...\u"` -> <ins>underline</ins>
+
+internal:
+- `\s...\s` -> display selected text
+- `\c` -> display cursor
+
 # Structures
 
 ## Comments
@@ -262,7 +277,7 @@ Methodes:
 - `scrollDown()` for hContainer it scrolls to the right
 - `scrollUp()` for hContainer it scrolls to the left
 
-# Tabs
+## Tabs
 
 Inherited from `Container`
 
@@ -389,15 +404,17 @@ The os object has some attributes and methodes to interact with the project.
 ## Effects
 - `os.get_effect(number)` gets an effect value (0-1)
 - `os.set_effect(number)` sets an effect value (0-1)
+
 ### Available effects
-- `1. Show FPS`
-- `2. Show Delta`
-- `3. Show AnimTime`
-- `4. Show mouse trail`
-- `5. Enable click effect`
-- `6. Show seconds`
-- `7. Show pre-installed apps list`
--# These are the current effects as of v2.10. **DO NOT REORDER**, they rely on their index.
+- `1`: Show FPS
+- `2`: Show Delta
+- `3`: Show AnimTime
+- `4`: Show mouse trail
+- `5`: Enable click effect
+- `6`: Show seconds
+- `7`: Show pre-installed apps list
+
+These are the current effects as of v2.10. **DO NOT REORDER**, they rely on their index.
 
 ## Music
 - `os.music_start(song_id)` plays the song from the beginning

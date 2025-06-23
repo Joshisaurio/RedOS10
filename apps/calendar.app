@@ -399,24 +399,12 @@ def reloadMonth() {
                 }
             }
         }
-
-        wwww_dayI.text = "29"
-        wwww_dayII.text = "30"
-        wwww_dayIII.text = "31"
-
-        if (days == 28) {
-            wwww_dayI.text = ""
-            wwww_dayII.text = ""
-            wwww_dayIII.text = ""
-        } elif (days == 30) {
-            wwww_dayIII.text = ""
-        }
     }
 
     monthText.text = month + " " + selectedYear
+    jumpMonthNumber.text = selectedMonth
     jumpYearNumber.text = selectedYear
     addMonthDays()
-    addDayBox()
 }
 
 def addMonthDays() {
@@ -512,9 +500,6 @@ def addMonthDays() {
         daysOfMonthContainer5.add(day)
         i += 1
     }
-
-    jumpMonthNumber.text = selectedMonth
-    jumpToContainer.text = selectedYear
 }
 
 //ai generated function for javascript translated to red os app script

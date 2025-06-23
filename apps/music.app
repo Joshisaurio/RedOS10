@@ -70,7 +70,7 @@ def init() {
     // --- Home Player Bar ---
     music_player = container()
     music_player.margin(225, 5, 5, 5)
-    music_player.theme = "#1A1A1A"
+    music_player.theme = 0.1
     music_player.height = 20
     tab1.add(music_player)
 
@@ -120,7 +120,7 @@ def init() {
     // --- Explore Player Bar ---
     music_player2 = container()
     music_player2.margin(225, 5, 5, 5)
-    music_player2.theme = "#1A1A1A"
+    music_player2.theme = 0.1
     music_player2.height = 20
     tab2.add(music_player2)
 
@@ -170,7 +170,7 @@ def init() {
     // --- Lyrics Player Bar ---
     music_player3 = container()
     music_player3.margin(225, 5, 5, 5)
-    music_player3.theme = "#1A1A1A"
+    music_player3.theme = 0.1
     music_player3.height = 20
     tab3.add(music_player3)
 
@@ -220,7 +220,7 @@ def init() {
     // --- Playlists Player Bar ---
     music_player4 = container()
     music_player4.margin(225, 5, 5, 5)
-    music_player4.theme = "#1A1A1A"
+    music_player4.theme = 0.1
     music_player4.height = 20
     tab4.add(music_player4)
 
@@ -310,7 +310,7 @@ def setup_home_tab(tab) {
 
 def setup_explore_tab(tab) {
     explore_scroll = vScrollContainer()
-    explore_scroll.margin(40, 5, 60, 5)
+    explore_scroll.margin(20, 5, 40, 5)
     tab.add(explore_scroll)
 
     // Add all the songs to the explore list
@@ -336,7 +336,7 @@ def setup_explore_tab(tab) {
 
 def setup_lyrics_tab(tab) {
     lyrics_container = vScrollContainer()
-    lyrics_container.margin(30, 5, 60, 5)
+    lyrics_container.margin(20, 5, 50, 5)
     tab.add(lyrics_container)
     
     os.music_get_line()
@@ -482,7 +482,7 @@ def create_song_entry(parent, song_id, song_title, interpreter, on_click_handler
     // Creates a single song entry button for the Explore page.
     song_button = button()
     song_button.margin(5, 5, "", 5)
-    song_button.theme = "#1A1A1A"
+    song_button.theme = 0.1
     song_button.height = 20
     song_button.onClick = on_click_handler
     parent.add(song_button)
@@ -520,11 +520,11 @@ def add_song_preview(parent, song_id, on_click_handler) {
 def create_lyrics_line(parent, text, on_click_handler) {
     // Creates a single line of lyrics
     line_container = container()
-    line_container.margin(20, 5, "", 5)
-    line_container.height = 10
+    line_container.margin(10, 5, "", 5)
+    line_container.height = "shrink"
     parent.add(line_container)
 
-    word_label = label(text, 12)
+    word_label = label(text, 12, 0, 1)
     word_label.onClick = on_click_handler
     line_container.add(word_label)
     return word_label
@@ -681,6 +681,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
 
     os.print("music_app: open_playlist_details called for " + playlist_name)
     current_playlist_window = window(260, 200)
+    current_playlist_window.mode = "no resize"
     current_playlist_window.center()
     current_playlist_status_var = status_var_name
 
@@ -726,7 +727,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
 def add_song_with_switch_entry(parent, idx, song_id, song_title, interpreter, status_str) {
     song_button = button()
     song_button.margin(5, 5, "", 5)
-    song_button.theme = "#1A1A1A"
+    song_button.theme = 0.1
     song_button.height = 20
     parent.add(song_button)
 

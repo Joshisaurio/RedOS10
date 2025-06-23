@@ -11,7 +11,7 @@ def init () {
     //////////
     // HOME //
     //////////
-    tab1 = container
+    tab1 = container()
     tabs.add(tab1, "Home")
 
     ////////////

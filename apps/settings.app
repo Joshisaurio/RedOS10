@@ -223,6 +223,31 @@ def init() {
     click_effect.state = os.get_effect(5)
     cust_vbox.add(click_effect)
     
+    // SAVE DATA
+
+    cust_data_title = label("Save Data", 12)
+    cust_data_title.marginTop = 10
+    cust_vbox.add(cust_data_title)
+
+    cust_data_label = label("Save your data to the cloud to pick up where you left off on the next startup!", 11)
+    if (os.guest == 1) {
+        cust_data_label.text = "Please log in to save your data to the cloud"
+    }
+    cust_data_label.wrap = 1
+    cust_vbox.add(cust_data_label)
+
+    global cust_data_button = button("Save", "save_data")
+    cust_data_button.minWidth = 66
+    cust_data_button.minHeight = 16
+    cust_data_button.shrink()
+    if (os.guest == 0) {
+        cust_data_button.theme = "#FF4060"
+    } else {
+        cust_data_button.theme = 0.2
+    }
+    cust_data_button.marginX("", 0)
+    cust_vbox.add(cust_data_button)
+
     ////////////
     // SYSTEM //
     ////////////
@@ -360,9 +385,9 @@ def init() {
     info_soft_title.wrap = 1
     info_vbox.add(info_soft_title)
 
-    info_soft_version = label("Red OS v2.10", 11)
+    info_soft_version = label("Red OS v2.11", 11)
     info_soft_draco = label("Draco v1.2", 11)
-    info_soft_scratch= label("Made with Scratch 3.0", 11)
+    info_soft_scratch = label("Made with Scratch 3.0", 11)
 
     info_soft_version.wrap = 1
     info_soft_draco.wrap = 1
@@ -525,26 +550,18 @@ def frame() {
         cust_bgThree.theme = 0.1
     }
 
-    if (os.get_effect(4)==1) {
-        trail_effect.state = 1
-    } else {
-        trail_effect.state = 0
-    }
-    if (os.get_effect(5)==1) {
-        click_effect.state = 1
-    } else {
-        click_effect.state = 0
-    }
-    if (os.get_effect(6)==1) {
-        showSeconds.state = 1
-    } else {
-        showSeconds.state = 0
-    }
+    trail_effect.state = os.get_effect(4)
+    click_effect.state = os.get_effect(5)
+    showSeconds.state = os.get_effect(6)
 
-    if (os.full_hours == 1) {
-        fullHours.state = 1
-    } else {
-        fullHours.state = 0
+    fullHours.state = os.full_hours
+
+    if (data_state==0) {
+        cust_data_button.text = "Save"
+    } elif (data_state==1) {
+        cust_data_button.text = "Saving..."
+    } elif (data_state==2) {
+        cust_data_button.text = "Saved"
     }
 
     ////////////
@@ -571,44 +588,28 @@ def frame() {
         sys_data_button.text = "Saved"
     }
 
-    if (os.get_effect(1)==1) {
-        showFps.state = 1
-    } else {
-        showFps.state = 0
-    }
+    showFps.state = os.get_effect(1)
 
-    if (os.get_effect(2)==1) {
-        showDelta.state = 1
-    } else {
-        showDelta.state = 0
-    }
+    showDelta.state = os.get_effect(2)
 
-    if (os.get_effect(3)==1) {
-        showAnimTime.state = 1
-    } else {
-        showAnimTime.state = 0
-    }
+    showAnimTime.state = os.get_effect(3)
 
-    if (os.get_effect(7)==1) {
-        showPreinstalled.state = 1
-    } else {
-        showPreinstalled.state = 0
-    }
+    showPreinstalled.state = os.get_effect(7)
 }
 
 def enable_dark_mode() {
     os.set_theme("dark")
-    os.print("Switched theme to dark")
+    data_state = 0
 }
 
 def enable_light_mode() {
     os.set_theme("light")
-    os.print("Switched theme to light")
+    data_state = 0
 }
 
 def enable_scheduled_mode() {
     os.set_theme("scheduled")
-    os.print("Switched theme to scheduled")
+    data_state = 0
 }
 
 def volume_off () {
@@ -631,80 +632,53 @@ def save_data () {
 
 def data_saved (info) {
     os.print(info)
-    data_state = 2
+    if (data_state == 1) {
+        data_state = 2
+    }
     os.print("Data saved")
 }
 
 def bgOne {
     os.set_bg("BG1")
+    data_state = 0
 }
 def bgTwo {
     os.set_bg("BG2")
+    data_state = 0
 }
 def bgThree {
     os.set_bg("BG3")
+    data_state = 0
 }
 
 def toggleEffectOne {
-    if (os.get_effect(1)==1) {
-        os.set_effect(1, 0)
-    } else {
-        os.set_effect(1, 1)
-    }
+    os.set_effect(1, !os.get_effect(1))
 }
 
 def toggleEffectTwo {
-    if (os.get_effect(2)==1) {
-        os.set_effect(2, 0)
-    } else {
-        os.set_effect(2, 1)
-    }
+    os.set_effect(2, !os.get_effect(2))
 }
 
 def toggleEffectThree {
-    if (os.get_effect(3)==1) {
-        os.set_effect(3, 0)
-    } else {
-        os.set_effect(3, 1)
-    }
+    os.set_effect(3, !os.get_effect(3))
 }
 
 def toggleEffectFour {
-    if (os.get_effect(4)==1) {
-        os.set_effect(4, 0)
-    } else {
-        os.set_effect(4, 1)
-    }
+    os.set_effect(4, !os.get_effect(4))
 }
 
 def toggleEffectFive {
-    if (os.get_effect(5)==1) {
-        os.set_effect(5, 0)
-    } else {
-        os.set_effect(5, 1)
-    }
+    os.set_effect(5, !os.get_effect(5))
 }
 
 def toggleEffectSix {
-    if (os.get_effect(6)==1) {
-        os.set_effect(6, 0)
-    } else {
-        os.set_effect(6, 1)
-    }
+    os.set_effect(6, !os.get_effect(6))
 }
 
 def toggleEffectSeven {
-    if (os.get_effect(7)==1) {
-        os.set_effect(7, 0)
-    } else {
-        os.set_effect(7, 1)
-    }
+    os.set_effect(7, !os.get_effect(7))
 }
 
 def toggleFullHours {
-    if (os.full_hours == 1){
-        os.set_full_hours(0)
-    } else {
-        os.set_full_hours(1)
-    }
+    os.set_full_hours(!os.full_hours)
 }

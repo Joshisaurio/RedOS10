@@ -319,8 +319,8 @@ def app_discord_list(username: str, password: str) -> list:
     return discord_list
 
 @methode("sly.search")
-def app_sly_search(text):
-    // code goes here :)
+def app_sly_search(text) -> list:
+    # code goes here :)
     return [text]
 
 llm_messages = utilities.Storage("saves/llm.json")

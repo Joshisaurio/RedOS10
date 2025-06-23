@@ -3,17 +3,24 @@ def init() {
     window.center()
     window.mode = "camera"
 
-    global warning = label("", 25)
-    warning.margin(10)
-    warning.marginBottom = ""
-    window.add(warning)
+    global shutter = container()
+    shutter.fill()
+    shutter.margin(0)
+    window.add(shutter)
+
+    global button = costume("other//camera-button")
+    button.marginRight = 20
+    button.size(50)
+    button.scale = 3
+    button.onClick = "take_photo"
+    button.theme = 1
+    window.add(button)
 }
 
 def frame() {
-    warning.text = "Please enable fullscreen"
-    if (window.width >= 480) {
-        if (window.height >= 335) {
-            warning.text = ""
-        }
-    }
+    
+}
+
+def take_photo() {
+    os.print("photo")
 }
