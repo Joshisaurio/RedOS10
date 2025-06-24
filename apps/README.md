@@ -35,6 +35,24 @@ A variable is only defined inside the current function. If you want to create/se
 global score = 0
 ```
 
+# Lists
+
+A list can be created with the `list()` function. You can add any number of arguments: `list(1, 2, 3, "Hello World")`. Lists can also contain other lists and elements.
+
+The first element in a list has index 0.
+
+Lists are just pointers to the actual list. This means that if you modify a copied list, the original list gets also modified.
+
+Attributes:
+- `length`
+
+Methodes:
+- `get(index)` returns the item at the given index
+- `add(item)` or `append(item)` adds an item to the end of the list
+- `insert(item, index)` inserts an item before the item at the given index, so that it afterwards is at that index
+- `delete(index)` or `remove(index)` removes the item at the given index from the list
+- `find(item)` or `index(item)` returns the index of the given item or -1 if it is not in the list
+
 # Text Formatting
 
 Strings use the escape character `\`:

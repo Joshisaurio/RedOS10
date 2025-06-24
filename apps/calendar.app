@@ -1,4 +1,8 @@
 def init() {
+    global MONTHS_LIST = list("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+    global DAYS_LIST = list(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+    global DAY_NAMES_LIST = list("S", "M", "T", "W", "T", "F", "S", "S")
+
     global window = window()
     window.center()
 
@@ -87,37 +91,16 @@ def init() {
     dayboxContainer.marginTop = 25
     tab_date_container.add(dayboxContainer)
 
-    global daybox1 = container()
-    global daybox2 = container()
-    global daybox3 = container()
-    global daybox4 = container()
-    global daybox5 = container()
-    global daybox6 = container()
-    global daybox7 = container()
-
-    dayboxContainer.add(daybox1)
-    dayboxContainer.add(daybox2)
-    dayboxContainer.add(daybox3)
-    dayboxContainer.add(daybox4)
-    dayboxContainer.add(daybox5)
-    dayboxContainer.add(daybox6)
-    dayboxContainer.add(daybox7)
-
-    daybox1.marginTop = 0
-    daybox2.marginTop = 0
-    daybox3.marginTop = 0
-    daybox4.marginTop = 0
-    daybox5.marginTop = 0
-    daybox6.marginTop = 0
-    daybox7.marginTop = 0
-
-    daybox1.height = 16
-    daybox2.height = 16
-    daybox3.height = 16
-    daybox4.height = 16
-    daybox5.height = 16
-    daybox6.height = 16
-    daybox7.height = 16
+    global dayboxList = list()
+    i = 0
+    while (i < 7) {
+        c = container()
+        c.marginTop = 0
+        c.height = 16
+        dayboxContainer.add(c)
+        dayboxList.add(c)
+        i += 1
+    }
 
     global monthGrid = container()
     monthGrid.marginTop = 0
@@ -147,29 +130,15 @@ def init() {
     weekInitialContainer.marginTop = 35
     tab_date_container.add(weekInitialContainer)
 
-    global sunday = label("S", 12, 0.5)
-    global monday = label("M", 12, 0.5)
-    global tuesday = label("T", 12, 0.5)
-    global wednesday = label("W", 12, 0.5)
-    global thursday = label("T", 12, 0.5)
-    global friday = label("F", 12, 0.5)
-    global saturday = label("S", 12, 0.5)
-
-    saturday.marginTop = 0
-    friday.marginTop = 0
-    thursday.marginTop = 0
-    wednesday.marginTop = 0
-    tuesday.marginTop = 0
-    monday.marginTop = 0
-    sunday.marginTop = 0
-
-    weekInitialContainer.add(sunday)
-    weekInitialContainer.add(monday)
-    weekInitialContainer.add(tuesday)
-    weekInitialContainer.add(wednesday)
-    weekInitialContainer.add(thursday)
-    weekInitialContainer.add(friday)
-    weekInitialContainer.add(saturday)
+    global dayLabelList = list()
+    i = 0
+    while (i < 7) {
+        dayLabel = label("", 12, 0.5)
+        dayLabel.marginTop = 0
+        weekInitialContainer.add(dayLabel)
+        dayLabelList.add(dayLabel)
+        i += 1
+    }
 
     dateX = os.date-1%6
     dateX += 1
@@ -212,57 +181,18 @@ def init() {
 
     // january 1, 1970 is the beginning of time
 
-    if (selectedMonth == 1) {
-        month = "January"
-        days = 31
-    } elif (selectedMonth == 2) {
-        month = "February"
-        days = 28
-    } elif (selectedMonth == 3) {
-        month = "March"
-        days = 31
-    } elif (selectedMonth == 4) {
-        month = "April"
-        days = 30
-    } elif (selectedMonth == 5) {
-        month = "May"
-        days = 31
-    } elif (selectedMonth == 6) {
-        month = "June"
-        days = 30
-    } elif (selectedMonth == 7) {
-        month = "July"
-        days = 31
-    } elif (selectedMonth == 8) {
-        month = "August"
-        days = 31
-    } elif (selectedMonth == 9) {
-        month = "September"
-        days = 30
-    } elif (selectedMonth == 10) {
-        month = "October"
-        days = 31
-    } elif (selectedMonth == 11) {
-        month = "November"
-        days = 30
-    } elif (selectedMonth == 12) {
-        month = "December"
-        days = 31
-    }
-
-    global monthText = label("January", 18, 0.5)
-    monthText.text = month + " " + selectedYear
+    global monthText = label("", 18, 0.5)
     monthText.marginTop = 10
 
     tab_date_container.add(monthText)
-    //tab_date_container.add(date)
     reloadMonth()
 }
 
 def frame() {
+    if (startWeekOnSunday != os.get_effect(8)) {
+        reloadMonth()
+    }
     date.text = month + " " + os.date + ", " + os.year
-
-    //log.text = os.second
 }
 
 def add_event() {
@@ -308,43 +238,20 @@ def prev_month() {
 }
 
 def reloadMonth() {
-    if (selectedMonth == 1) {
-        month = "January"
-        days = 31
-    } elif (selectedMonth == 2) {
-        month = "February"
-        days = 28
-    } elif (selectedMonth == 3) {
-        month = "March"
-        days = 31
-    } elif (selectedMonth == 4) {
-        month = "April"
-        days = 30
-    } elif (selectedMonth == 5) {
-        month = "May"
-        days = 31
-    } elif (selectedMonth == 6) {
-        month = "June"
-        days = 30
-    } elif (selectedMonth == 7) {
-        month = "July"
-        days = 31
-    } elif (selectedMonth == 8) {
-        month = "August"
-        days = 31
-    } elif (selectedMonth == 9) {
-        month = "September"
-        days = 30
-    } elif (selectedMonth == 10) {
-        month = "October"
-        days = 31
-    } elif (selectedMonth == 11) {
-        month = "November"
-        days = 30
-    } elif (selectedMonth == 12) {
-        month = "December"
-        days = 31
+    global startWeekOnSunday = os.get_effect(8)
+    
+    i = 0
+    while (i < 7) {
+        if (startWeekOnSunday) {
+            dayLabelList.get(i).text = DAY_NAMES_LIST.get(i)
+        } else {
+            dayLabelList.get(i).text = DAY_NAMES_LIST.get(i+1)
+        }
+        i += 1
     }
+
+    month = MONTHS_LIST.get(selectedMonth-1)
+    days = DAYS_LIST.get(selectedMonth-1)
 
     //named like that because i already named a variable date
     dafe = os.date
@@ -370,33 +277,17 @@ def reloadMonth() {
             dateY = 135
         }
         
-        daybox1.theme = ""
-        daybox2.theme = ""
-        daybox3.theme = ""
-        daybox4.theme = ""
-        daybox5.theme = ""
-        daybox6.theme = ""
-        daybox7.theme = ""
+        i = 0
+        while (i < 7) {
+            dayboxList.get(i).theme = ""
+            i += 1
+        }
 
         if (selectedMonth == os.month) {
             if (selectedYear == os.year) {
                 dayboxContainer.marginTop = dateY - 4
 
-                if (dateX == 1) {
-                    daybox1.theme = "#191919"
-                } elif (dateX == 2) {
-                    daybox2.theme = "#191919"
-                } elif (dateX == 3) {
-                    daybox3.theme = "#191919"
-                } elif (dateX == 4) {
-                    daybox4.theme = "#191919"
-                } elif (dateX == 5) {
-                    daybox5.theme = "#191919"
-                } elif (dateX == 6) {
-                    daybox6.theme = "#191919"
-                } elif (dateX == 7) {
-                    daybox7.theme = "#191919"
-                }
+                dayboxList.get(dateX).theme = "#191919"
             }
         }
     }
@@ -408,97 +299,38 @@ def reloadMonth() {
 }
 
 def addMonthDays() {
-    monthOffset = getMonthStartDay(selectedMonth, selectedYear)
+    monthOffset = 1 - getMonthStartDay(selectedMonth, selectedYear) - startWeekOnSunday
+    
+    i = monthOffset
 
-    i = 1 - monthOffset
     monthGrid.delete_children()
 
-    daysOfMonthContainer1 = hcontainer()
-    daysOfMonthContainer1.marginTop = 60
-    monthGrid.add(daysOfMonthContainer1)
-    
-    while (i < 1) {
-        day = label("", 10, 0.5)
-        day.marginTop = 0
-
-        daysOfMonthContainer1.add(day)
-        i += 1
-    }
-
-    while (i < 8 - monthOffset) {
-        day = label(i, 10, 0.5)
-        day.marginTop = 0
-
-        daysOfMonthContainer1.add(day)
-        i += 1
-    }
-
-
-    daysOfMonthContainer2 = hcontainer()
-    daysOfMonthContainer2.marginTop = 75
-    monthGrid.add(daysOfMonthContainer2)
-    while (i < 15 - monthOffset) {
-        day = label(i, 10, 0.5)
-        day.marginTop = 0
-
-        daysOfMonthContainer2.add(day)
-        i += 1
-    }
-
-
-    daysOfMonthContainer3 = hcontainer()
-    daysOfMonthContainer3.marginTop = 90
-    monthGrid.add(daysOfMonthContainer3)
-    while (i < 22 - monthOffset) {
-        day = label(i, 10, 0.5)
-        day.marginTop = 0
-
-        daysOfMonthContainer3.add(day)
-        i += 1
-    }
-
-
-    daysOfMonthContainer4 = hcontainer()
-    daysOfMonthContainer4.marginTop = 105
-    monthGrid.add(daysOfMonthContainer4)
-    while (i < 29 - monthOffset) {
-        day = label(i, 10, 0.5)
-        day.marginTop = 0
-
-        daysOfMonthContainer4.add(day)
-        i += 1
-    }
-
-
-    daysOfMonthContainer4 = hcontainer()
-    daysOfMonthContainer4.marginTop = 120
-    monthGrid.add(daysOfMonthContainer4)
-    while (i < 36 - monthOffset) {
-        if (i > days) {
+    row = 0
+    while (row < 5) {
+        rowContainer = hcontainer()
+        rowContainer.marginTop = 60 + 15 * row
+        monthGrid.add(rowContainer)
+        
+        while (i < 1) {
             day = label("", 10, 0.5)
-        } else {
-            day = label(i, 10, 0.5)
+            day.marginTop = 0
+
+            rowContainer.add(day)
+            i += 1
         }
-        day.marginTop = 0
 
-        daysOfMonthContainer4.add(day)
-        i += 1
-    }
+        while (i - monthOffset < 7 * (row+1)) {
+            if (i > days) {
+                day = label("", 10, 0.5)
+            } else {
+                day = label(i, 10, 0.5)
+            }
+            day.marginTop = 0
 
-
-    daysOfMonthContainer5 = hcontainer()
-    daysOfMonthContainer5.marginTop = 135
-    monthGrid.add(daysOfMonthContainer5)
-    while (i < 43 - monthOffset) {
-        if (i > days) {
-            day = label("", 10, 0.5)
-        } else {
-            day = label(i, 10, 0.5)
+            rowContainer.add(day)
+            i += 1
         }
-        day.marginTop = 0
-
-        daysOfMonthContainer5.add(day)
-        i += 1
+        row += 1
     }
 }
 

@@ -211,6 +211,10 @@ def init() {
     fullHours.state = os.get_effect(4)
     cust_vbox.add(fullHours)
 
+    global startWeekOnSunday = switch("Start week on Sunday", "toggleEffectEight")
+    startWeekOnSunday.state = os.get_effect(8)
+    cust_vbox.add(startWeekOnSunday)
+
     global showSeconds = switch("Show seconds", "toggleEffectSix")
     showSeconds.state = os.get_effect(6)
     cust_vbox.add(showSeconds)
@@ -553,6 +557,7 @@ def frame() {
     trail_effect.state = os.get_effect(4)
     click_effect.state = os.get_effect(5)
     showSeconds.state = os.get_effect(6)
+    startWeekOnSunday.state = os.get_effect(8)
 
     fullHours.state = os.full_hours
 
@@ -677,6 +682,10 @@ def toggleEffectSix {
 
 def toggleEffectSeven {
     os.set_effect(7, !os.get_effect(7))
+}
+
+def toggleEffectEight {
+    os.set_effect(8, !os.get_effect(8))
 }
 
 def toggleFullHours {
