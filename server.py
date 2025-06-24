@@ -13,12 +13,13 @@ import random
 import string
 import bcrypt
 import discord
+from discord.ext import commands
+from discord import Interaction, Attachment
 import asyncio
 from datetime import datetime, timedelta, timezone
 import json
 import math
 import subprocess
-import aiohttp
 
 LOG_TO_FILE = True
 
@@ -508,7 +509,8 @@ for id, _ in general["projects"]:
 intents = discord.Intents.default()
 intents.message_content = True
 
-discord_client = discord.Client(intents=intents)
+discord_client = commands.Bot(command_prefix="/", intents=intents)
+discord_tree = discord_client.tree
 
 bot_loop = asyncio.new_event_loop()
 
@@ -517,6 +519,10 @@ ADMIN_ID = 1140159421557780510
 
 @discord_client.event
 async def on_ready():
+    try:
+        await discord_tree.sync()
+    except Exception as e:
+        log_server(f"Could not sync command tree: {e}")
     log_server(f'discord is ready')
 
 @discord_client.event
@@ -525,156 +531,6 @@ async def on_message(message: discord.Message):
     if message.author == discord_client.user:
         return
     
-    # commands
-    async def respond(text: str, file: discord.File = None):
-        await message.channel.send(text, reference=message, mention_author=False, file=file)
-    
-    async def unsecure() -> bool:
-        if message.channel.id != CHANNEL_ID and message.author.id != ADMIN_ID:
-            await respond(f"for safety reasons you can only use this command here: <#{CHANNEL_ID}>")
-            return True
-        return False
-    
-    async def admin() -> bool:
-        if message.author.id != ADMIN_ID:
-            await respond(f"for safety reasons only the admin can use this command: <@{ADMIN_ID}>")
-            return True
-        return False
-    
-    if len(message.content) >= 2 and message.content[0] == "$":
-        try:
-            split = message.content[1:].split()
-            match split[0]:
-                case "help":
-                    await respond(
-                        "**Available Commands:**\n"
-                        "* `$help` – Displays this help message\n"
-                        "* `$ping <message>` – Echoes back your message\n"
-                        "* `$stats` – Shows the number of registered users\n"
-                        "* `$project get` – Lists all connected projects\n"
-                        "* `$project add <project-id>` – Connects a new project with the given ID\n"
-                        "* `$project remove <project-id>` – Removes the project\n"
-                        "* `$project lock <project-id>` – Locks the project, so it cannot be removed. Only use this command for the official project. A lock can only be removed by KROKOBIL!\n"
-                        "* `$music <song-name>` (append mp3 file) – Split the mp3 file in small parts\n"
-                    )
-                case "ping":
-                    await respond(" ".join(split))
-                case "stats":
-                    await respond(f"users: {len(users)}")
-                case "project" | "projects":
-                    match split[1]:
-                        case "get":
-                            response = ""
-                            for id, locked in general["projects"]:
-                                if locked:
-                                    response += f"* `{id}` 🔒\n"
-                                else:
-                                    response += f"* `{id}`\n"
-                            if response == "":
-                                await respond("*No projects connected*")
-                            else:
-                                await respond(response)
-                        case "add":
-                            if await unsecure(): return
-                            for id, _ in general["projects"]:
-                                if id == split[2]:
-                                    await respond(f"project with id `{split[2]}` is already connected")
-                                    return
-                            if len(general["projects"]) >= 10:
-                                await respond(f"maximum number of projects is already reached: 10")
-                                return
-                            general["projects"].append((split[2], False))
-                            general.save()
-                            add_project(split[2])
-                            await respond(f"added project with id `{split[2]}`")
-                        case "remove":
-                            if await unsecure(): return
-                            idx = 0
-                            for id, _ in general["projects"]:
-                                if id == split[2]: break
-                                idx += 1
-                            else:
-                                await respond(f"project with id `{split[2]}` is not connected")
-                                return
-                            if general["projects"][idx][1]:
-                                await respond(f"project with id `{split[2]}` is locked")
-                                return
-                            remove_project(split[2])
-                            del general["projects"][idx]
-                            general.save()
-                            await respond(f"removed project with id `{split[2]}`")
-                        case "lock":
-                            if await unsecure(): return
-                            idx = 0
-                            for id, _ in general["projects"]:
-                                if id == split[2]: break
-                                idx += 1
-                            else:
-                                await respond(f"project with id `{split[2]}` is not connected")
-                                return
-                            general["projects"][idx] = (split[2], True)
-                            await respond(f"locked project with id `{split[2]}`")
-                        case "unlock":
-                            if await admin(): return
-                            idx = 0
-                            for id, _ in general["projects"]:
-                                if id == split[2]: break
-                                idx += 1
-                            else:
-                                await respond(f"project with id `{split[2]}` is not connected")
-                                return
-                            general["projects"][idx] = (split[2], False)
-                            await respond(f"unlocked project with id `{split[2]}`")
-
-                case "shutdown":
-                    if await admin(): return
-                    await respond("The server is now shutting down safely.")
-                    log_server("shut down by discord message")
-                    shutdown()
-                case "restart":
-                    if await admin(): return
-                    await respond("The server is now restarting safely.")
-                    log_server("restart by discord message")
-                    restart()
-                
-                case "music" | "song":
-                    song_name = split[1].split(".")[0].lower().replace(" ", "-")
-                    if len(message.attachments) == 0:
-                        await respond(f"Please append mp3 file")
-                        return
-                    attachment = message.attachments[0]
-                    save_path = os.path.join('music/songs', song_name + ".mp3")
-                    os.makedirs("music", exist_ok=True)
-                    os.makedirs("music/songs", exist_ok=True)
-                    async with aiohttp.ClientSession() as session:
-                        async with session.get(attachment.url) as resp:
-                            if resp.status == 200:
-                                with open(save_path, 'wb') as f:
-                                    f.write(await resp.read())
-                                log_server(f"saved: {save_path}")
-                            else:
-                                log_server(f"download failed: {resp.status}")
-                    await respond(f"Processing {song_name} ...")
-
-                    result = subprocess.run(
-                        [PYTHON_CMD, "music/music.py", song_name],
-                        capture_output=True,
-                        text=True,
-                        timeout=300
-                    )
-
-                    if result.returncode != 0:
-                        log_server("Error: " + result.stderr.strip())
-                        await respond("Error: " + result.stderr.strip())
-                        return
-                    
-                    output = result.stdout.strip()
-
-                    await respond(f"Success:\n```\n{output}\n```", discord.File(f"music/songs/{song_name}.zip"))
-                
-        except IndexError:
-            await respond("missing arguments")
-
     # response to question
     if message.reference and str(message.reference.message_id) in discord_messages:
         if utilities.is_profane(message.content):
@@ -700,6 +556,159 @@ async def on_message_edit(before: discord.Message, after: discord.Message):
                     response["text"] = after.content
                     await after.add_reaction("🖋")
                     return
+
+async def unsecure(interaction: Interaction) -> bool:
+    if interaction.channel.id != CHANNEL_ID and interaction.user.id != ADMIN_ID:
+        await interaction.response.send_message(f"for safety reasons you can only use this command here: <#{CHANNEL_ID}>")
+        return True
+    return False
+
+async def admin(interaction: Interaction) -> bool:
+    if interaction.user.id != ADMIN_ID:
+        await interaction.response.send_message(f"for safety reasons only the admin can use this command: <@{ADMIN_ID}>")
+        return True
+    return False
+
+@discord_tree.command(name="help", description="Displays help message")
+async def help_command(interaction: Interaction):
+    await interaction.response.send_message(
+        "**Available Commands:**\n"
+        "* `/help` – Display this help message\n"
+        "* `/ping <message>` – Echo back your message\n"
+        "* `/stats` – Show the number of registered users\n"
+        "* `/project-get` – List all connected projects\n"
+        "* `/project-add <project-id>` – Connect a new project with the given ID\n"
+        "* `/project-remove <project-id>` – Remove a project\n"
+        "* `/project-lock <project-id>` – Lock the project, so it cannot be removed. Only use this command for the official project. A lock can only be removed by KROKOBIL!\n"
+        "* `/music <song-name>` (append mp3 file) – Split the mp3 file in small parts\n"
+    )
+
+@discord_tree.command(name="ping", description="Echo back your message")
+async def command_ping(interaction: Interaction, message: str):
+    await interaction.response.send_message(message)
+
+@discord_tree.command(name="stats", description="Show the number of registered users")
+async def command_stats(interaction: Interaction):
+    await interaction.response.send_message(f"users: {len(users)}")
+
+def get_projects_list():
+    response = ""
+    for id, locked in general["projects"]:
+        if locked:
+            response += f"* `{id}` 🔒\n"
+        else:
+            response += f"* `{id}`\n"
+    if response == "":
+        response = "*No projects connected*"
+    return response
+
+@discord_tree.command(name="project-get", description="List all connected projects")
+async def command_project_get(interaction: Interaction):
+    await interaction.response.send_message(get_projects_list())
+
+@discord_tree.command(name="project-add", description="Connect a new project")
+async def command_project_add(interaction: Interaction, project_id: str):
+    if await unsecure(interaction): return
+    for id, _ in general["projects"]:
+        if id == project_id:
+            await interaction.response.send_message(f"project with id `{project_id}` is already connected")
+            return
+    if len(general["projects"]) >= 10:
+        await interaction.response.send_message(f"maximum number of projects is already reached: 10")
+        return
+    general["projects"].append((project_id, False))
+    general.save()
+    add_project(project_id)
+    await interaction.response.send_message(f"added project with id `{project_id}`\n{get_projects_list()}")
+
+@discord_tree.command(name="project-remove", description="Remove a project")
+async def command_project_remove(interaction: Interaction, project_id: str):
+    if await unsecure(interaction): return
+    idx = 0
+    for id, _ in general["projects"]:
+        if id == project_id: break
+        idx += 1
+    else:
+        await interaction.response.send_message(f"project with id `{project_id}` is not connected")
+        return
+    if general["projects"][idx][1]:
+        await interaction.response.send_message(f"project with id `{project_id}` is locked")
+        return
+    remove_project(project_id)
+    del general["projects"][idx]
+    general.save()
+    await interaction.response.send_message(f"removed project with id `{project_id}`\n{get_projects_list()}")
+
+@discord_tree.command(name="project-lock", description="Lock the project, so it cannot be removed. Only use this command for the official project.")
+async def command_project_lock(interaction: Interaction, project_id: str):
+    if await unsecure(interaction): return
+    idx = 0
+    for id, _ in general["projects"]:
+        if id == project_id: break
+        idx += 1
+    else:
+        await interaction.response.send_message(f"project with id `{project_id}` is not connected")
+        return
+    general["projects"][idx] = (project_id, True)
+    await interaction.response.send_message(f"locked project with id `{project_id}`\n{get_projects_list()}")
+
+@discord_tree.command(name="project-unlock", description="Unlock the project, can only be used by KROKOBIL!")
+async def command_project_unlock(interaction: Interaction, project_id: str):
+    if await admin(interaction): return
+    idx = 0
+    for id, _ in general["projects"]:
+        if id == project_id: break
+        idx += 1
+    else:
+        await interaction.response.send_message(f"project with id `{project_id}` is not connected")
+        return
+    general["projects"][idx] = (project_id, False)
+    await interaction.response.send_message(f"unlocked project with id `{project_id}`\n{get_projects_list()}")
+
+@discord_tree.command(name="shutdown", description="Shut down the server, can only be used by KROKOBIL!")
+async def command_shutdown(interaction: Interaction):
+    if await admin(interaction): return
+    await interaction.response.send_message("The server is now shutting down safely.")
+    log_server("shut down by discord message")
+    shutdown()
+
+@discord_tree.command(name="restart", description="Restart the server, can only be used by KROKOBIL!")
+async def command_restart(interaction: Interaction):
+    if await admin(interaction): return
+    await interaction.response.send_message("The server is now restarting safely.")
+    log_server("restart by discord message")
+    restart()
+
+@discord_tree.command(name="music", description="Split the mp3 file in small parts")
+async def command_music(interaction: Interaction, song_name: str, song_file: Attachment):
+    song_name = song_name.split(".")[0].lower().replace(" ", "-")
+    if not song_file.filename.lower().endswith(".mp3"):
+        await interaction.response.send_message("Please upload a .mp3 file", ephemeral=True)
+        return
+    await interaction.response.defer(thinking=True)
+    save_path = os.path.join('music/songs', song_name + ".mp3")
+    os.makedirs("music", exist_ok=True)
+    os.makedirs("music/songs", exist_ok=True)
+    data = await song_file.read()
+    with open(save_path, 'wb') as f:
+        f.write(data)
+    log_server(f"saved: {save_path}")
+
+    result = subprocess.run(
+        [PYTHON_CMD, "music/music.py", song_name],
+        capture_output=True,
+        text=True,
+        timeout=300
+    )
+
+    if result.returncode != 0:
+        log_server("Error: " + result.stderr.strip())
+        await interaction.edit_original_response(content = "Error: " + result.stderr.strip())
+        return
+    
+    output = result.stdout.strip()
+
+    await interaction.edit_original_response(content = f"Success:\n```\n{output}\n```", attachments=[discord.File(f"music/songs/{song_name}.zip")])
 
 def run_discord_bot():
     asyncio.set_event_loop(bot_loop)
