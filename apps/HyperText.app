@@ -3,6 +3,7 @@
 // vars "w_[window name]_main":                  window main container
 // vars with "w_[window name]_[ui element name]: ui elements
 
+/////////////////////MAIN STUFF//////////////////////
 
 //on start of the app
 def init() {
@@ -87,6 +88,9 @@ def frame() {
     }
 }
 
+
+////////////////////RESIZING WINDOWS//////////////////
+
 //set the resize paramters
 def start_resize(size_x, size_y) {
     resize = true
@@ -109,6 +113,9 @@ def resize() {
         window.center()
     }
 }
+
+
+//////////////////////CALLBACKS///////////////////////
 
 //when the newfile button is clicked in start window
 def w_start_newfile() {
@@ -139,12 +146,14 @@ def w_newfile_create() {
 def w_newfile_cancel() {
     open_start_window()
 }
-//when a file is clicked in opnefile window
+//when a file is clicked in openfile window
 def w_openfile_fileclicked() {
     project_content = os.read(project_path + "/" + project_name + ".app")
     open_editor_window()
 }
 
+
+///////////////WINDOW INITIALIZATIONS//////////////////
 
 //the start window is opened when app is started
 def open_start_window() {
@@ -296,6 +305,10 @@ def open_editor_window() {
     window.add(w_editor_tabs)
 }
 
+
+////////////////USEFULL HELPER FUNCTIONS////////////////
+
+//splits a string into parts (you select which part with substring_idx)
 def split_string_into_substring_by_string(string, split_string, substring_idx) {
     temp = ""
     substring_idx_i = 0
@@ -323,14 +336,13 @@ def split_string_into_substring_by_string(string, split_string, substring_idx) {
     temp = temp + letter(string_i, string)
     return temp
 }
-
 //returns a preformatted title object
 def title(text) {
     title = label(text, 15)
     title.margin(10, 10, "")
     return title
 }
-
+//returns a preformatted file object
 def file(name, path, number_tokens, last_edited) {
     container = container()
     container.onClick = "w_openfile_fileclicked"
