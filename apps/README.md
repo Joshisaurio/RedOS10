@@ -35,6 +35,39 @@ A variable is only defined inside the current function. If you want to create/se
 global score = 0
 ```
 
+# Lists
+
+A list can be created with the `list()` function. You can add any number of arguments: `list(1, 2, 3, "Hello World")`. Lists can also contain other lists and elements.
+
+The first element in a list has index 0.
+
+Lists are just pointers to the actual list. This means that if you modify a copied list, the original list gets also modified.
+
+Attributes:
+- `length`
+
+Methodes:
+- `get(index)` returns the item at the given index
+- `add(item)` or `append(item)` adds an item to the end of the list
+- `insert(item, index)` inserts an item before the item at the given index, so that it afterwards is at that index
+- `delete(index)` or `remove(index)` removes the item at the given index from the list
+- `find(item)` or `index(item)` returns the index of the given item or -1 if it is not in the list
+
+# Text Formatting
+
+Strings use the escape character `\`:
+- `"\\"` -> `\`
+- `"\n"` -> new line
+- `"\l"` -> three animated dots
+- `"\m...\m"` -> marker
+- `"\b...\b"` -> **bold**
+- `"\i...\i"` -> ***italic***
+- `"\u...\u"` -> <ins>underline</ins>
+
+internal:
+- `\s...\s` -> display selected text
+- `\c` -> display cursor
+
 # Structures
 
 ## Comments
@@ -171,6 +204,11 @@ These functions are called by the os:
     - `0` for one line without wrap
     - `1` for  multiple lines with wrap
 
+- **mode** of window:
+    - `""`
+    - `"no resize"`
+    - `"camera"`
+
 ## Element
 
 Methodes:
@@ -192,11 +230,16 @@ Attributes:
 - `y`
 - `width`
 - `height`
+- `minWidth`
+- `minHeight`
+- `mode`
 
 Methodes:
 - `pos(x, y)`
 - `size(size)` size*size
 - `size(width, height)`
+- `minSize(size)` size*size
+- `minSize(width, height)`
 - `center()`
 
 ## Container
@@ -252,7 +295,7 @@ Methodes:
 - `scrollDown()` for hContainer it scrolls to the right
 - `scrollUp()` for hContainer it scrolls to the left
 
-# Tabs
+## Tabs
 
 Inherited from `Container`
 
@@ -282,10 +325,6 @@ Attributes:
 - `align`
 - `wrap`
 - `monospace`
-
-Methodes:
-- `scrollDown()` for hContainer it scrolls to the right
-- `scrollUp()` for hContainer it scrolls to the left
 
 ## Input
 
@@ -363,12 +402,46 @@ The os object has some attributes and methodes to interact with the project.
 - `os.dayssince2000`
 - `os.timezone` timezone as UTC offset
 - `os.delta` time since the last frame in seconds
+- `os.fps` returns frames per second of the OS
+
+## Settings
+- `os.set_background(str)` or `os.set_wallpaper(str)` or `os.set_bg(str)` sets the wallpaper
+- `os.set_theme(str)` sets the theme
+- `os.set_volume(number)` sets the volume (0-100)
+- `os.set_full_hours(number)` sets if 24-hour format should be used, 0 or 1
+- `os.save_all()` saves all settings to the server
+- `os.full_hours` returns 0 or 1, if 1 the OS will display time in 24-hour format.
+- `os.theme` returns "Dark", "Light", or "Scheduled"
+- `os.theme_string` returns theme name, so "dark"
+- `os.background` or `os.bg` returns wallpaper name (as of 2.10, "BG1-3")
+- `os.volume` returns volume level
+- `os.username` returns username of the current account
+- `os.guest` returns 1 if user is guest
+- `os.turbowarp` returns 1 if the project is running in Turbowarp
+
+## Effects
+- `os.get_effect(number)` gets an effect value (0-1)
+- `os.set_effect(number)` sets an effect value (0-1)
+
+### Available effects
+- `1`: Show FPS
+- `2`: Show Delta
+- `3`: Show AnimTime
+- `4`: Show mouse trail
+- `5`: Enable click effect
+- `6`: Show seconds
+- `7`: Show pre-installed apps list
+
+These are the current effects as of v2.10. **DO NOT REORDER**, they rely on their index.
 
 ## Music
 - `os.music_start(song_id)` plays the song from the beginning
 - `os.music_stop()` pauses the music
 - `os.music_play()` continues the music
 - `os.music_toggle()` pauses or continues the music
+- `os.music_skip()` skips to the next song
+- `os.music_skip_back()` skips to the last song
+- `os.music_set_progress()` time in seconds
 - `os.music_song_id` current song
 - `os.music_progress` time in seconds
 - `os.music_length` length of current song in seconds
