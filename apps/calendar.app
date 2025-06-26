@@ -47,7 +47,7 @@ def init() {
 
     deleteAllEventsButton = button("Delete all", "delete_all_events()")
     deleteAllEventsButton.marginLeft = 2
-    deleteAllEventsButton.theme = "#191919"
+    deleteAllEventsButton.theme = 0.09
 
     event_button_grid.add(addEventButton)
     event_button_grid.add(deleteAllEventsButton)
@@ -78,7 +78,7 @@ def init() {
     event_name_container.marginBottom = 26
     event_name_container.marginTop = ""
     event_name_container.height = 18
-    event_name_container.theme = "#191919"
+    event_name_container.theme = 0.09
     global event_name_input = input("Event name")
     event_name_input.marginLeft = 4
     event_name_input.marginRight = 4
@@ -112,11 +112,11 @@ def init() {
 
     prevMonthButton = button("<", "prev_month()")
     prevMonthButton.marginRight = 2
-    prevMonthButton.theme = "#191919"
+    prevMonthButton.theme = 0.09
 
     nextMonthButton = button(">", "next_month()")
     nextMonthButton.marginLeft = 2
-    nextMonthButton.theme = "#191919"
+    nextMonthButton.theme = 0.09
 
     global jumpMonthNumber = label("January()")
     jumpMonthNumber.align = 0.5
@@ -287,7 +287,7 @@ def reloadMonth() {
             if (selectedYear == os.year) {
                 dayboxContainer.marginTop = dateY - 4
 
-                dayboxList.get(dateX).theme = "#191919"
+                dayboxList.get(dateX).theme = 0.09
             }
         }
     }

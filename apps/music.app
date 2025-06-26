@@ -44,7 +44,7 @@ def init() {
     // --- Home Player Bar ---
     music_player = container()
     music_player.margin(225, 5, 5, 5)
-    music_player.theme = "#1A1A1A"
+    music_player.theme = 0.1
     music_player.height = 20
     tab1.add(music_player)
 
@@ -94,7 +94,7 @@ def init() {
     // --- Explore Player Bar ---
     music_player2 = container()
     music_player2.margin(225, 5, 5, 5)
-    music_player2.theme = "#1A1A1A"
+    music_player2.theme = 0.1
     music_player2.height = 20
     tab2.add(music_player2)
 
@@ -144,7 +144,7 @@ def init() {
     // --- Lyrics Player Bar ---
     music_player3 = container()
     music_player3.margin(225, 5, 5, 5)
-    music_player3.theme = "#1A1A1A"
+    music_player3.theme = 0.1
     music_player3.height = 20
     tab3.add(music_player3)
 
@@ -194,7 +194,7 @@ def init() {
     // --- Playlists Player Bar ---
     music_player4 = container()
     music_player4.margin(225, 5, 5, 5)
-    music_player4.theme = "#1A1A1A"
+    music_player4.theme = 0.1
     music_player4.height = 20
     tab4.add(music_player4)
 
@@ -299,7 +299,7 @@ def setup_home_tab(tab) {
 
 def setup_explore_tab(tab) {
     explore_scroll = vScrollContainer()
-    explore_scroll.margin(40, 5, 60, 5)
+    explore_scroll.margin(20, 5, 40, 5)
     tab.add(explore_scroll)
 
     // Add all the songs to the explore list
@@ -325,7 +325,7 @@ def setup_explore_tab(tab) {
 
 def setup_lyrics_tab(tab) {
     lyrics_container = vScrollContainer()
-    lyrics_container.margin(30, 5, 60, 5)
+    lyrics_container.margin(20, 5, 50, 5)
     tab.add(lyrics_container)
     
     os.music_get_line()
@@ -434,7 +434,7 @@ def create_song_entry(parent, song_id, song_title, interpreter, on_click_handler
     // Creates a single song entry button for the Explore page.
     song_button = button()
     song_button.margin(5, 5, "", 5)
-    song_button.theme = "#1A1A1A"
+    song_button.theme = 0.1
     song_button.height = 20
     song_button.onClick = on_click_handler
     parent.add(song_button)
@@ -472,11 +472,11 @@ def add_song_preview(parent, song_id, on_click_handler) {
 def create_lyrics_line(parent, text, on_click_handler) {
     // Creates a single line of lyrics
     line_container = container()
-    line_container.margin(20, 5, "", 5)
-    line_container.height = 10
+    line_container.margin(10, 5, "", 5)
+    line_container.height = "shrink"
     parent.add(line_container)
 
-    word_label = label(text, 12)
+    word_label = label(text, 12, 0, 1)
     word_label.onClick = on_click_handler
     line_container.add(word_label)
     return word_label
@@ -574,6 +574,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     os.print("open_playlist_details: called for " + playlist_name)
     os.print("open_playlist_details: creating window")
     current_playlist_window = window(260, 200)
+    current_playlist_window.mode = "no resize"
     current_playlist_window.center()
 
     os.print("open_playlist_details: adding title label")
@@ -628,7 +629,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 0
     song_button_0 = button()
     song_button_0.margin(5, 5, "", 5)
-    song_button_0.theme = "#1A1A1A"
+    song_button_0.theme = 0.1
     song_button_0.height = 20
     songs_container.add(song_button_0)
     song_picture_0 = costume("music//viva-la-vida", 4)
@@ -652,7 +653,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 1
     song_button_1 = button()
     song_button_1.margin(5, 5, "", 5)
-    song_button_1.theme = "#1A1A1A"
+    song_button_1.theme = 0.1
     song_button_1.height = 20
     songs_container.add(song_button_1)
     song_picture_1 = costume("music//hotel-california", 4)
@@ -676,7 +677,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 2
     song_button_2 = button()
     song_button_2.margin(5, 5, "", 5)
-    song_button_2.theme = "#1A1A1A"
+    song_button_2.theme = 0.1
     song_button_2.height = 20
     songs_container.add(song_button_2)
     song_picture_2 = costume("music//lost", 4)
@@ -700,7 +701,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 3
     song_button_3 = button()
     song_button_3.margin(5, 5, "", 5)
-    song_button_3.theme = "#1A1A1A"
+    song_button_3.theme = 0.1
     song_button_3.height = 20
     songs_container.add(song_button_3)
     song_picture_3 = costume("music//nothing-else-matters", 4)
@@ -724,7 +725,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 4
     song_button_4 = button()
     song_button_4.margin(5, 5, "", 5)
-    song_button_4.theme = "#1A1A1A"
+    song_button_4.theme = 0.1
     song_button_4.height = 20
     songs_container.add(song_button_4)
     song_picture_4 = costume("music//somewhere-i-belong", 4)
@@ -748,7 +749,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 5
     song_button_5 = button()
     song_button_5.margin(5, 5, "", 5)
-    song_button_5.theme = "#1A1A1A"
+    song_button_5.theme = 0.1
     song_button_5.height = 20
     songs_container.add(song_button_5)
     song_picture_5 = costume("music//everything-ends", 4)
@@ -772,7 +773,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 6
     song_button_6 = button()
     song_button_6.margin(5, 5, "", 5)
-    song_button_6.theme = "#1A1A1A"
+    song_button_6.theme = 0.1
     song_button_6.height = 20
     songs_container.add(song_button_6)
     song_picture_6 = costume("music//hall-of-fame", 4)
@@ -796,7 +797,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 7
     song_button_7 = button()
     song_button_7.margin(5, 5, "", 5)
-    song_button_7.theme = "#1A1A1A"
+    song_button_7.theme = 0.1
     song_button_7.height = 20
     songs_container.add(song_button_7)
     song_picture_7 = costume("music//call-of-the-wild", 4)
@@ -820,7 +821,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 8
     song_button_8 = button()
     song_button_8.margin(5, 5, "", 5)
-    song_button_8.theme = "#1A1A1A"
+    song_button_8.theme = 0.1
     song_button_8.height = 20
     songs_container.add(song_button_8)
     song_picture_8 = costume("music//diamond-heart", 4)
@@ -844,7 +845,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 9
     song_button_9 = button()
     song_button_9.margin(5, 5, "", 5)
-    song_button_9.theme = "#1A1A1A"
+    song_button_9.theme = 0.1
     song_button_9.height = 20
     songs_container.add(song_button_9)
     song_picture_9 = costume("music//never-gonna-give-you-up", 4)
@@ -868,7 +869,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 10
     song_button_10 = button()
     song_button_10.margin(5, 5, "", 5)
-    song_button_10.theme = "#1A1A1A"
+    song_button_10.theme = 0.1
     song_button_10.height = 20
     songs_container.add(song_button_10)
     song_picture_10 = costume("music//above-the-skies", 4)
@@ -892,7 +893,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 11
     song_button_11 = button()
     song_button_11.margin(5, 5, "", 5)
-    song_button_11.theme = "#1A1A1A"
+    song_button_11.theme = 0.1
     song_button_11.height = 20
     songs_container.add(song_button_11)
     song_picture_11 = costume("music//legends", 4)
@@ -916,7 +917,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 12
     song_button_12 = button()
     song_button_12.margin(5, 5, "", 5)
-    song_button_12.theme = "#1A1A1A"
+    song_button_12.theme = 0.1
     song_button_12.height = 20
     songs_container.add(song_button_12)
     song_picture_12 = costume("music//gladius", 4)
@@ -940,7 +941,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 13
     song_button_13 = button()
     song_button_13.margin(5, 5, "", 5)
-    song_button_13.theme = "#1A1A1A"
+    song_button_13.theme = 0.1
     song_button_13.height = 20
     songs_container.add(song_button_13)
     song_picture_13 = costume("music//mountains", 4)
@@ -964,7 +965,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 14
     song_button_14 = button()
     song_button_14.margin(5, 5, "", 5)
-    song_button_14.theme = "#1A1A1A"
+    song_button_14.theme = 0.1
     song_button_14.height = 20
     songs_container.add(song_button_14)
     song_picture_14 = costume("music//where_the_mountain_ends_progressive_house_version", 4)
@@ -988,7 +989,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 15
     song_button_15 = button()
     song_button_15.margin(5, 5, "", 5)
-    song_button_15.theme = "#1A1A1A"
+    song_button_15.theme = 0.1
     song_button_15.height = 20
     songs_container.add(song_button_15)
     song_picture_15 = costume("music//no", 4)
@@ -1012,7 +1013,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 16
     song_button_16 = button()
     song_button_16.margin(5, 5, "", 5)
-    song_button_16.theme = "#1A1A1A"
+    song_button_16.theme = 0.1
     song_button_16.height = 20
     songs_container.add(song_button_16)
     song_picture_16 = costume("music//that-bass", 4)
@@ -1036,7 +1037,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     // Song 17
     song_button_17 = button()
     song_button_17.margin(5, 5, "", 5)
-    song_button_17.theme = "#1A1A1A"
+    song_button_17.theme = 0.1
     song_button_17.height = 20
     songs_container.add(song_button_17)
     song_picture_17 = costume("music//gladius-superabit-v2", 4)

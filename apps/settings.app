@@ -208,7 +208,7 @@ def init() {
     cust_vbox.add(cust_options_label)
 
     global fullHours = switch("Use 24-Hour time", "toggleFullHours()")
-    fullHours.state = os.get_effect(4)
+    fullHours.state = os.full_hours
     cust_vbox.add(fullHours)
 
     global startWeekOnSunday = switch("Start week on Sunday", "toggleEffectEight()")
@@ -389,7 +389,7 @@ def init() {
     info_soft_title.wrap = 1
     info_vbox.add(info_soft_title)
 
-    info_soft_version = label("Red OS v2.11", 11)
+    info_soft_version = label("Red OS v2.13", 11)
     info_soft_draco = label("Draco v1.2", 11)
     info_soft_scratch = label("Made with Scratch 3.0", 11)
 

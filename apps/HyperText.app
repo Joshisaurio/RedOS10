@@ -178,12 +178,12 @@ def open_start_window() {
     w_start_buttons = hcontainer()
     w_start_buttons.margin("", 10, 10)
     w_start_buttons.height = "shrink"
-    w_start_new_button = button("New File", "w_start_newfile")
+    w_start_new_button = button("New File", "w_start_newfile()")
     w_start_new_button.marginRight = 5
     w_start_new_button.minHeight = 25
     w_start_new_button.theme = primary_color
     w_start_buttons.add(w_start_new_button)
-    w_start_open_button = button("Open File", "w_start_openfile")
+    w_start_open_button = button("Open File", "w_start_openfile()")
     w_start_open_button.marginLeft = 5
     w_start_open_button.theme = primary_color
     w_start_open_button.minHeight = 25
@@ -211,7 +211,7 @@ def open_openfile_window() {
     w_openfile_file_container.fill()
     w_openfile_main.add(w_openfile_file_container)
 
-    w_openfile_cancel = button("Cancel", "w_newfile_cancel")
+    w_openfile_cancel = button("Cancel", "w_newfile_cancel()")
     w_openfile_cancel.margin("", 10, 10)
     w_openfile_cancel.theme = primary_color
     w_openfile_cancel.minHeight = 22
@@ -259,12 +259,12 @@ def open_newfile_window() {
     w_newfile_buttons = hcontainer()
     w_newfile_buttons.margin("", 10, 10)
     w_newfile_buttons.height = "shrink"
-    w_newfile_create = button("Create", "w_newfile_create")
+    w_newfile_create = button("Create", "w_newfile_create()")
     w_newfile_create.marginRight = 2
     w_newfile_create.minHeight = 20
     w_newfile_create.theme = primary_color
     w_newfile_buttons.add(w_newfile_create)
-    w_newfile_cancel = button("Cancel", "w_newfile_cancel")
+    w_newfile_cancel = button("Cancel", "w_newfile_cancel()")
     w_newfile_cancel.marginLeft = 2
     w_newfile_cancel.theme = primary_color
     w_newfile_cancel.minHeight = 20

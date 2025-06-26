@@ -25,7 +25,8 @@ def init() {
     clock_canvas.margin(30, 0, 70)
     tab1.add(clock_canvas)
 
-    time_mode = switch("Use 24-hour time")
+    global time_mode = switch("Use 24-hour time", "toggleFullHours()")
+    time_mode.state = os.get_effect(4)
     time_mode.margin(8)
     time_mode.marginTop = ""
     tab1.add(time_mode)
@@ -121,6 +122,8 @@ def init() {
 }
 
 def frame() {
+    time_mode.state = os.full_hours
+
     time_label.text = os.time_seconds_str
     if (timer_is_running) {
         timer += os.delta
@@ -144,7 +147,7 @@ def time_to_format(time) {
     if (seconds < 10) {
         seconds = "0" + seconds
     }
-    minutes = floor(time/60 % 60)
+    minutes = floor((time/60) % 60)
     if (minutes < 10) {
         minutes = "0" + minutes
     }
@@ -182,6 +185,7 @@ def stopwatch_toggle() {
 }
 
 def stopwatch_lap() {
+    if (!stopwatch_is_running) {return}
     lapCount += 1
     lap = container()
     lap.height = 18
@@ -205,4 +209,8 @@ def stopwatch_reset() {
     stopwatch = 0
     stopwatch_button_toggle.text = "Start"
     laps.delete_children()
+}
+
+def toggleFullHours() {
+    os.set_full_hours(!os.full_hours)
 }
