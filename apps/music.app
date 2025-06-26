@@ -1,51 +1,25 @@
 def init() {
-    global num_added_playlists = 0
+    
     global window = window(400, 250)
     global all_songs_data
-    all_songs_data = "Viva la Vida|Coldplay,Another Brick in the Wall|Pink Floyd,Hotel California|Eagles,Stairway to Heaven|Led Zeppelin,Bohemian Rhapsody|Queen,Smells Like Teen Spirit|Nirvana,Sweet Child O' Mine|Guns N' Roses"
+    all_songs_data = "viva la vida|Coldplay,hotel california|Eagles,lost|Linkin Park,nothing else matters|Metallica,somewhere i belong|Linkin Park,everything ends|Architects,hall of fame|The Script,call of the wild|Powerwulf,diamond heart|Alan Walker,never gonna give you up|Rick Astley,Above the skies|RedOS-Paulottix,legends|RedOS-Paulottix,Gladius Superabit|Paulottix,SunoAi,Citrus,where the mountain ends|RedOS-Paulottix,Where the m. ends ph|RedOS-Paulottix,No Return|RedOS-Paulottix,That Bass will grow on you ig|RedOS-Paulottix,Gladius Superabit v2|RedOS-Paulottix"
     window.center()
     window.mode = "no resize"
+
+    global current_queue_index
+    current_queue_index = 0
+    global playlist_queue = list("viva-la-vida", "hotel-california", "lost", "nothing-else-matters", "somewhere-i-belong", "everything-ends", "hall-of-fame", "call-of-the-wild", "diamond-heart", "never-gonna-give-you-up", "above-the-skies", "legends", "gladius", "mountains", "where_the_mountain_ends_progressive_house_version", "no", "that-bass", "gladius-superabit-v2")
+    global num_added_playlists = 0
 
     tabs = tabs()
     tabs.fill()
     tabs.tab = 1
     window.add(tabs)
     
-    all_songs_data = "Viva la Vida|Coldplay,Another Brick in the Wall|Pink Floyd,Hotel California|Eagles,Stairway to Heaven|Led Zeppelin,Bohemian Rhapsody|Queen,Smells Like Teen Spirit|Nirvana,Sweet Child O' Mine|Guns N' Roses"
-
-    // --- Playlist status variables ---
-    global pop_playlist_status = "000000000000000000"
-    global rock_playlist_status = "000000000000000000"
-    global rick_playlist_status = "000000000000000000"
-    global generic_playlist_status_1 = "000000000000000000"
-    global generic_playlist_status_2 = "000000000000000000"
-    global generic_playlist_status_3 = "000000000000000000"
-    global generic_playlist_status_4 = "000000000000000000"
-    global generic_playlist_status_5 = "000000000000000000"
-    global generic_playlist_status_6 = "000000000000000000"
-
-    global current_playlist_window = 0
-    global current_playlist_status_var = ""
-    global switch_0 = 0
-    global switch_1 = 0
-    global switch_2 = 0
-    global switch_3 = 0
-    global switch_4 = 0
-    global switch_5 = 0
-    global switch_6 = 0
-    global switch_7 = 0
-    global switch_8 = 0
-    global switch_9 = 0
-    global switch_10 = 0
-    global switch_11 = 0
-    global switch_12 = 0
-    global switch_13 = 0
-    global switch_14 = 0
-    global switch_15 = 0
-    global switch_16 = 0
-    global switch_17 = 0
-
-    // Setup Tabs
+    global tab1
+    global tab2
+    global tab3
+    global tab4
     tab1 = container()
     tabs.add(tab1, "Home")
     tab2 = container()
@@ -54,7 +28,7 @@ def init() {
     tabs.add(tab3, "Lyrics")
     tab4 = container()
     tabs.add(tab4, "Playlists")
-
+    
     // --- Home Tab ---
     setup_home_tab(tab1)
 
@@ -70,7 +44,7 @@ def init() {
     // --- Home Player Bar ---
     music_player = container()
     music_player.margin(225, 5, 5, 5)
-    music_player.theme = 0.1
+    music_player.theme = "#1A1A1A"
     music_player.height = 20
     tab1.add(music_player)
 
@@ -120,7 +94,7 @@ def init() {
     // --- Explore Player Bar ---
     music_player2 = container()
     music_player2.margin(225, 5, 5, 5)
-    music_player2.theme = 0.1
+    music_player2.theme = "#1A1A1A"
     music_player2.height = 20
     tab2.add(music_player2)
 
@@ -170,7 +144,7 @@ def init() {
     // --- Lyrics Player Bar ---
     music_player3 = container()
     music_player3.margin(225, 5, 5, 5)
-    music_player3.theme = 0.1
+    music_player3.theme = "#1A1A1A"
     music_player3.height = 20
     tab3.add(music_player3)
 
@@ -220,7 +194,7 @@ def init() {
     // --- Playlists Player Bar ---
     music_player4 = container()
     music_player4.margin(225, 5, 5, 5)
-    music_player4.theme = 0.1
+    music_player4.theme = "#1A1A1A"
     music_player4.height = 20
     tab4.add(music_player4)
 
@@ -268,6 +242,19 @@ def init() {
     tab4.add(song_bar4)
 
     global progress = os.music_progress_skip
+
+    global current_playlist_offset = 0
+
+    // At the top, after other globals:
+    global pop_playlist_list = list()
+    global rock_playlist_list = list()
+    global rick_playlist_list = list()
+    global generic_playlist_list_1 = list()
+    global generic_playlist_list_2 = list()
+    global generic_playlist_list_3 = list()
+    global generic_playlist_list_4 = list()
+    global generic_playlist_list_5 = list()
+    global generic_playlist_list_6 = list()
 }
 
 def setup_home_tab(tab) {
@@ -310,7 +297,7 @@ def setup_home_tab(tab) {
 
 def setup_explore_tab(tab) {
     explore_scroll = vScrollContainer()
-    explore_scroll.margin(20, 5, 40, 5)
+    explore_scroll.margin(40, 5, 60, 5)
     tab.add(explore_scroll)
 
     // Add all the songs to the explore list
@@ -336,7 +323,7 @@ def setup_explore_tab(tab) {
 
 def setup_lyrics_tab(tab) {
     lyrics_container = vScrollContainer()
-    lyrics_container.margin(20, 5, 50, 5)
+    lyrics_container.margin(30, 5, 60, 5)
     tab.add(lyrics_container)
     
     os.music_get_line()
@@ -371,26 +358,6 @@ def setup_playlists_tab(tab) {
 }
 
 def frame() {
-    global current_playlist_status_var
-    global switch_0
-    global switch_1
-    global switch_2
-    global switch_3
-    global switch_4
-    global switch_5
-    global switch_6
-    global switch_7
-    global switch_8
-    global switch_9
-    global switch_10
-    global switch_11
-    global switch_12
-    global switch_13
-    global switch_14
-    global switch_15
-    global switch_16
-    global switch_17
-    
     if (os.music_is_playing) {
         play_symbol.costume = "music//pause"
         play_symbol2.costume = "music//pause"
@@ -449,28 +416,10 @@ def frame() {
         os.music_play()
     }
 
-    // Update playlist status string if a playlist window is open
-    if (current_playlist_status_var != "") {
-        new_status = ""
-        if (switch_0 != 0) { new_status = new_status + str(switch_0.state) } else { new_status = new_status + "0" }
-        if (switch_1 != 0) { new_status = new_status + str(switch_1.state) } else { new_status = new_status + "0" }
-        if (switch_2 != 0) { new_status = new_status + str(switch_2.state) } else { new_status = new_status + "0" }
-        if (switch_3 != 0) { new_status = new_status + str(switch_3.state) } else { new_status = new_status + "0" }
-        if (switch_4 != 0) { new_status = new_status + str(switch_4.state) } else { new_status = new_status + "0" }
-        if (switch_5 != 0) { new_status = new_status + str(switch_5.state) } else { new_status = new_status + "0" }
-        if (switch_6 != 0) { new_status = new_status + str(switch_6.state) } else { new_status = new_status + "0" }
-        if (switch_7 != 0) { new_status = new_status + str(switch_7.state) } else { new_status = new_status + "0" }
-        if (switch_8 != 0) { new_status = new_status + str(switch_8.state) } else { new_status = new_status + "0" }
-        if (switch_9 != 0) { new_status = new_status + str(switch_9.state) } else { new_status = new_status + "0" }
-        if (switch_10 != 0) { new_status = new_status + str(switch_10.state) } else { new_status = new_status + "0" }
-        if (switch_11 != 0) { new_status = new_status + str(switch_11.state) } else { new_status = new_status + "0" }
-        if (switch_12 != 0) { new_status = new_status + str(switch_12.state) } else { new_status = new_status + "0" }
-        if (switch_13 != 0) { new_status = new_status + str(switch_13.state) } else { new_status = new_status + "0" }
-        if (switch_14 != 0) { new_status = new_status + str(switch_14.state) } else { new_status = new_status + "0" }
-        if (switch_15 != 0) { new_status = new_status + str(switch_15.state) } else { new_status = new_status + "0" }
-        if (switch_16 != 0) { new_status = new_status + str(switch_16.state) } else { new_status = new_status + "0" }
-        if (switch_17 != 0) { new_status = new_status + str(switch_17.state) } else { new_status = new_status + "0" }
-        set_playlist_status(current_playlist_status_var, new_status)
+    if (os.music_length - os.music_progress < 5) {
+        os.print("music:" + playlist_queue.get(playlist_queue.index(os.music_song_id) + 1))
+        os.music_start(playlist_queue.get(playlist_queue.index(os.music_song_id) + 1))
+        os.music_set_progress(0) 
     }
 }
 
@@ -482,7 +431,7 @@ def create_song_entry(parent, song_id, song_title, interpreter, on_click_handler
     // Creates a single song entry button for the Explore page.
     song_button = button()
     song_button.margin(5, 5, "", 5)
-    song_button.theme = 0.1
+    song_button.theme = "#1A1A1A"
     song_button.height = 20
     song_button.onClick = on_click_handler
     parent.add(song_button)
@@ -493,7 +442,7 @@ def create_song_entry(parent, song_id, song_title, interpreter, on_click_handler
     song_button.add(song_picture)
 
     title_label = label(song_title, 8)
-    title_label.margin("","","","")
+    title_label.margin("","","",0)
     title_label.align = 0.5
     song_button.add(title_label)
 
@@ -520,11 +469,11 @@ def add_song_preview(parent, song_id, on_click_handler) {
 def create_lyrics_line(parent, text, on_click_handler) {
     // Creates a single line of lyrics
     line_container = container()
-    line_container.margin(10, 5, "", 5)
-    line_container.height = "shrink"
+    line_container.margin(20, 5, "", 5)
+    line_container.height = 10
     parent.add(line_container)
 
-    word_label = label(text, 12, 0, 1)
+    word_label = label(text, 12)
     word_label.onClick = on_click_handler
     line_container.add(word_label)
     return word_label
@@ -548,30 +497,39 @@ def add_playlist_preview(parent, costume_name, playlist_name) {
 // ---------------------------------------------------
 
 def open_playlist_details_pop() {
+    os.print("Clicked pop playlist!")
     open_playlist_details("Pop Playlist", "music//lost", "pop_playlist_status")
 }
 def open_playlist_details_rock() {
+    os.print("Clicked rock playlist!")
     open_playlist_details("Rock Playlist", "music//no", "rock_playlist_status")
 }
 def open_playlist_details_rick() {
+    os.print("Clicked rick playlist!")
     open_playlist_details("Rick Playlist", "music//never-gonna-give-you-up", "rick_playlist_status")
 }
 def open_playlist_details_generic_1() {
+    os.print("Clicked generic_1 playlist!")
     open_playlist_details("Generic Playlist 1", "music//lost", "generic_playlist_status_1")
 }
 def open_playlist_details_generic_2() {
+    os.print("Clicked generic_2 playlist!")
     open_playlist_details("Generic Playlist 2", "music//lost", "generic_playlist_status_2")
 }
 def open_playlist_details_generic_3() {
+    os.print("Clicked generic_3 playlist!")
     open_playlist_details("Generic Playlist 3", "music//lost", "generic_playlist_status_3")
 }
 def open_playlist_details_generic_4() {
+    os.print("Clicked generic_4 playlist!")
     open_playlist_details("Generic Playlist 4", "music//lost", "generic_playlist_status_4")
 }
 def open_playlist_details_generic_5() {
+    os.print("Clicked generic_5 playlist!")
     open_playlist_details("Generic Playlist 5", "music//lost", "generic_playlist_status_5")
 }
 def open_playlist_details_generic_6() {
+    os.print("Clicked generic_6 playlist!")
     open_playlist_details("Generic Playlist 6", "music//lost", "generic_playlist_status_6")
 }
 
@@ -609,210 +567,586 @@ def add_playlist_clicked() {
     }
 }
 
-def close_playlist_details_window() {
-    global current_playlist_window
-    global current_playlist_status_var
-    global switch_0
-    global switch_1
-    global switch_2
-    global switch_3
-    global switch_4
-    global switch_5
-    global switch_6
-    global switch_7
-    global switch_8
-    global switch_9
-    global switch_10
-    global switch_11
-    global switch_12
-    global switch_13
-    global switch_14
-    global switch_15
-    global switch_16
-    global switch_17
-    
-    if (current_playlist_window != 0) {
-        current_playlist_window.close()
-    }
-
-    current_playlist_window = 0
-    current_playlist_status_var = ""
-    switch_0 = 0
-    switch_1 = 0
-    switch_2 = 0
-    switch_3 = 0
-    switch_4 = 0
-    switch_5 = 0
-    switch_6 = 0
-    switch_7 = 0
-    switch_8 = 0
-    switch_9 = 0
-    switch_10 = 0
-    switch_11 = 0
-    switch_12 = 0
-    switch_13 = 0
-    switch_14 = 0
-    switch_15 = 0
-    switch_16 = 0
-    switch_17 = 0
-}
-
 def open_playlist_details(playlist_name, cover_image, status_var_name) {
-    global current_playlist_window
-    global current_playlist_status_var
-    global switch_0
-    global switch_1
-    global switch_2
-    global switch_3
-    global switch_4
-    global switch_5
-    global switch_6
-    global switch_7
-    global switch_8
-    global switch_9
-    global switch_10
-    global switch_11
-    global switch_12
-    global switch_13
-    global switch_14
-    global switch_15
-    global switch_16
-    global switch_17
-
-    os.print("music_app: open_playlist_details called for " + playlist_name)
+    os.print("open_playlist_details: called for " + playlist_name)
+    os.print("open_playlist_details: creating window")
     current_playlist_window = window(260, 200)
-    current_playlist_window.mode = "no resize"
     current_playlist_window.center()
-    current_playlist_status_var = status_var_name
 
+    os.print("open_playlist_details: adding title label")
     title_label = label(playlist_name)
     title_label.margin(10, "", "", 0)
     title_label.align = 0.5
     current_playlist_window.add(title_label)
 
+    add_playlist_to_queue_button = button("Play Playlist", "add_playlist_to_queue_button_" + status_var_name)
+    add_playlist_to_queue_button.margin("","",0,"")
+    add_playlist_to_queue_button.theme = "#FF4060"
+    current_playlist_window.add(add_playlist_to_queue_button)
+
+    os.print("open_playlist_details: adding songs container")
     songs_container = vScrollContainer()
     songs_container.margin(55, 10, 50, 10)
     songs_container.height = 120
     current_playlist_window.add(songs_container)
-    
-    status_str = get_playlist_status(status_var_name)
-    
-    switch_0 = add_song_with_switch_entry(songs_container, 0, "viva-la-vida", "viva la vida", "Coldplay", status_str)
-    switch_1 = add_song_with_switch_entry(songs_container, 1, "hotel-california", "hotel california", "Eagles", status_str)
-    switch_2 = add_song_with_switch_entry(songs_container, 2, "lost", "lost", "Linkin Park", status_str)
-    switch_3 = add_song_with_switch_entry(songs_container, 3, "nothing-else-matters", "nothing else matters", "Metallica", status_str)
-    switch_4 = add_song_with_switch_entry(songs_container, 4, "somewhere-i-belong", "somewhere i belong", "Linkin Park", status_str)
-    switch_5 = add_song_with_switch_entry(songs_container, 5, "everything-ends", "everything ends", "Architects", status_str)
-    switch_6 = add_song_with_switch_entry(songs_container, 6, "hall-of-fame", "hall of fame", "The Script", status_str)
-    switch_7 = add_song_with_switch_entry(songs_container, 7, "call-of-the-wild", "call of the wild", "Powerwulf", status_str)
-    switch_8 = add_song_with_switch_entry(songs_container, 8, "diamond-heart", "diamond heart", "Alan Walker", status_str)
-    switch_9 = add_song_with_switch_entry(songs_container, 9, "never-gonna-give-you-up", "never gonna give you up", "Rick Astley", status_str)
-    switch_10 = add_song_with_switch_entry(songs_container, 10, "above-the-skies", "Above the skies", "RedOS-Paulottix", status_str)
-    switch_11 = add_song_with_switch_entry(songs_container, 11, "legends", "legends", "RedOS-Paulottix", status_str)
-    switch_12 = add_song_with_switch_entry(songs_container, 12, "gladius", "Gladius Superabit", "Paulottix,SunoAi,Citrus", status_str)
-    switch_13 = add_song_with_switch_entry(songs_container, 13, "mountains", "where the mountain ends", "RedOS-Paulottix", status_str)
-    switch_14 = add_song_with_switch_entry(songs_container, 14, "where_the_mountain_ends_progressive_house_version", "Where the m. ends ph", "RedOS-Paulottix", status_str)
-    switch_15 = add_song_with_switch_entry(songs_container, 15, "no", "No Return", "RedOS-Paulottix", status_str)
-    switch_16 = add_song_with_switch_entry(songs_container, 16, "that-bass", "That Bass will grow on you ig", "RedOS-Paulottix", status_str)
-    switch_17 = add_song_with_switch_entry(songs_container, 17, "gladius-superabit-v2", "Gladius Superabit v2", "RedOS-Paulottix", status_str)
 
-    close_button = button("Close", "close_playlist_details_window")
-    close_button.margin(195, "", 10, "")
-    close_button.align = 0.5
-    current_playlist_window.add(close_button)
-
-    os.print("music_app: finished adding all songs, window should be visible now")
-}
-
-def add_song_with_switch_entry(parent, idx, song_id, song_title, interpreter, status_str) {
-    song_button = button()
-    song_button.margin(5, 5, "", 5)
-    song_button.theme = 0.1
-    song_button.height = 20
-    parent.add(song_button)
-
-    song_picture = costume("music//" + song_id, 4)
-    song_picture.margin("", "","", 10)
-    song_picture.size(1)
-    song_button.add(song_picture)
-
-    // Concatenate with extra spaces for separation
-    name_interpreter = song_title + "        " + interpreter
-    name_interpreter_label = label(name_interpreter, 8)
-    name_interpreter_label.margin("", "", "", 0)
-    name_interpreter_label.align = 0.3
-    song_button.add(name_interpreter_label)
-
-    song_switch = switch()
-    song_switch.margin(5, "", "", 220)
-    if (os.get_char(status_str, idx) == "1") {
-        song_switch.state = 1
-    } else {
-        song_switch.state = 0
+    // Determine which playlist list to use
+    playlist_list = pop_playlist_list
+    current_playlist_offset = 0
+    if (status_var_name == "pop_playlist_status") {
+        playlist_list = pop_playlist_list
+        current_playlist_offset = 0
+    } else if (status_var_name == "rock_playlist_status") {
+        playlist_list = rock_playlist_list
+        current_playlist_offset = 18
+    } else if (status_var_name == "rick_playlist_status") {
+        playlist_list = rick_playlist_list
+        current_playlist_offset = 36
+    } else if (status_var_name == "generic_playlist_status_1") {
+        playlist_list = generic_playlist_list_1
+        current_playlist_offset = 54
+    } else if (status_var_name == "generic_playlist_status_2") {
+        playlist_list = generic_playlist_list_2
+        current_playlist_offset = 72
+    } else if (status_var_name == "generic_playlist_status_3") {
+        playlist_list = generic_playlist_list_3
+        current_playlist_offset = 90
+    } else if (status_var_name == "generic_playlist_status_4") {
+        playlist_list = generic_playlist_list_4
+        current_playlist_offset = 108
+    } else if (status_var_name == "generic_playlist_status_5") {
+        playlist_list = generic_playlist_list_5
+        current_playlist_offset = 126
+    } else if (status_var_name == "generic_playlist_status_6") {
+        playlist_list = generic_playlist_list_6
+        current_playlist_offset = 144
     }
-    song_button.add(song_switch)
-    return song_switch
+
+    // Song 0
+    song_button_0 = button()
+    song_button_0.margin(5, 5, "", 5)
+    song_button_0.theme = "#1A1A1A"
+    song_button_0.height = 20
+    songs_container.add(song_button_0)
+    song_picture_0 = costume("music//viva-la-vida", 4)
+    song_picture_0.margin("", "","", 10)
+    song_picture_0.size(1)
+    song_button_0.add(song_picture_0)
+    name_interpreter_label_0 = label("viva la vida        Coldplay", 8)
+    name_interpreter_label_0.margin("", "", "", 0)
+    name_interpreter_label_0.align = 0.3
+    song_button_0.add(name_interpreter_label_0)
+    song_switch_0 = switch()
+    song_switch_0.margin(5, "", "", 220)
+    if (playlist_list.index("viva-la-vida") != -1) {
+        song_switch_0.state = 1
+    } else {
+        song_switch_0.state = 0
+    }
+    song_switch_0.onClick = "s_0"
+    song_button_0.add(song_switch_0)
+
+    // Song 1
+    song_button_1 = button()
+    song_button_1.margin(5, 5, "", 5)
+    song_button_1.theme = "#1A1A1A"
+    song_button_1.height = 20
+    songs_container.add(song_button_1)
+    song_picture_1 = costume("music//hotel-california", 4)
+    song_picture_1.margin("", "","", 10)
+    song_picture_1.size(1)
+    song_button_1.add(song_picture_1)
+    name_interpreter_label_1 = label("hotel california        Eagles", 8)
+    name_interpreter_label_1.margin("", "", "", 0)
+    name_interpreter_label_1.align = 0.3
+    song_button_1.add(name_interpreter_label_1)
+    song_switch_1 = switch()
+    song_switch_1.margin(5, "", "", 220)
+    if (playlist_list.index("hotel-california") != -1) {
+        song_switch_1.state = 1
+    } else {
+        song_switch_1.state = 0
+    }
+    song_switch_1.onClick = "s_1"
+    song_button_1.add(song_switch_1)
+
+    // Song 2
+    song_button_2 = button()
+    song_button_2.margin(5, 5, "", 5)
+    song_button_2.theme = "#1A1A1A"
+    song_button_2.height = 20
+    songs_container.add(song_button_2)
+    song_picture_2 = costume("music//lost", 4)
+    song_picture_2.margin("", "","", 10)
+    song_picture_2.size(1)
+    song_button_2.add(song_picture_2)
+    name_interpreter_label_2 = label("lost        Linkin Park", 8)
+    name_interpreter_label_2.margin("", "", "", 0)
+    name_interpreter_label_2.align = 0.3
+    song_button_2.add(name_interpreter_label_2)
+    song_switch_2 = switch()
+    song_switch_2.margin(5, "", "", 220)
+    if (playlist_list.index("lost") != -1) {
+        song_switch_2.state = 1
+    } else {
+        song_switch_2.state = 0
+    }
+    song_switch_2.onClick = "s_2"
+    song_button_2.add(song_switch_2)
+
+    // Song 3
+    song_button_3 = button()
+    song_button_3.margin(5, 5, "", 5)
+    song_button_3.theme = "#1A1A1A"
+    song_button_3.height = 20
+    songs_container.add(song_button_3)
+    song_picture_3 = costume("music//nothing-else-matters", 4)
+    song_picture_3.margin("", "","", 10)
+    song_picture_3.size(1)
+    song_button_3.add(song_picture_3)
+    name_interpreter_label_3 = label("nothing else matters        Metallica", 8)
+    name_interpreter_label_3.margin("", "", "", 0)
+    name_interpreter_label_3.align = 0.3
+    song_button_3.add(name_interpreter_label_3)
+    song_switch_3 = switch()
+    song_switch_3.margin(5, "", "", 220)
+    if (playlist_list.index("nothing-else-matters") != -1) {
+        song_switch_3.state = 1
+    } else {
+        song_switch_3.state = 0
+    }
+    song_switch_3.onClick = "s_3"
+    song_button_3.add(song_switch_3)
+
+    // Song 4
+    song_button_4 = button()
+    song_button_4.margin(5, 5, "", 5)
+    song_button_4.theme = "#1A1A1A"
+    song_button_4.height = 20
+    songs_container.add(song_button_4)
+    song_picture_4 = costume("music//somewhere-i-belong", 4)
+    song_picture_4.margin("", "","", 10)
+    song_picture_4.size(1)
+    song_button_4.add(song_picture_4)
+    name_interpreter_label_4 = label("somewhere i belong        Linkin Park", 8)
+    name_interpreter_label_4.margin("", "", "", 0)
+    name_interpreter_label_4.align = 0.3
+    song_button_4.add(name_interpreter_label_4)
+    song_switch_4 = switch()
+    song_switch_4.margin(5, "", "", 220)
+    if (playlist_list.index("somewhere-i-belong") != -1) {
+        song_switch_4.state = 1
+    } else {
+        song_switch_4.state = 0
+    }
+    song_switch_4.onClick = "s_4"
+    song_button_4.add(song_switch_4)
+
+    // Song 5
+    song_button_5 = button()
+    song_button_5.margin(5, 5, "", 5)
+    song_button_5.theme = "#1A1A1A"
+    song_button_5.height = 20
+    songs_container.add(song_button_5)
+    song_picture_5 = costume("music//everything-ends", 4)
+    song_picture_5.margin("", "","", 10)
+    song_picture_5.size(1)
+    song_button_5.add(song_picture_5)
+    name_interpreter_label_5 = label("everything ends        Architects", 8)
+    name_interpreter_label_5.margin("", "", "", 0)
+    name_interpreter_label_5.align = 0.3
+    song_button_5.add(name_interpreter_label_5)
+    song_switch_5 = switch()
+    song_switch_5.margin(5, "", "", 220)
+    if (playlist_list.index("everything-ends") != -1) {
+        song_switch_5.state = 1
+    } else {
+        song_switch_5.state = 0
+    }
+    song_switch_5.onClick = "s_5"
+    song_button_5.add(song_switch_5)
+
+    // Song 6
+    song_button_6 = button()
+    song_button_6.margin(5, 5, "", 5)
+    song_button_6.theme = "#1A1A1A"
+    song_button_6.height = 20
+    songs_container.add(song_button_6)
+    song_picture_6 = costume("music//hall-of-fame", 4)
+    song_picture_6.margin("", "","", 10)
+    song_picture_6.size(1)
+    song_button_6.add(song_picture_6)
+    name_interpreter_label_6 = label("hall of fame        The Script", 8)
+    name_interpreter_label_6.margin("", "", "", 0)
+    name_interpreter_label_6.align = 0.3
+    song_button_6.add(name_interpreter_label_6)
+    song_switch_6 = switch()
+    song_switch_6.margin(5, "", "", 220)
+    if (playlist_list.index("hall-of-fame") != -1) {
+        song_switch_6.state = 1
+    } else {
+        song_switch_6.state = 0
+    }
+    song_switch_6.onClick = "s_6"
+    song_button_6.add(song_switch_6)
+
+    // Song 7
+    song_button_7 = button()
+    song_button_7.margin(5, 5, "", 5)
+    song_button_7.theme = "#1A1A1A"
+    song_button_7.height = 20
+    songs_container.add(song_button_7)
+    song_picture_7 = costume("music//call-of-the-wild", 4)
+    song_picture_7.margin("", "","", 10)
+    song_picture_7.size(1)
+    song_button_7.add(song_picture_7)
+    name_interpreter_label_7 = label("call of the wild        Powerwulf", 8)
+    name_interpreter_label_7.margin("", "", "", 0)
+    name_interpreter_label_7.align = 0.3
+    song_button_7.add(name_interpreter_label_7)
+    song_switch_7 = switch()
+    song_switch_7.margin(5, "", "", 220)
+    if (playlist_list.index("call-of-the-wild") != -1) {
+        song_switch_7.state = 1
+    } else {
+        song_switch_7.state = 0
+    }
+    song_switch_7.onClick = "s_7"
+    song_button_7.add(song_switch_7)
+
+    // Song 8
+    song_button_8 = button()
+    song_button_8.margin(5, 5, "", 5)
+    song_button_8.theme = "#1A1A1A"
+    song_button_8.height = 20
+    songs_container.add(song_button_8)
+    song_picture_8 = costume("music//diamond-heart", 4)
+    song_picture_8.margin("", "","", 10)
+    song_picture_8.size(1)
+    song_button_8.add(song_picture_8)
+    name_interpreter_label_8 = label("diamond heart        Alan Walker", 8)
+    name_interpreter_label_8.margin("", "", "", 0)
+    name_interpreter_label_8.align = 0.3
+    song_button_8.add(name_interpreter_label_8)
+    song_switch_8 = switch()
+    song_switch_8.margin(5, "", "", 220)
+    if (playlist_list.index("diamond-heart") != -1) {
+        song_switch_8.state = 1
+    } else {
+        song_switch_8.state = 0
+    }
+    song_switch_8.onClick = "s_8"
+    song_button_8.add(song_switch_8)
+
+    // Song 9
+    song_button_9 = button()
+    song_button_9.margin(5, 5, "", 5)
+    song_button_9.theme = "#1A1A1A"
+    song_button_9.height = 20
+    songs_container.add(song_button_9)
+    song_picture_9 = costume("music//never-gonna-give-you-up", 4)
+    song_picture_9.margin("", "","", 10)
+    song_picture_9.size(1)
+    song_button_9.add(song_picture_9)
+    name_interpreter_label_9 = label("never gonna give you up        Rick Astley", 8)
+    name_interpreter_label_9.margin("", "", "", 0)
+    name_interpreter_label_9.align = 0.3
+    song_button_9.add(name_interpreter_label_9)
+    song_switch_9 = switch()
+    song_switch_9.margin(5, "", "", 220)
+    if (playlist_list.index("never-gonna-give-you-up") != -1) {
+        song_switch_9.state = 1
+    } else {
+        song_switch_9.state = 0
+    }
+    song_switch_9.onClick = "s_9"
+    song_button_9.add(song_switch_9)
+
+    // Song 10
+    song_button_10 = button()
+    song_button_10.margin(5, 5, "", 5)
+    song_button_10.theme = "#1A1A1A"
+    song_button_10.height = 20
+    songs_container.add(song_button_10)
+    song_picture_10 = costume("music//above-the-skies", 4)
+    song_picture_10.margin("", "","", 10)
+    song_picture_10.size(1)
+    song_button_10.add(song_picture_10)
+    name_interpreter_label_10 = label("Above the skies        RedOS-Paulottix", 8)
+    name_interpreter_label_10.margin("", "", "", 0)
+    name_interpreter_label_10.align = 0.3
+    song_button_10.add(name_interpreter_label_10)
+    song_switch_10 = switch()
+    song_switch_10.margin(5, "", "", 220)
+    if (playlist_list.index("above-the-skies") != -1) {
+        song_switch_10.state = 1
+    } else {
+        song_switch_10.state = 0
+    }
+    song_switch_10.onClick = "s_10"
+    song_button_10.add(song_switch_10)
+
+    // Song 11
+    song_button_11 = button()
+    song_button_11.margin(5, 5, "", 5)
+    song_button_11.theme = "#1A1A1A"
+    song_button_11.height = 20
+    songs_container.add(song_button_11)
+    song_picture_11 = costume("music//legends", 4)
+    song_picture_11.margin("", "","", 10)
+    song_picture_11.size(1)
+    song_button_11.add(song_picture_11)
+    name_interpreter_label_11 = label("legends        RedOS-Paulottix", 8)
+    name_interpreter_label_11.margin("", "", "", 0)
+    name_interpreter_label_11.align = 0.3
+    song_button_11.add(name_interpreter_label_11)
+    song_switch_11 = switch()
+    song_switch_11.margin(5, "", "", 220)
+    if (playlist_list.index("legends") != -1) {
+        song_switch_11.state = 1
+    } else {
+        song_switch_11.state = 0
+    }
+    song_switch_11.onClick = "s_11"
+    song_button_11.add(song_switch_11)
+
+    // Song 12
+    song_button_12 = button()
+    song_button_12.margin(5, 5, "", 5)
+    song_button_12.theme = "#1A1A1A"
+    song_button_12.height = 20
+    songs_container.add(song_button_12)
+    song_picture_12 = costume("music//gladius", 4)
+    song_picture_12.margin("", "","", 10)
+    song_picture_12.size(1)
+    song_button_12.add(song_picture_12)
+    name_interpreter_label_12 = label("Gladius Superabit        Paulottix,SunoAi,Citrus", 8)
+    name_interpreter_label_12.margin("", "", "", 0)
+    name_interpreter_label_12.align = 0.3
+    song_button_12.add(name_interpreter_label_12)
+    song_switch_12 = switch()
+    song_switch_12.margin(5, "", "", 220)
+    if (playlist_list.index("gladius") != -1) {
+        song_switch_12.state = 1
+    } else {
+        song_switch_12.state = 0
+    }
+    song_switch_12.onClick = "s_12"
+    song_button_12.add(song_switch_12)
+
+    // Song 13
+    song_button_13 = button()
+    song_button_13.margin(5, 5, "", 5)
+    song_button_13.theme = "#1A1A1A"
+    song_button_13.height = 20
+    songs_container.add(song_button_13)
+    song_picture_13 = costume("music//mountains", 4)
+    song_picture_13.margin("", "","", 10)
+    song_picture_13.size(1)
+    song_button_13.add(song_picture_13)
+    name_interpreter_label_13 = label("where the mountain ends        RedOS-Paulottix", 8)
+    name_interpreter_label_13.margin("", "", "", 0)
+    name_interpreter_label_13.align = 0.3
+    song_button_13.add(name_interpreter_label_13)
+    song_switch_13 = switch()
+    song_switch_13.margin(5, "", "", 220)
+    if (playlist_list.index("mountains") != -1) {
+        song_switch_13.state = 1
+    } else {
+        song_switch_13.state = 0
+    }
+    song_switch_13.onClick = "s_13"
+    song_button_13.add(song_switch_13)
+
+    // Song 14
+    song_button_14 = button()
+    song_button_14.margin(5, 5, "", 5)
+    song_button_14.theme = "#1A1A1A"
+    song_button_14.height = 20
+    songs_container.add(song_button_14)
+    song_picture_14 = costume("music//where_the_mountain_ends_progressive_house_version", 4)
+    song_picture_14.margin("", "","", 10)
+    song_picture_14.size(1)
+    song_button_14.add(song_picture_14)
+    name_interpreter_label_14 = label("Where the m. ends ph        RedOS-Paulottix", 8)
+    name_interpreter_label_14.margin("", "", "", 0)
+    name_interpreter_label_14.align = 0.3
+    song_button_14.add(name_interpreter_label_14)
+    song_switch_14 = switch()
+    song_switch_14.margin(5, "", "", 220)
+    if (playlist_list.index("where_the_mountain_ends_progressive_house_version") != -1) {
+        song_switch_14.state = 1
+    } else {
+        song_switch_14.state = 0
+    }
+    song_switch_14.onClick = "s_14"
+    song_button_14.add(song_switch_14)
+
+    // Song 15
+    song_button_15 = button()
+    song_button_15.margin(5, 5, "", 5)
+    song_button_15.theme = "#1A1A1A"
+    song_button_15.height = 20
+    songs_container.add(song_button_15)
+    song_picture_15 = costume("music//no", 4)
+    song_picture_15.margin("", "","", 10)
+    song_picture_15.size(1)
+    song_button_15.add(song_picture_15)
+    name_interpreter_label_15 = label("No Return        RedOS-Paulottix", 8)
+    name_interpreter_label_15.margin("", "", "", 0)
+    name_interpreter_label_15.align = 0.3
+    song_button_15.add(name_interpreter_label_15)
+    song_switch_15 = switch()
+    song_switch_15.margin(5, "", "", 220)
+    if (playlist_list.index("no") != -1) {
+        song_switch_15.state = 1
+    } else {
+        song_switch_15.state = 0
+    }
+    song_switch_15.onClick = "s_15"
+    song_button_15.add(song_switch_15)
+
+    // Song 16
+    song_button_16 = button()
+    song_button_16.margin(5, 5, "", 5)
+    song_button_16.theme = "#1A1A1A"
+    song_button_16.height = 20
+    songs_container.add(song_button_16)
+    song_picture_16 = costume("music//that-bass", 4)
+    song_picture_16.margin("", "","", 10)
+    song_picture_16.size(1)
+    song_button_16.add(song_picture_16)
+    name_interpreter_label_16 = label("That Bass will grow on you ig        RedOS-Paulottix", 8)
+    name_interpreter_label_16.margin("", "", "", 0)
+    name_interpreter_label_16.align = 0.3
+    song_button_16.add(name_interpreter_label_16)
+    song_switch_16 = switch()
+    song_switch_16.margin(5, "", "", 220)
+    if (playlist_list.index("that-bass") != -1) {
+        song_switch_16.state = 1
+    } else {
+        song_switch_16.state = 0
+    }
+    song_switch_16.onClick = "s_16"
+    song_button_16.add(song_switch_16)
+
+    // Song 17
+    song_button_17 = button()
+    song_button_17.margin(5, 5, "", 5)
+    song_button_17.theme = "#1A1A1A"
+    song_button_17.height = 20
+    songs_container.add(song_button_17)
+    song_picture_17 = costume("music//gladius-superabit-v2", 4)
+    song_picture_17.margin("", "","", 10)
+    song_picture_17.size(1)
+    song_button_17.add(song_picture_17)
+    name_interpreter_label_17 = label("Gladius Superabit v2        RedOS-Paulottix", 8)
+    name_interpreter_label_17.margin("", "", "", 0)
+    name_interpreter_label_17.align = 0.3
+    song_button_17.add(name_interpreter_label_17)
+    song_switch_17 = switch()
+    song_switch_17.margin(5, "", "", 220)
+    if (playlist_list.index("gladius-superabit-v2") != -1) {
+        song_switch_17.state = 1
+    } else {
+        song_switch_17.state = 0
+    }
+    song_switch_17.onClick = "s_17"
+    song_button_17.add(song_switch_17)
 }
-
-def get_playlist_status(var_name) {
-    global pop_playlist_status
-    global rock_playlist_status
-    global rick_playlist_status
-    global generic_playlist_status_1
-    global generic_playlist_status_2
-    global generic_playlist_status_3
-    global generic_playlist_status_4
-    global generic_playlist_status_5
-    global generic_playlist_status_6
-
-    if (var_name == "pop_playlist_status") { return pop_playlist_status }
-    if (var_name == "rock_playlist_status") { return rock_playlist_status }
-    if (var_name == "rick_playlist_status") { return rick_playlist_status }
-    if (var_name == "generic_playlist_status_1") { return generic_playlist_status_1 }
-    if (var_name == "generic_playlist_status_2") { return generic_playlist_status_2 }
-    if (var_name == "generic_playlist_status_3") { return generic_playlist_status_3 }
-    if (var_name == "generic_playlist_status_4") { return generic_playlist_status_4 }
-    if (var_name == "generic_playlist_status_5") { return generic_playlist_status_5 }
-    if (var_name == "generic_playlist_status_6") { return generic_playlist_status_6 }
-    return "000000000000000000"
-}
-
-def set_playlist_status(var_name, value) {
-    global pop_playlist_status
-    global rock_playlist_status
-    global rick_playlist_status
-    global generic_playlist_status_1
-    global generic_playlist_status_2
-    global generic_playlist_status_3
-    global generic_playlist_status_4
-    global generic_playlist_status_5
-    global generic_playlist_status_6
-
-    if (var_name == "pop_playlist_status") { pop_playlist_status = value }
-    if (var_name == "rock_playlist_status") { rock_playlist_status = value }
-    if (var_name == "rick_playlist_status") { rick_playlist_status = value }
-    if (var_name == "generic_playlist_status_1") { generic_playlist_status_1 = value }
-    if (var_name == "generic_playlist_status_2") { generic_playlist_status_2 = value }
-    if (var_name == "generic_playlist_status_3") { generic_playlist_status_3 = value }
-    if (var_name == "generic_playlist_status_4") { generic_playlist_status_4 = value }
-    if (var_name == "generic_playlist_status_5") { generic_playlist_status_5 = value }
-    if (var_name == "generic_playlist_status_6") { generic_playlist_status_6 = value }
-}
-
-// ---------------------------------------------------
-// --              ORIGINAL FUNCTIONS               --
-// ---------------------------------------------------
 
 def start_music() {
     os.music_toggle()
 }
+def s_0() {
+    os.set_switch_state(current_playlist_offset + 0)
+    update_playlist_list(current_playlist_offset + 0)
+}
+def s_1() {
+    os.set_switch_state(current_playlist_offset + 1)
+    update_playlist_list(current_playlist_offset + 1)
+}
+def s_2() {
+    os.set_switch_state(current_playlist_offset + 2)
+    update_playlist_list(current_playlist_offset + 2)
+}
+def s_3() {
+    os.set_switch_state(current_playlist_offset + 3)
+    update_playlist_list(current_playlist_offset + 3)
+}
+def s_4() {
+    os.set_switch_state(current_playlist_offset + 4)
+    update_playlist_list(current_playlist_offset + 4)
+}
+def s_5() {
+    os.set_switch_state(current_playlist_offset + 5)
+    update_playlist_list(current_playlist_offset + 5)
+}
+def s_6() {
+    os.set_switch_state(current_playlist_offset + 6)
+    update_playlist_list(current_playlist_offset + 6)
+}
+def s_7() {
+    os.set_switch_state(current_playlist_offset + 7)
+    update_playlist_list(current_playlist_offset + 7)
+}
+def s_8() {
+    os.set_switch_state(current_playlist_offset + 8)
+    update_playlist_list(current_playlist_offset + 8)
+}
+def s_9() {
+    os.set_switch_state(current_playlist_offset + 9)
+    update_playlist_list(current_playlist_offset + 9)
+}
+def s_10() {
+    os.set_switch_state(current_playlist_offset + 10)
+    update_playlist_list(current_playlist_offset + 10)
+}
+def s_11() {
+    os.set_switch_state(current_playlist_offset + 11)
+    update_playlist_list(current_playlist_offset + 11)
+}
+def s_12() {
+    os.set_switch_state(current_playlist_offset + 12)
+    update_playlist_list(current_playlist_offset + 12)
+}
+def s_13() {
+    os.set_switch_state(current_playlist_offset + 13)
+    update_playlist_list(current_playlist_offset + 13)
+}
+def s_14() {
+    os.set_switch_state(current_playlist_offset + 14)
+    update_playlist_list(current_playlist_offset + 14)
+}
+def s_15() {
+    os.set_switch_state(current_playlist_offset + 15)
+    update_playlist_list(current_playlist_offset + 15)
+}
+def s_16() {
+    os.set_switch_state(current_playlist_offset + 16)
+    update_playlist_list(current_playlist_offset + 16)
+}
+def s_17() {
+    os.set_switch_state(current_playlist_offset + 17)
+    update_playlist_list(current_playlist_offset + 17)
+}
 
 def skip_f_music() {
-    os.music_skip()
+    play_next_in_queue()
 }
 
 def skip_b_music() {
-    os.music_skip_back()
+
+    if (playlist_queue.index(os.music_song_id) <= 0) 
+    { 
+        os.music_start(playlist_queue.get(playlist_queue.length - 1))
+    }
+    else
+    { 
+        os.print("music:" + playlist_queue.get(playlist_queue.index(os.music_song_id) - 1))
+        os.music_start(playlist_queue.get(playlist_queue.index(os.music_song_id) - 1)) 
+    }
+    
 }
 
 def format_time(seconds) {
@@ -824,29 +1158,25 @@ def format_time(seconds) {
     return minutes + ":" + secs
 }
 
-def new_start() {
-    os.music_start("lost")
-}
-
 // Song click handlers (unchanged because language requires static function names for callbacks)
-def viva_la_vida(){ os.music_start("viva-la-vida") }
-def hotel_california(){ os.music_start("hotel-california") }
-def lost(){ os.music_start("lost") }
-def nothing_else_matters(){ os.music_start("nothing-else-matters") }
-def somewhere_i_belong(){ os.music_start("somewhere-i-belong") }
-def everything_ends(){ os.music_start("everything-ends") }
-def hall_of_fame(){ os.music_start("hall-of-fame") }
-def call_of_the_wild(){ os.music_start("call-of-the-wild") }
-def diamond_heart(){ os.music_start("diamond-heart") }
-def never_gonna_give_you_up(){ os.music_start("never-gonna-give-you-up") }
-def above_the_skies(){ os.music_start("above-the-skies") }
-def legends(){ os.music_start("legends") }
-def gladius(){ os.music_start("gladius") }
-def mountain(){ os.music_start("mountains") }
-def mountain_ends(){ os.music_start("where_the_mountain_ends_progressive_house_version") }
-def no(){ os.music_start("no") }
-def gladius_superabit(){ os.music_start("gladius-superabit-v2") }
-def that_bass(){ os.music_start("that-bass") }
+def viva_la_vida(){ add_song_to_queue("viva-la-vida") }
+def hotel_california(){ add_song_to_queue("hotel-california") }
+def lost(){ add_song_to_queue("lost") }
+def nothing_else_matters(){ add_song_to_queue("nothing-else-matters") }
+def somewhere_i_belong(){ add_song_to_queue("somewhere-i-belong") }
+def everything_ends(){ add_song_to_queue("everything-ends") }
+def hall_of_fame(){ add_song_to_queue("hall-of-fame") }
+def call_of_the_wild(){ add_song_to_queue("call-of-the-wild") }
+def diamond_heart(){ add_song_to_queue("diamond-heart") }
+def never_gonna_give_you_up(){ add_song_to_queue("never-gonna-give-you-up") }
+def above_the_skies(){ add_song_to_queue("above-the-skies") }
+def legends(){ add_song_to_queue("legends") }
+def gladius(){ add_song_to_queue("gladius") }
+def mountain(){ add_song_to_queue("mountains") }
+def mountain_ends(){ add_song_to_queue("where_the_mountain_ends_progressive_house_version") }
+def no(){ add_song_to_queue("no") }
+def gladius_superabit(){ add_song_to_queue("gladius-superabit-v2") }
+def that_bass(){ add_song_to_queue("that-bass") }
 
 // Lyrics click handlers
 def lyrics1(){ os.music_set_progress(os.lyrics_time1)
@@ -879,4 +1209,383 @@ def add_song_with_switch(parent, song_title) {
     song_switch = switch()
     song_switch.margin(5, 10, "", "")
     song_entry_container.add(song_switch)
+}
+
+// Helper to safely get .state or 0 (no typeof, no &&, no [], no ;, no undefined)
+def get_switch_state(sw) {
+    if (sw != 0) {
+        if (sw != "") {
+            if (sw.state != 0) {
+                return sw.state
+            }
+            if (sw.state != "") {
+                return sw.state
+            }
+        }
+    }
+    return 0
+}
+
+def play_next_in_queue() {
+
+    if(playlist_queue.index(os.music_song_id) >= playlist_queue.length - 1)
+    { 
+        os.music_start(playlist_queue.get(0)) 
+    }
+    else
+    { os.print("music:" + playlist_queue.get(playlist_queue.index(os.music_song_id) + 1))
+      os.music_start(playlist_queue.get(playlist_queue.index(os.music_song_id) + 1)) 
+    }
+}
+
+def get_song_id_by_index(idx) {
+    if (idx < 0) { idx = 0 }
+    if (idx >= playlist_queue.length) { idx = 0 }
+    return playlist_queue.get(idx)
+}
+
+def get_index_by_song_id(song_id) {
+    idx = playlist_queue.index(song_id)
+    if (idx == -1) { return 0 }
+    return idx
+}
+
+def add_song_to_queue(song_id){
+    if (playlist_queue.length == 0) {
+        playlist_queue.add(song_id)
+    } else {
+        playlist_queue.insert(song_id, get_index_by_song_id(os.music_song_id) + 1)
+    }
+}
+
+def update_playlist_list(idx) {
+    // Determine which playlist is open by current_playlist_offset
+    global pop_playlist_list
+    global rock_playlist_list
+    global rick_playlist_list
+    global generic_playlist_list_1
+    global generic_playlist_list_2
+    global generic_playlist_list_3
+    global generic_playlist_list_4
+    global generic_playlist_list_5
+    global generic_playlist_list_6
+    song_id = get_song_id_by_index(idx - current_playlist_offset)
+    sw_state = os.check_switch_state(idx)
+    os.print("[DEBUG] update_playlist_list: idx=" + str(idx) + ", song_id=" + song_id + ", sw_state=" + str(sw_state) + ", current_playlist_offset=" + str(current_playlist_offset))
+    if (current_playlist_offset == 0) {
+        os.print("[DEBUG] pop_playlist_list before: " + str(pop_playlist_list))
+        update_list(pop_playlist_list, song_id, sw_state)
+        os.print("[DEBUG] pop_playlist_list after: " + str(pop_playlist_list))
+    } else if (current_playlist_offset == 18) {
+        os.print("[DEBUG] rock_playlist_list before: " + str(rock_playlist_list))
+        update_list(rock_playlist_list, song_id, sw_state)
+        os.print("[DEBUG] rock_playlist_list after: " + str(rock_playlist_list))
+    } else if (current_playlist_offset == 36) {
+        os.print("[DEBUG] rick_playlist_list before: " + str(rick_playlist_list))
+        update_list(rick_playlist_list, song_id, sw_state)
+        os.print("[DEBUG] rick_playlist_list after: " + str(rick_playlist_list))
+    } else if (current_playlist_offset == 54) {
+        os.print("[DEBUG] generic_playlist_list_1 before: " + str(generic_playlist_list_1))
+        update_list(generic_playlist_list_1, song_id, sw_state)
+        os.print("[DEBUG] generic_playlist_list_1 after: " + str(generic_playlist_list_1))
+    } else if (current_playlist_offset == 72) {
+        os.print("[DEBUG] generic_playlist_list_2 before: " + str(generic_playlist_list_2))
+        update_list(generic_playlist_list_2, song_id, sw_state)
+        os.print("[DEBUG] generic_playlist_list_2 after: " + str(generic_playlist_list_2))
+    } else if (current_playlist_offset == 90) {
+        os.print("[DEBUG] generic_playlist_list_3 before: " + str(generic_playlist_list_3))
+        update_list(generic_playlist_list_3, song_id, sw_state)
+        os.print("[DEBUG] generic_playlist_list_3 after: " + str(generic_playlist_list_3))
+    } else if (current_playlist_offset == 108) {
+        os.print("[DEBUG] generic_playlist_list_4 before: " + str(generic_playlist_list_4))
+        update_list(generic_playlist_list_4, song_id, sw_state)
+        os.print("[DEBUG] generic_playlist_list_4 after: " + str(generic_playlist_list_4))
+    } else if (current_playlist_offset == 126) {
+        os.print("[DEBUG] generic_playlist_list_5 before: " + str(generic_playlist_list_5))
+        update_list(generic_playlist_list_5, song_id, sw_state)
+        os.print("[DEBUG] generic_playlist_list_5 after: " + str(generic_playlist_list_5))
+    } else if (current_playlist_offset == 144) {
+        os.print("[DEBUG] generic_playlist_list_6 before: " + str(generic_playlist_list_6))
+        update_list(generic_playlist_list_6, song_id, sw_state)
+        os.print("[DEBUG] generic_playlist_list_6 after: " + str(generic_playlist_list_6))
+    }
+}
+
+def update_list(playlist_list, song_id, sw_state) {
+    if (sw_state) {
+        // Add if not present
+        if (playlist_list.index(song_id) == -1) {
+            playlist_list.add(song_id)
+        }
+    } else {
+        // Remove if present
+        idx = playlist_list.index(song_id)
+        if (idx != -1) {
+            playlist_list.remove(idx)
+        }
+    }
+}
+
+def add_pop_playlist_to_queue() {
+    global playlist_queue
+    global current_queue_index
+    os.print("[DEBUG] add_pop_playlist_to_queue called. pop_playlist_list.length=" + str(pop_playlist_list.length))
+    os.print("[DEBUG] pop_playlist_list: " + str(pop_playlist_list))
+    os.print("[DEBUG] playlist_queue before: " + str(playlist_queue))
+    while (playlist_queue.length > 0) {
+        playlist_queue.remove(0)
+    }
+    idx = 0
+    while (idx < pop_playlist_list.length) {
+        song_id = pop_playlist_list.get(idx)
+        os.print("[DEBUG] Adding song to queue: " + song_id + " from pop_playlist_list")
+        add_song_to_queue(song_id)
+        idx += 1
+    }
+    current_queue_index = 0
+    os.print("[DEBUG] playlist_queue after: " + str(playlist_queue))
+    if (playlist_queue.length > 0) {
+        os.music_start(playlist_queue.get(0))
+    } else {
+        os.print("[DEBUG] No songs enabled in this playlist!")
+    }
+}
+
+def add_rock_playlist_to_queue() {
+    global playlist_queue
+    global current_queue_index
+    os.print("[DEBUG] add_rock_playlist_to_queue called. rock_playlist_list.length=" + str(rock_playlist_list.length))
+    os.print("[DEBUG] rock_playlist_list: " + str(rock_playlist_list))
+    os.print("[DEBUG] playlist_queue before: " + str(playlist_queue))
+    while (playlist_queue.length > 0) {
+        playlist_queue.remove(0)
+    }
+    idx = 0
+    while (idx < rock_playlist_list.length) {
+        song_id = rock_playlist_list.get(idx)
+        os.print("[DEBUG] Adding song to queue: " + song_id + " from rock_playlist_list")
+        add_song_to_queue(song_id)
+        idx += 1
+    }
+    current_queue_index = 0
+    os.print("[DEBUG] playlist_queue after: " + str(playlist_queue))
+    if (playlist_queue.length > 0) {
+        os.music_start(playlist_queue.get(0))
+    } else {
+        os.print("[DEBUG] No songs enabled in this playlist!")
+    }
+}
+
+def add_rick_playlist_to_queue() {
+    global playlist_queue
+    global current_queue_index
+    os.print("[DEBUG] add_rick_playlist_to_queue called. rick_playlist_list.length=" + str(rick_playlist_list.length))
+    os.print("[DEBUG] rick_playlist_list: " + str(rick_playlist_list))
+    os.print("[DEBUG] playlist_queue before: " + str(playlist_queue))
+    while (playlist_queue.length > 0) {
+        playlist_queue.remove(0)
+    }
+    idx = 0
+    while (idx < rick_playlist_list.length) {
+        song_id = rick_playlist_list.get(idx)
+        os.print("[DEBUG] Adding song to queue: " + song_id + " from rick_playlist_list")
+        add_song_to_queue(song_id)
+        idx += 1
+    }
+    current_queue_index = 0
+    os.print("[DEBUG] playlist_queue after: " + str(playlist_queue))
+    if (playlist_queue.length > 0) {
+        os.music_start(playlist_queue.get(0))
+    } else {
+        os.print("[DEBUG] No songs enabled in this playlist!")
+    }
+}
+
+def add_generic_playlist_1_to_queue() {
+    global playlist_queue
+    global current_queue_index
+    os.print("[DEBUG] add_generic_playlist_1_to_queue called. generic_playlist_list_1.length=" + str(generic_playlist_list_1.length))
+    os.print("[DEBUG] generic_playlist_list_1: " + str(generic_playlist_list_1))
+    os.print("[DEBUG] playlist_queue before: " + str(playlist_queue))
+    while (playlist_queue.length > 0) {
+        playlist_queue.remove(0)
+    }
+    idx = 0
+    while (idx < generic_playlist_list_1.length) {
+        song_id = generic_playlist_list_1.get(idx)
+        os.print("[DEBUG] Adding song to queue: " + song_id + " from generic_playlist_list_1")
+        add_song_to_queue(song_id)
+        idx += 1
+    }
+    current_queue_index = 0
+    os.print("[DEBUG] playlist_queue after: " + str(playlist_queue))
+    if (playlist_queue.length > 0) {
+        os.music_start(playlist_queue.get(0))
+    } else {
+        os.print("[DEBUG] No songs enabled in this playlist!")
+    }
+}
+
+def add_generic_playlist_2_to_queue() {
+    global playlist_queue
+    global current_queue_index
+    os.print("[DEBUG] add_generic_playlist_2_to_queue called. generic_playlist_list_2.length=" + str(generic_playlist_list_2.length))
+    os.print("[DEBUG] generic_playlist_list_2: " + str(generic_playlist_list_2))
+    os.print("[DEBUG] playlist_queue before: " + str(playlist_queue))
+    while (playlist_queue.length > 0) {
+        playlist_queue.remove(0)
+    }
+    idx = 0
+    while (idx < generic_playlist_list_2.length) {
+        song_id = generic_playlist_list_2.get(idx)
+        os.print("[DEBUG] Adding song to queue: " + song_id + " from generic_playlist_list_2")
+        add_song_to_queue(song_id)
+        idx += 1
+    }
+    current_queue_index = 0
+    os.print("[DEBUG] playlist_queue after: " + str(playlist_queue))
+    if (playlist_queue.length > 0) {
+        os.music_start(playlist_queue.get(0))
+    } else {
+        os.print("[DEBUG] No songs enabled in this playlist!")
+    }
+}
+
+def add_generic_playlist_3_to_queue() {
+    global playlist_queue
+    global current_queue_index
+    os.print("[DEBUG] add_generic_playlist_3_to_queue called. generic_playlist_list_3.length=" + str(generic_playlist_list_3.length))
+    os.print("[DEBUG] generic_playlist_list_3: " + str(generic_playlist_list_3))
+    os.print("[DEBUG] playlist_queue before: " + str(playlist_queue))
+    while (playlist_queue.length > 0) {
+        playlist_queue.remove(0)
+    }
+    idx = 0
+    while (idx < generic_playlist_list_3.length) {
+        song_id = generic_playlist_list_3.get(idx)
+        os.print("[DEBUG] Adding song to queue: " + song_id + " from generic_playlist_list_3")
+        add_song_to_queue(song_id)
+        idx += 1
+    }
+    current_queue_index = 0
+    os.print("[DEBUG] playlist_queue after: " + str(playlist_queue))
+    if (playlist_queue.length > 0) {
+        os.music_start(playlist_queue.get(0))
+    } else {
+        os.print("[DEBUG] No songs enabled in this playlist!")
+    }
+}
+
+def add_generic_playlist_4_to_queue() {
+    global playlist_queue
+    global current_queue_index
+    os.print("[DEBUG] add_generic_playlist_4_to_queue called. generic_playlist_list_4.length=" + str(generic_playlist_list_4.length))
+    os.print("[DEBUG] generic_playlist_list_4: " + str(generic_playlist_list_4))
+    os.print("[DEBUG] playlist_queue before: " + str(playlist_queue))
+    while (playlist_queue.length > 0) {
+        playlist_queue.remove(0)
+    }
+    idx = 0
+    while (idx < generic_playlist_list_4.length) {
+        song_id = generic_playlist_list_4.get(idx)
+        os.print("[DEBUG] Adding song to queue: " + song_id + " from generic_playlist_list_4")
+        add_song_to_queue(song_id)
+        idx += 1
+    }
+    current_queue_index = 0
+    os.print("[DEBUG] playlist_queue after: " + str(playlist_queue))
+    if (playlist_queue.length > 0) {
+        os.music_start(playlist_queue.get(0))
+    } else {
+        os.print("[DEBUG] No songs enabled in this playlist!")
+    }
+}
+
+def add_generic_playlist_5_to_queue() {
+    global playlist_queue
+    global current_queue_index
+    os.print("[DEBUG] add_generic_playlist_5_to_queue called. generic_playlist_list_5.length=" + str(generic_playlist_list_5.length))
+    os.print("[DEBUG] generic_playlist_list_5: " + str(generic_playlist_list_5))
+    os.print("[DEBUG] playlist_queue before: " + str(playlist_queue))
+    while (playlist_queue.length > 0) {
+        playlist_queue.remove(0)
+    }
+    idx = 0
+    while (idx < generic_playlist_list_5.length) {
+        song_id = generic_playlist_list_5.get(idx)
+        os.print("[DEBUG] Adding song to queue: " + song_id + " from generic_playlist_list_5")
+        add_song_to_queue(song_id)
+        idx += 1
+    }
+    current_queue_index = 0
+    os.print("[DEBUG] playlist_queue after: " + str(playlist_queue))
+    if (playlist_queue.length > 0) {
+        os.music_start(playlist_queue.get(0))
+    } else {
+        os.print("[DEBUG] No songs enabled in this playlist!")
+    }
+}
+
+def add_generic_playlist_6_to_queue() {
+    global playlist_queue
+    global current_queue_index
+    os.print("[DEBUG] add_generic_playlist_6_to_queue called. generic_playlist_list_6.length=" + str(generic_playlist_list_6.length))
+    os.print("[DEBUG] generic_playlist_list_6: " + str(generic_playlist_list_6))
+    os.print("[DEBUG] playlist_queue before: " + str(playlist_queue))
+    while (playlist_queue.length > 0) {
+        playlist_queue.remove(0)
+    }
+    idx = 0
+    while (idx < generic_playlist_list_6.length) {
+        song_id = generic_playlist_list_6.get(idx)
+        os.print("[DEBUG] Adding song to queue: " + song_id + " from generic_playlist_list_6")
+        add_song_to_queue(song_id)
+        idx += 1
+    }
+    current_queue_index = 0
+    os.print("[DEBUG] playlist_queue after: " + str(playlist_queue))
+    if (playlist_queue.length > 0) {
+        os.music_start(playlist_queue.get(0))
+    } else {
+        os.print("[DEBUG] No songs enabled in this playlist!")
+    }
+}
+
+// Remove the generic add_playlist_to_queue_from_list function
+
+def add_playlist_to_queue_button_pop_playlist_status() {
+    os.print("[DEBUG] Play button pressed: pop_playlist_list")
+    add_pop_playlist_to_queue()
+}
+def add_playlist_to_queue_button_rock_playlist_status() {
+    os.print("[DEBUG] Play button pressed: rock_playlist_list")
+    add_rock_playlist_to_queue()
+}
+def add_playlist_to_queue_button_rick_playlist_status() {
+    os.print("[DEBUG] Play button pressed: rick_playlist_list")
+    add_rick_playlist_to_queue()
+}
+def add_playlist_to_queue_button_generic_playlist_status_1() {
+    os.print("[DEBUG] Play button pressed: generic_playlist_list_1")
+    add_generic_playlist_1_to_queue()
+}
+def add_playlist_to_queue_button_generic_playlist_status_2() {
+    os.print("[DEBUG] Play button pressed: generic_playlist_list_2")
+    add_generic_playlist_2_to_queue()
+}
+def add_playlist_to_queue_button_generic_playlist_status_3() {
+    os.print("[DEBUG] Play button pressed: generic_playlist_list_3")
+    add_generic_playlist_3_to_queue()
+}
+def add_playlist_to_queue_button_generic_playlist_status_4() {
+    os.print("[DEBUG] Play button pressed: generic_playlist_list_4")
+    add_generic_playlist_4_to_queue()
+}
+def add_playlist_to_queue_button_generic_playlist_status_5() {
+    os.print("[DEBUG] Play button pressed: generic_playlist_list_5")
+    add_generic_playlist_5_to_queue()
+}
+def add_playlist_to_queue_button_generic_playlist_status_6() {
+    os.print("[DEBUG] Play button pressed: generic_playlist_list_6")
+    add_generic_playlist_6_to_queue()
 }
