@@ -21,7 +21,9 @@ def init() {
 
 All apps are in the `apps` folder. You can edit the `.app` files with any text editor. Run the `apps.convert.py` python file to generate `apps.preinstalled.txt`. Open the Scratch project and go to the `Program` sprite. Show the `apps.preinstalled` list and import `apps.preinstalled.txt`. Restart the project.
 
-# Variables
+# Data Types
+
+## Variables
 
 A variable can be created and set like in python:
 ```python
@@ -35,7 +37,7 @@ A variable is only defined inside the current function. If you want to create/se
 global score = 0
 ```
 
-# Lists
+## Lists
 
 A list can be created with the `list()` function. You can add any number of arguments: `list(1, 2, 3, "Hello World")`. Lists can also contain other lists and elements.
 
@@ -53,7 +55,20 @@ Methodes:
 - `delete(index)` or `remove(index)` removes the item at the given index from the list
 - `find(item)` or `index(item)` returns the index of the given item or -1 if it is not in the list
 
-# Text Formatting
+## Strings
+
+A string can be created with double quotation marks: `"some text"`.
+
+Attributes:
+- `length`
+
+Methodes:
+- `contains(substring)`
+- `beginswith(prefix)`
+- `endswith(suffix)`
+- `split(separator)` returns a list
+
+### Text Formatting
 
 Strings use the escape character `\`:
 - `"\\"` -> `\`
@@ -233,6 +248,7 @@ Attributes:
 - `minWidth`
 - `minHeight`
 - `mode`
+- `title`
 
 Methodes:
 - `pos(x, y)`
@@ -462,7 +478,7 @@ when finished the callback function is called
 - `os.duplicate_file(path, new_name)`
 - `os.move_file(path, to_folder)`
 - `os.rename_file(path, new_name)`
-- `os.list_file(path)` (returns a string representation of the list, because we don't have lists yet)
+- `os.list_folder(path)` returns a list
 - `os.add_folder(path, name)`
 - `os.delete_folder(path)`
 - `os.duplicate_folder(path, new_name)`
