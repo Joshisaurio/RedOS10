@@ -22,7 +22,7 @@ def init() {
     button.marginRight = ""
     button.width = "shrink"
     button.height = 16.5
-    button.onClick = "mode"
+    button.onClick = "mode()"
     button.theme = 0.2
 
     global buttonLabel = label("Draco", 8, 0.5)
@@ -45,7 +45,7 @@ def init() {
     send.size(15)
     send.margin(5)
     send.marginLeft = ""
-    send.onClick = "send"
+    send.onClick = "send()"
     bottom.add(send)
 
     window.add(bottom)

@@ -42,21 +42,21 @@ def init() {
     theme_container.marginX(0, 0)
     home_vbox.add(theme_container)
 
-    global theme_dark = button("Dark mode", "enable_dark_mode")
+    global theme_dark = button("Dark mode", "enable_dark_mode()")
     theme_dark.minHeight = 45
     theme_dark.minWidth = 60
     theme_dark.size("fill", "shrink")
     theme_dark.margin("5","5","5","0")
     theme_container.add(theme_dark)
 
-    global theme_light = button("Light mode", "enable_light_mode")
+    global theme_light = button("Light mode", "enable_light_mode()")
     theme_light.minHeight = 45
     theme_light.minWidth = 60
     theme_light.size("fill", "shrink")
     theme_light.margin("5","5","5","0")
     theme_container.add(theme_light)
 
-    global theme_scheduled = button("Scheduled mode", "enable_scheduled_mode")
+    global theme_scheduled = button("Scheduled mode", "enable_scheduled_mode()")
     theme_scheduled.minHeight = 45
     theme_scheduled.minWidth = 60
     theme_scheduled.size("fill", "shrink")
@@ -74,13 +74,13 @@ def init() {
     vol_container.marginX(0, 0)
     home_vbox.add(vol_container)
 
-    global vol_off = button("Volume off", "volume_off")
+    global vol_off = button("Volume off", "volume_off()")
     vol_off.minHeight = 20
     vol_off.minWidth = 60
     vol_off.margin("5","5","5","0")
     vol_container.add(vol_off)
 
-    global vol_on = button("Volume on", "volume_on")
+    global vol_on = button("Volume on", "volume_on()")
     vol_on.minHeight = 20
     vol_on.minWidth = 60
     vol_on.margin("5","5","5","0")
@@ -103,7 +103,7 @@ def init() {
     global data_state = 0
     // State 0 = save, state 1 = saving, state 2 = saved
 
-    global data_button = button("Save", "save_data")
+    global data_button = button("Save", "save_data()")
     data_button.minWidth = 66
     data_button.minHeight = 16
     data_button.shrink()
@@ -144,21 +144,21 @@ def init() {
     //cust_theme_container.marginX(0, 0)
     cust_vbox.add(cust_theme_container)
 
-    global cust_theme_dark = button("Dark mode", "enable_dark_mode")
+    global cust_theme_dark = button("Dark mode", "enable_dark_mode()")
     cust_theme_dark.minHeight = 45
     cust_theme_dark.minWidth = 60
     cust_theme_dark.size("fill", "shrink")
     cust_theme_dark.margin("5","5","5","0")
     cust_theme_container.add(cust_theme_dark)
 
-    global cust_theme_light = button("Light mode", "enable_light_mode")
+    global cust_theme_light = button("Light mode", "enable_light_mode()")
     cust_theme_light.minHeight = 45
     cust_theme_light.minWidth = 60
     cust_theme_light.size("fill", "shrink")
     cust_theme_light.margin("5","5","5","0")
     cust_theme_container.add(cust_theme_light)
 
-    global cust_theme_scheduled = button("Scheduled mode", "enable_scheduled_mode")
+    global cust_theme_scheduled = button("Scheduled mode", "enable_scheduled_mode()")
     cust_theme_scheduled.minHeight = 45
     cust_theme_scheduled.minWidth = 60
     cust_theme_scheduled.size("fill", "shrink")
@@ -180,21 +180,21 @@ def init() {
     //cust_bg_container.marginX(0, 0)
     cust_vbox.add(cust_bg_container)
 
-    global cust_bgOne = button("BG1", "bgOne")
+    global cust_bgOne = button("BG1", "bgOne()")
     cust_bgOne.minHeight = 45
     cust_bgOne.minWidth = 60
     cust_bgOne.size("fill", "shrink")
     cust_bgOne.margin("5","5","5","0")
     cust_bg_container.add(cust_bgOne)
 
-    global cust_bgTwo = button("BG2", "bgTwo")
+    global cust_bgTwo = button("BG2", "bgTwo()")
     cust_bgTwo.minHeight = 45
     cust_bgTwo.minWidth = 60
     cust_bgTwo.size("fill", "shrink")
     cust_bgTwo.margin("5","5","5","0")
     cust_bg_container.add(cust_bgTwo)
 
-    global cust_bgThree = button("BG3", "bgThree")
+    global cust_bgThree = button("BG3", "bgThree()")
     cust_bgThree.minHeight = 45
     cust_bgThree.minWidth = 60
     cust_bgThree.size("fill", "shrink")
@@ -207,23 +207,23 @@ def init() {
     cust_options_label.marginTop = 10
     cust_vbox.add(cust_options_label)
 
-    global fullHours = switch("Use 24-Hour time", "toggleFullHours")
+    global fullHours = switch("Use 24-Hour time", "toggleFullHours()")
     fullHours.state = os.get_effect(4)
     cust_vbox.add(fullHours)
 
-    global startWeekOnSunday = switch("Start week on Sunday", "toggleEffectEight")
+    global startWeekOnSunday = switch("Start week on Sunday", "toggleEffectEight()")
     startWeekOnSunday.state = os.get_effect(8)
     cust_vbox.add(startWeekOnSunday)
 
-    global showSeconds = switch("Show seconds", "toggleEffectSix")
+    global showSeconds = switch("Show seconds", "toggleEffectSix()")
     showSeconds.state = os.get_effect(6)
     cust_vbox.add(showSeconds)
 
-    global trail_effect = switch("Enable mouse trail", "toggleEffectFour")
+    global trail_effect = switch("Enable mouse trail", "toggleEffectFour()")
     trail_effect.state = os.get_effect(4)
     cust_vbox.add(trail_effect)
 
-    global click_effect = switch("Enable click effect", "toggleEffectFive")
+    global click_effect = switch("Enable click effect", "toggleEffectFive()")
     click_effect.state = os.get_effect(5)
     cust_vbox.add(click_effect)
     
@@ -240,7 +240,7 @@ def init() {
     cust_data_label.wrap = 1
     cust_vbox.add(cust_data_label)
 
-    global cust_data_button = button("Save", "save_data")
+    global cust_data_button = button("Save", "save_data()")
     cust_data_button.minWidth = 66
     cust_data_button.minHeight = 16
     cust_data_button.shrink()
@@ -280,13 +280,13 @@ def init() {
     sys_vol_container.marginX(0, 0)
     sys_vbox.add(sys_vol_container)
 
-    global sys_vol_off = button("Volume off", "volume_off")
+    global sys_vol_off = button("Volume off", "volume_off()")
     sys_vol_off.minHeight = 20
     sys_vol_off.minWidth = 60
     sys_vol_off.margin("5","5","5","0")
     sys_vol_container.add(sys_vol_off)
 
-    global sys_vol_on = button("Volume on", "volume_on")
+    global sys_vol_on = button("Volume on", "volume_on()")
     sys_vol_on.minHeight = 20
     sys_vol_on.minWidth = 60
     sys_vol_on.margin("5","5","5","0")
@@ -298,19 +298,19 @@ def init() {
     sys_option_title.marginTop = 10
     sys_vbox.add(sys_option_title)
 
-    global showFps = switch("Show FPS", "toggleEffectOne")
+    global showFps = switch("Show FPS", "toggleEffectOne()")
     showFps.state = os.get_effect(1)
     sys_vbox.add(showFps)
 
-    global showDelta = switch("Show deltaTime", "toggleEffectTwo")
+    global showDelta = switch("Show deltaTime", "toggleEffectTwo()")
     showDelta.state = os.get_effect(2)
     sys_vbox.add(showDelta)
 
-    global showAnimTime = switch("Show animTime", "toggleEffectThree")
+    global showAnimTime = switch("Show animTime", "toggleEffectThree()")
     showAnimTime.state = os.get_effect(3)
     sys_vbox.add(showAnimTime)
 
-    global showPreinstalled = switch("Show pre-installed apps list", "toggleEffectSeven")
+    global showPreinstalled = switch("Show pre-installed apps list", "toggleEffectSeven()")
     showPreinstalled.state = os.get_effect(7)
     sys_vbox.add(showPreinstalled)
 
@@ -327,7 +327,7 @@ def init() {
     sys_data_label.wrap = 1
     sys_vbox.add(sys_data_label)
 
-    global sys_data_button = button("Save", "save_data")
+    global sys_data_button = button("Save", "save_data()")
     sys_data_button.minWidth = 66
     sys_data_button.minHeight = 16
     sys_data_button.shrink()

@@ -41,11 +41,11 @@ def init() {
     event_button_grid.margin("", 4, 4, 4)
     event_button_grid.height = 20
 
-    addEventButton = button("New event", "add_event")
+    addEventButton = button("New event", "add_event()")
     addEventButton.marginRight = 2
     addEventButton.theme = "#FF4060"
 
-    deleteAllEventsButton = button("Delete all", "delete_all_events")
+    deleteAllEventsButton = button("Delete all", "delete_all_events()")
     deleteAllEventsButton.marginLeft = 2
     deleteAllEventsButton.theme = "#191919"
 
@@ -110,15 +110,15 @@ def init() {
     month_button_grid.margin("", 4, 4, 4)
     month_button_grid.height = 20
 
-    prevMonthButton = button("<", "prev_month")
+    prevMonthButton = button("<", "prev_month()")
     prevMonthButton.marginRight = 2
     prevMonthButton.theme = "#191919"
 
-    nextMonthButton = button(">", "next_month")
+    nextMonthButton = button(">", "next_month()")
     nextMonthButton.marginLeft = 2
     nextMonthButton.theme = "#191919"
 
-    global jumpMonthNumber = label("January")
+    global jumpMonthNumber = label("January()")
     jumpMonthNumber.align = 0.5
 
     month_button_grid.add(prevMonthButton)
@@ -159,9 +159,9 @@ def init() {
     jumpToContainer.margin("", 4, 24, 4)
     jumpToContainer.height = 20
 
-    yearIncrease = button(">", "increment_year_jump")
+    yearIncrease = button(">", "increment_year_jump()")
     yearIncrease.marginLeft = 2
-    yearDecrease = button("<", "decrement_year_jump")
+    yearDecrease = button("<", "decrement_year_jump()")
     yearDecrease.marginRight = 2
     global jumpYearNumber = label("2025")
     jumpYearNumber.align = 0.5

@@ -51,19 +51,19 @@ def init() {
     global play_symbol = costume("music//play", 5)
     play_symbol.margin(225, "", 5, 250)
     play_symbol.size(15)
-    play_symbol.onClick = "start_music"
+    play_symbol.onClick = "start_music()"
     tab1.add(play_symbol)
 
     global skip_back = costume("music//skip_back", 5)
     skip_back.margin(225, "", 5, 230)
     skip_back.size(15)
-    skip_back.onClick = "skip_b_music"
+    skip_back.onClick = "skip_b_music()"
     tab1.add(skip_back)
 
     global skip_forward = costume("music//skip_forward", 5)
     skip_forward.margin(225, "", 5, 270)
     skip_forward.size(15)
-    skip_forward.onClick = "skip_f_music"
+    skip_forward.onClick = "skip_f_music()"
     tab1.add(skip_forward)
 
     global song_picture_small = costume("music//viva-la-vida", 4)
@@ -101,19 +101,19 @@ def init() {
     global play_symbol2 = costume("music//play", 5)
     play_symbol2.margin(225, "", 5, 255)
     play_symbol2.size(15)
-    play_symbol2.onClick = "start_music"
+    play_symbol2.onClick = "start_music()"
     tab2.add(play_symbol2)
 
     global skip_back2 = costume("music//skip_back", 5)
     skip_back2.margin(225, "", 5, 235)
     skip_back2.size(15)
-    skip_back2.onClick = "skip_b_music"
+    skip_back2.onClick = "skip_b_music()"
     tab2.add(skip_back2)
 
     global skip_forward2 = costume("music//skip_forward", 5)
     skip_forward2.margin(225, "", 5, 275)
     skip_forward2.size(15)
-    skip_forward2.onClick = "skip_f_music"
+    skip_forward2.onClick = "skip_f_music()"
     tab2.add(skip_forward2)
     
     global song_picture_small2 = costume("music//viva-la-vida", 4)
@@ -151,19 +151,19 @@ def init() {
     global play_symbol3 = costume("music//play", 5)
     play_symbol3.margin(225, "", 5, 250)
     play_symbol3.size(15)
-    play_symbol3.onClick = "start_music"
+    play_symbol3.onClick = "start_music()"
     tab3.add(play_symbol3)
 
     global skip_back3 = costume("music//skip_back", 5)
     skip_back3.margin(225, "", 5, 230)
     skip_back3.size(15)
-    skip_back3.onClick = "skip_b_music"
+    skip_back3.onClick = "skip_b_music()"
     tab3.add(skip_back3)
 
     global skip_forward3 = costume("music//skip_forward", 5)
     skip_forward3.margin(225, "", 5, 270)
     skip_forward3.size(15)
-    skip_forward3.onClick = "skip_f_music"
+    skip_forward3.onClick = "skip_f_music()"
     tab3.add(skip_forward3)
     
     global song_picture_small3 = costume("music//viva-la-vida", 4)
@@ -201,19 +201,19 @@ def init() {
     global play_symbol4 = costume("music//play", 5)
     play_symbol4.margin(225, "", 5, 250)
     play_symbol4.size(15)
-    play_symbol4.onClick = "start_music"
+    play_symbol4.onClick = "start_music()"
     tab4.add(play_symbol4)
 
     global skip_back4 = costume("music//skip_back", 5)
     skip_back4.margin(225, "", 5, 230)
     skip_back4.size(15)
-    skip_back4.onClick = "skip_b_music"
+    skip_back4.onClick = "skip_b_music()"
     tab4.add(skip_back4)
 
     global skip_forward4 = costume("music//skip_forward", 5)
     skip_forward4.margin(225, "", 5, 270)
     skip_forward4.size(15)
-    skip_forward4.onClick = "skip_f_music"
+    skip_forward4.onClick = "skip_f_music()"
     tab4.add(skip_forward4)
     
     global song_picture_small4 = costume("music//viva-la-vida", 4)
@@ -255,6 +255,8 @@ def init() {
     global generic_playlist_list_4 = list()
     global generic_playlist_list_5 = list()
     global generic_playlist_list_6 = list()
+
+    global last_mps_skip_status = os.mps_skip_status
 }
 
 def setup_home_tab(tab) {
@@ -265,7 +267,7 @@ def setup_home_tab(tab) {
     news_container = container()
     news_container.margin(0,10,"", 10)
     news_container.height = 75
-    news_container.onClick = "gladius"
+    news_container.onClick = "gladius()"
     home_vbox.add(news_container)  
 
     news = costume("music//news",10)
@@ -279,18 +281,18 @@ def setup_home_tab(tab) {
     song_shown_first.height = 75
     home_vbox.add(song_shown_first)  
     
-    add_song_preview(song_shown_first, "diamond-heart", "diamond_heart")
-    add_song_preview(song_shown_first, "lost", "lost")
-    add_song_preview(song_shown_first, "never-gonna-give-you-up", "never_gonna_give_you_up")
+    add_song_preview(song_shown_first, "diamond-heart", "diamond_heart()")
+    add_song_preview(song_shown_first, "lost", "lost()")
+    add_song_preview(song_shown_first, "never-gonna-give-you-up", "never_gonna_give_you_up()")
 
     song_shown_first2 = hScrollContainer()
     song_shown_first2.margin(5,10,"", 10)
     song_shown_first2.height = 75
     home_vbox.add(song_shown_first2)
 
-    add_song_preview(song_shown_first2, "hall-of-fame", "hall_of_fame")
-    add_song_preview(song_shown_first2, "hotel-california", "hotel_california")
-    add_song_preview(song_shown_first2, "call-of-the-wild", "call_of_the_wild")
+    add_song_preview(song_shown_first2, "hall-of-fame", "hall_of_fame()")
+    add_song_preview(song_shown_first2, "hotel-california", "hotel_california()")
+    add_song_preview(song_shown_first2, "call-of-the-wild", "call_of_the_wild()")
 
     home_vbox.scrollUp()
 }
@@ -301,24 +303,24 @@ def setup_explore_tab(tab) {
     tab.add(explore_scroll)
 
     // Add all the songs to the explore list
-    create_song_entry(explore_scroll, "viva-la-vida", "viva la vida", "Coldplay", "viva_la_vida")
-    create_song_entry(explore_scroll, "hotel-california", "hotel california", "Eagles", "hotel_california")
-    create_song_entry(explore_scroll, "lost", "lost", "Linkin Park", "lost")
-    create_song_entry(explore_scroll, "nothing-else-matters", "nothing else matters", "Metallica", "nothing_else_matters")
-    create_song_entry(explore_scroll, "somewhere-i-belong", "somewhere i belong", "Linkin Park", "somewhere_i_belong")
-    create_song_entry(explore_scroll, "everything-ends", "everything ends", "Architects", "everything_ends")
-    create_song_entry(explore_scroll, "hall-of-fame", "hall of fame", "The Script", "hall_of_fame")
-    create_song_entry(explore_scroll, "call-of-the-wild", "call of the wild", "Powerwulf", "call_of_the_wild")
-    create_song_entry(explore_scroll, "diamond-heart", "diamond heart", "Alan Walker", "diamond_heart")
-    create_song_entry(explore_scroll, "never-gonna-give-you-up", "never gonna give you up", "Rick Astley", "never_gonna_give_you_up")
-    create_song_entry(explore_scroll, "above-the-skies", "Above the skies", "RedOS-Paulottix", "above_the_skies")
-    create_song_entry(explore_scroll, "legends", "legends", "RedOS-Paulottix", "legends")
-    create_song_entry(explore_scroll, "gladius", "Gladius Superabit", "Paulottix,SunoAi,Citrus", "gladius")
-    create_song_entry(explore_scroll, "mountains", "where the mountain ends", "RedOS-Paulottix", "mountain")
-    create_song_entry(explore_scroll, "where_the_mountain_ends_progressive_house_version", "Where the m. ends ph", "RedOS-Paulottix", "mountain_ends")
-    create_song_entry(explore_scroll, "no", "No Return", "RedOS-Paulottix", "no")
-    create_song_entry(explore_scroll, "that-bass", "That Bass will grow on you ig", "RedOS-Paulottix", "that_bass")
-    create_song_entry(explore_scroll, "gladius-superabit-v2", "Gladius Superabit v2", "RedOS-Paulottix", "gladius_superabit")
+    create_song_entry(explore_scroll, "viva-la-vida", "viva la vida", "Coldplay", "explore_click_song(\"viva-la-vida\")")
+    create_song_entry(explore_scroll, "hotel-california", "hotel california", "Eagles", "explore_click_song(\"hotel-california\")")
+    create_song_entry(explore_scroll, "lost", "lost", "Linkin Park", "explore_click_song(\"lost\")")
+    create_song_entry(explore_scroll, "nothing-else-matters", "nothing else matters", "Metallica", "explore_click_song(\"nothing-else-matters\")")
+    create_song_entry(explore_scroll, "somewhere-i-belong", "somewhere i belong", "Linkin Park", "explore_click_song(\"somewhere-i-belong\")")
+    create_song_entry(explore_scroll, "everything-ends", "everything ends", "Architects", "explore_click_song(\"everything-ends\")")
+    create_song_entry(explore_scroll, "hall-of-fame", "hall of fame", "The Script", "explore_click_song(\"hall-of-fame\")")
+    create_song_entry(explore_scroll, "call-of-the-wild", "call of the wild", "Powerwulf", "explore_click_song(\"call-of-the-wild\")")
+    create_song_entry(explore_scroll, "diamond-heart", "diamond heart", "Alan Walker", "explore_click_song(\"diamond-heart\")")
+    create_song_entry(explore_scroll, "never-gonna-give-you-up", "never gonna give you up", "Rick Astley", "explore_click_song(\"never-gonna-give-you-up\")")
+    create_song_entry(explore_scroll, "above-the-skies", "Above the skies", "RedOS-Paulottix", "explore_click_song(\"above-the-skies\")")
+    create_song_entry(explore_scroll, "legends", "legends", "RedOS-Paulottix", "explore_click_song(\"legends\")")
+    create_song_entry(explore_scroll, "gladius", "Gladius Superabit", "Paulottix,SunoAi,Citrus", "explore_click_song(\"gladius\")")
+    create_song_entry(explore_scroll, "mountains", "where the mountain ends", "RedOS-Paulottix", "explore_click_song(\"mountains\")")
+    create_song_entry(explore_scroll, "where_the_mountain_ends_progressive_house_version", "Where the m. ends ph", "RedOS-Paulottix", "explore_click_song(\"where_the_mountain_ends_progressive_house_version\")")
+    create_song_entry(explore_scroll, "no", "No Return", "RedOS-Paulottix", "explore_click_song(\"no\")")
+    create_song_entry(explore_scroll, "that-bass", "That Bass will grow on you ig", "RedOS-Paulottix", "explore_click_song(\"that-bass\")")
+    create_song_entry(explore_scroll, "gladius-superabit-v2", "Gladius Superabit v2", "RedOS-Paulottix", "explore_click_song(\"gladius-superabit-v2\")")
 }
 
 def setup_lyrics_tab(tab) {
@@ -328,11 +330,11 @@ def setup_lyrics_tab(tab) {
     
     os.music_get_line()
 
-    global lyrics_word1 = create_lyrics_line(lyrics_container, " ", "lyrics1")
-    global lyrics_word2 = create_lyrics_line(lyrics_container, " ", "lyrics2")
-    global lyrics_word3 = create_lyrics_line(lyrics_container, "Please start a song", "lyrics3")
-    global lyrics_word4 = create_lyrics_line(lyrics_container, " ", "lyrics4")
-    global lyrics_word5 = create_lyrics_line(lyrics_container, " ", "lyrics5")
+    global lyrics_word1 = create_lyrics_line(lyrics_container, " ", "lyrics1()")
+    global lyrics_word2 = create_lyrics_line(lyrics_container, " ", "lyrics2()")
+    global lyrics_word3 = create_lyrics_line(lyrics_container, "Please start a song", "lyrics3()")
+    global lyrics_word4 = create_lyrics_line(lyrics_container, " ", "lyrics4()")
+    global lyrics_word5 = create_lyrics_line(lyrics_container, " ", "lyrics5()")
     
     lyrics_container.scrollUp()
 }
@@ -342,7 +344,7 @@ def setup_playlists_tab(tab) {
     playlists_vbox.margin(60, 5, 60, 5)
     tab.add(playlists_vbox)
 
-    add_button = button("Add New Playlist", "add_playlist_clicked")
+    add_button = button("Add New Playlist", "add_playlist_clicked()")
     add_button.height = 20
     add_button.margin(0, 5, 5, 5)
     playlists_vbox.add(add_button)
@@ -411,10 +413,11 @@ def frame() {
     }
 
     global progress = os.music_progress_skip
-    if(os.mps_skip_status == 1){
+    if (os.mps_skip_status == 0 && last_mps_skip_status == 1) {
         os.music_set_progress(progress)
         os.music_play()
     }
+    last_mps_skip_status = os.mps_skip_status
 
     if (os.music_length - os.music_progress < 5) {
         os.print("music:" + playlist_queue.get(playlist_queue.index(os.music_song_id) + 1))
@@ -484,7 +487,7 @@ def add_playlist_preview(parent, costume_name, playlist_name) {
     playlist_container = container()
     playlist_container.margin("","","",15)
     playlist_container.size(70,70)
-    playlist_container.onClick = "open_playlist_details_" + playlist_name
+    playlist_container.onClick = "open_playlist_details_" + playlist_name + "()"
     parent.add(playlist_container)
 
     playlist_costume = costume(costume_name, 10)
@@ -579,7 +582,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     title_label.align = 0.5
     current_playlist_window.add(title_label)
 
-    add_playlist_to_queue_button = button("Play Playlist", "add_playlist_to_queue_button_" + status_var_name)
+    add_playlist_to_queue_button = button("Play Playlist", "add_playlist_to_queue_button_" + status_var_name + "()")
     add_playlist_to_queue_button.margin("","",0,"")
     add_playlist_to_queue_button.theme = "#FF4060"
     current_playlist_window.add(add_playlist_to_queue_button)
@@ -643,7 +646,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_0.state = 0
     }
-    song_switch_0.onClick = "s_0"
+    song_switch_0.onClick = "s_0()"
     song_button_0.add(song_switch_0)
 
     // Song 1
@@ -667,7 +670,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_1.state = 0
     }
-    song_switch_1.onClick = "s_1"
+    song_switch_1.onClick = "s_1()"
     song_button_1.add(song_switch_1)
 
     // Song 2
@@ -691,7 +694,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_2.state = 0
     }
-    song_switch_2.onClick = "s_2"
+    song_switch_2.onClick = "s_2()"
     song_button_2.add(song_switch_2)
 
     // Song 3
@@ -715,7 +718,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_3.state = 0
     }
-    song_switch_3.onClick = "s_3"
+    song_switch_3.onClick = "s_3()"
     song_button_3.add(song_switch_3)
 
     // Song 4
@@ -739,7 +742,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_4.state = 0
     }
-    song_switch_4.onClick = "s_4"
+    song_switch_4.onClick = "s_4()"
     song_button_4.add(song_switch_4)
 
     // Song 5
@@ -763,7 +766,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_5.state = 0
     }
-    song_switch_5.onClick = "s_5"
+    song_switch_5.onClick = "s_5()"
     song_button_5.add(song_switch_5)
 
     // Song 6
@@ -787,7 +790,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_6.state = 0
     }
-    song_switch_6.onClick = "s_6"
+    song_switch_6.onClick = "s_6()"
     song_button_6.add(song_switch_6)
 
     // Song 7
@@ -811,7 +814,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_7.state = 0
     }
-    song_switch_7.onClick = "s_7"
+    song_switch_7.onClick = "s_7()"
     song_button_7.add(song_switch_7)
 
     // Song 8
@@ -835,7 +838,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_8.state = 0
     }
-    song_switch_8.onClick = "s_8"
+    song_switch_8.onClick = "s_8()"
     song_button_8.add(song_switch_8)
 
     // Song 9
@@ -859,7 +862,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_9.state = 0
     }
-    song_switch_9.onClick = "s_9"
+    song_switch_9.onClick = "s_9()"
     song_button_9.add(song_switch_9)
 
     // Song 10
@@ -883,7 +886,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_10.state = 0
     }
-    song_switch_10.onClick = "s_10"
+    song_switch_10.onClick = "s_10()"
     song_button_10.add(song_switch_10)
 
     // Song 11
@@ -907,7 +910,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_11.state = 0
     }
-    song_switch_11.onClick = "s_11"
+    song_switch_11.onClick = "s_11()"
     song_button_11.add(song_switch_11)
 
     // Song 12
@@ -931,7 +934,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_12.state = 0
     }
-    song_switch_12.onClick = "s_12"
+    song_switch_12.onClick = "s_12()"
     song_button_12.add(song_switch_12)
 
     // Song 13
@@ -955,7 +958,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_13.state = 0
     }
-    song_switch_13.onClick = "s_13"
+    song_switch_13.onClick = "s_13()"
     song_button_13.add(song_switch_13)
 
     // Song 14
@@ -979,7 +982,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_14.state = 0
     }
-    song_switch_14.onClick = "s_14"
+    song_switch_14.onClick = "s_14()"
     song_button_14.add(song_switch_14)
 
     // Song 15
@@ -1003,7 +1006,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_15.state = 0
     }
-    song_switch_15.onClick = "s_15"
+    song_switch_15.onClick = "s_15()"
     song_button_15.add(song_switch_15)
 
     // Song 16
@@ -1027,7 +1030,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_16.state = 0
     }
-    song_switch_16.onClick = "s_16"
+    song_switch_16.onClick = "s_16()"
     song_button_16.add(song_switch_16)
 
     // Song 17
@@ -1051,7 +1054,7 @@ def open_playlist_details(playlist_name, cover_image, status_var_name) {
     } else {
         song_switch_17.state = 0
     }
-    song_switch_17.onClick = "s_17"
+    song_switch_17.onClick = "s_17()"
     song_button_17.add(song_switch_17)
 }
 
@@ -1159,24 +1162,12 @@ def format_time(seconds) {
 }
 
 // Song click handlers (unchanged because language requires static function names for callbacks)
-def viva_la_vida(){ add_song_to_queue("viva-la-vida") }
-def hotel_california(){ add_song_to_queue("hotel-california") }
-def lost(){ add_song_to_queue("lost") }
-def nothing_else_matters(){ add_song_to_queue("nothing-else-matters") }
-def somewhere_i_belong(){ add_song_to_queue("somewhere-i-belong") }
-def everything_ends(){ add_song_to_queue("everything-ends") }
-def hall_of_fame(){ add_song_to_queue("hall-of-fame") }
-def call_of_the_wild(){ add_song_to_queue("call-of-the-wild") }
-def diamond_heart(){ add_song_to_queue("diamond-heart") }
-def never_gonna_give_you_up(){ add_song_to_queue("never-gonna-give-you-up") }
-def above_the_skies(){ add_song_to_queue("above-the-skies") }
-def legends(){ add_song_to_queue("legends") }
-def gladius(){ add_song_to_queue("gladius") }
-def mountain(){ add_song_to_queue("mountains") }
-def mountain_ends(){ add_song_to_queue("where_the_mountain_ends_progressive_house_version") }
-def no(){ add_song_to_queue("no") }
-def gladius_superabit(){ add_song_to_queue("gladius-superabit-v2") }
-def that_bass(){ add_song_to_queue("that-bass") }
+def explore_click_song(song) {
+    add_song_to_queue(song)
+    if (!os.music_is_playing) {
+        os.music_skip()
+    }
+}
 
 // Lyrics click handlers
 def lyrics1(){ os.music_set_progress(os.lyrics_time1)

@@ -12,7 +12,7 @@ def init() {
     button.marginRight = 20
     button.size(50)
     button.scale = 3
-    button.onClick = "take_photo"
+    button.onClick = "take_photo()"
     button.theme = 1
     window.add(button)
 }

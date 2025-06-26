@@ -55,12 +55,12 @@ def init() {
     buttons.margin("", 6, 6, 6)
     buttons.height = "shrink"
 
-    global timer_button_toggle = button("Start", "timer_toggle")
+    global timer_button_toggle = button("Start", "timer_toggle()")
     timer_button_toggle.margin(2)
     timer_button_toggle.theme = "#FF4060"
     buttons.add(timer_button_toggle)
     
-    global timer_button_cancel = button("Cancel", "timer_cancel")
+    global timer_button_cancel = button("Cancel", "timer_cancel()")
     timer_button_cancel.margin(2)
     buttons.add(timer_button_cancel)
 
@@ -93,16 +93,16 @@ def init() {
     buttons.margin("", 6, 6, 6)
     buttons.height = "shrink"
 
-    global stopwatch_button_toggle = button("Start", "stopwatch_toggle")
+    global stopwatch_button_toggle = button("Start", "stopwatch_toggle()")
     stopwatch_button_toggle.margin(2)
     stopwatch_button_toggle.theme = "#FF4060"
     buttons.add(stopwatch_button_toggle)
 
-    global stopwatch_button_lap = button("Lap", "stopwatch_lap")
+    global stopwatch_button_lap = button("Lap", "stopwatch_lap()")
     stopwatch_button_lap.margin(2)
     buttons.add(stopwatch_button_lap)
     
-    global stopwatch_button_reset = button("Reset", "stopwatch_reset")
+    global stopwatch_button_reset = button("Reset", "stopwatch_reset()")
     stopwatch_button_reset.margin(2)
     buttons.add(stopwatch_button_reset)
 

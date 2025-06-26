@@ -345,7 +345,7 @@ def title(text) {
 //returns a preformatted file object
 def file(name, path, number_tokens, last_edited) {
     container = container()
-    container.onClick = "w_openfile_fileclicked"
+    container.onClick = "w_openfile_fileclicked()"
     container.height = 36
     container.width = "fill"
     container.theme = 0
