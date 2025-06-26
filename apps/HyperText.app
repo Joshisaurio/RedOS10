@@ -34,7 +34,7 @@ def init() {
 
     //color variables
     global primary_color = "#FF4060"
-    global background_brighter = "#1A1818"
+    global background_brighter = 0.1
 
     os.print("HyperText running")
     open_start_window()
