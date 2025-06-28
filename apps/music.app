@@ -374,13 +374,7 @@ def open_playlist_details(playlist_name, cover_image, index) {
 
         i += 1
     }
-    }
-    }
-    song_switch_6.onClick = "s_6()"
-    song_button_6.add(song_switch_6)
 }
-    song_switch_6.onClick = "s_6()"
-    song_button_6.add(song_switch_6)
 
 def playlist_switch(index, i) {
     if (playlist_switches.get(i).state) {
@@ -461,7 +455,7 @@ def get_index_by_song_id(song_id) {
 def add_playlist_to_queue(index) {
     global playlist_queue
     global current_queue_index
-    playlist_queue = playlists.get(index)
+    playlist_queue = playlists.get(index).copy()
     current_queue_index = 0
     if (playlist_queue.length > 0) {
         os.music_start(playlist_queue.get(0))
