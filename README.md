@@ -90,13 +90,14 @@ The server reacts with:
 If the question is profane, the user is banned for 10 minutes from asking llm or discord.
 
 The bot has also some basic commands:
-- `$help` – Displays this help message
-- `$ping <message>` – Echoes back your message
-- `$stats` – Shows the number of registered users
-- `$project get` – Lists all connected projects
-- `$project add <project-id>` – Connects a new project with the given ID
-- `$project remove <project-id>` – Removes the project
-- `$project lock <project-id>` – Locks the project, so it cannot be removed. Only use this command for the official project. A lock can only be removed manually by KROKOBIL when the server restarts!
+* `/help` – Display this help message
+* `/ping <message>` – Echo back your message
+* `/stats` – Show the number of registered users
+* `/project-get` – List all connected projects
+* `/project-add <project-id>` – Connect a new project with the given ID
+* `/project-remove <project-id>` – Remove a project
+* `/project-lock <project-id>` – Lock the project, so it cannot be removed. Only use this command for the official project. A lock can only be removed by KROKOBIL!
+* `/music <song-name>` (append mp3 file) – Split the mp3 file in small parts
 
 You can use some commands in a DM to the bot.
 
