@@ -43,17 +43,19 @@ A list can be created with the `list()` function. You can add any number of argu
 
 The first element in a list has index 0.
 
-Lists are just pointers to the actual list. This means that if you modify a copied list, the original list gets also modified.
+Lists are just pointers to the actual list.
 
 Attributes:
 - `length`
 
 Methodes:
 - `get(index)` returns the item at the given index
+- `set(index, item)` or `replace(index, item)` replaces the item at the given index
 - `add(item)` or `append(item)` adds an item to the end of the list
 - `insert(item, index)` inserts an item before the item at the given index, so that it afterwards is at that index
 - `delete(index)` or `remove(index)` removes the item at the given index from the list
 - `find(item)` or `index(item)` returns the index of the given item or -1 if it is not in the list
+- `copy()` returns a copy of the list (not a deep copy, so any item in the list is still the same)
 
 ## Strings
 
@@ -331,13 +333,13 @@ Inherited from `Container`
 Constructor:
 - `label()`
 - `label(text)`
-- `label(text, fontSize)`
-- `label(text, fontSize, align)`
-- `label(text, fontSize, align, wrap)`
+- `label(text, size)`
+- `label(text, size, align)`
+- `label(text, size, align, wrap)`
 
 Attributes:
 - `text`
-- `fontSize`
+- `size` Font size
 - `align`
 - `wrap`
 - `monospace`
@@ -349,9 +351,9 @@ Inherited from `Label` and `HContainer`
 Constructor:
 - `input()`
 - `input(text)`
-- `input(text, fontSize)`
-- `input(text, fontSize, align)`
-- `input(text, fontSize, align, wrap)`
+- `input(text, size)`
+- `input(text, size, align)`
+- `input(text, size, align, wrap)`
 
 Attributes:
 - `focus` if the input is selected

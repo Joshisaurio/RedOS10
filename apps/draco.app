@@ -37,7 +37,7 @@ def init() {
     input.margin(5)
     input.marginRight = 25
     input.marginLeft = 40
-    input.onEnter = "send"
+    input.onEnter = "send()"
     input.theme = 0.1
     bottom.add(input)
 
