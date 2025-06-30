@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html data-bs-theme="dark">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+            crossorigin="anonymous"></script>
+        <link href="styles.css" rel="stylesheet">
+        <link href="font.css" rel="stylesheet">
+        <script src="script.js" defer></script>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <h1 style="font-size: 2rem"><span style="color:#ff3355">Red</span>OS</h1>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Modes
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item light-mode-switch" href="#">Light</a></li>
+                                <li><a class="dropdown-item dark-mode-switch" href="#">Dark</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" aria-disabled="true" href="https://www.oswars.org/red.html" target="_blank">Our Profile</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex" role="search" action="/check" method="POST">
+                        <input class="form-control me-2" type="search" name="password" id="password" placeholder="Code to enter member portal" aria-label="Check" required>
+                        <button class="btn btn-outline-success" type="submit">Check</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+        <!-- Navbar is Bootstrap's navbar. Code copied at https://getbootstrap.com/docs/5.3/components/navbar/#text -->
+        <!-- Card is Bootstrap's card. Code copied at https://getbootstrap.com/docs/5.3/components/card -->
+        <section class="top-logo d-flex flex-column gap-1 my-1">
+            <h1 class="large-text text-center"><strong><span style="color:#ff3355">Red</span>OS<br>
+            <span style="font-size: 1.5rem;"><p>gladius superabit</p></span></strong></h1>
+        </section>
+        <section class="row justify-content-center" style="background-color: #ff3355; padding-top: 12px;">
+                <div class="shadow-lg col-10 col-md-3 mx-2 mb-3 card">
+                    <img src="assets/redos-lockscreen.png" class="card-img-top" style="margin-top: 12px;">
+                    <div class="card-body">
+                        <h5 class="card-title">Sleek interface for lockscreen</h5>
+                        <p class="card-text">The RedOS lockscreen displays the current time, date, and recent notifications with a clean
+                            red-themed interface. It features a smooth swipe-to-unlock gesture, giving users a realistic and modern lockscreen
+                            experience.</p>
+                        <a href="https://scratch.mit.edu/projects/1186023517/" target="_blank" class="btn btn-primary">Our project</a>
+                    </div>
+                </div>
+                <div class="shadow-lg col-10 col-md-3 mx-2 mb-3 card">
+                    <img src="assets/redos-login.png" class="card-img-top" style="margin-top: 12px;">
+                    <div class="card-body">
+                        <h5 class="card-title">Cloud management</h5>
+                        <p class="card-text">The RedOS user management system is very advanced
+                            and is done via Python servers the servers are managed by 
+                            <a href="https://scratch.mit.edu/users/_krokobil" target="_blank">@_krokobil</a>
+                             on Scratch.
+                        </p>
+                        <a href="https://oswars.org" target="_blank" class="btn btn-primary">OS Wars</a>
+                    </div>
+                </div>
+                <div class="shadow-lg col-10 col-md-3 mx-2 mb-3 card">
+                    <img src="assets/redos-desktop.png" class="card-img-top" style="margin-top: 12px;">
+                    <div class="card-body">
+                        <h5 class="card-title">Desktop experience</h5>
+                        <p class="card-text">The RedOS desktop experience is a beautiful mix
+                            of perfectly fine tuned elements designed to fit your preferences.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Hey guys! Replace "[]" with the team members' username! -->
+        <section class="last-stuff my-5">
+            <footer class="py-4">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>About Us</h5>
+                            <p>[modify this until its cool]</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Members</h5>
+                            <ul class="list-unstyled d-flex gap-4">
+                                <div>
+                                    <li><a href="https://scratch.mit.edu/users/Joshisaurio" target="_blank" class="text-info">@Joshisaurio</a></li>
+                                    <li><a href="https://scratch.mit.edu/users/_krokobil" target="_blank" class="text-success">@_krokobil</a></li>
+                                    <li><a href="https://scratch.mit.edu/users/777-pig" target="_blank" class="text-white">@777-pig</a></li>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                </div>
+                                <div>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                </div>
+                                <div>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                </div>
+                                <div>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                </div>
+                                <div>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                    <li><a href="https://scratch.mit.edu/users/" target="_blank" class="text-white">[]</a></li>
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <p>Made by the RedOS Team for OSWars.</p>
+                    </div>
+                </div>
+            </footer>        
+        </section>
+    </body>
+</html>
