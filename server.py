@@ -515,7 +515,7 @@ discord_tree = discord_client.tree
 bot_loop = asyncio.new_event_loop()
 
 CHANNEL_ID = 1358447901365501962
-ADMIN_ID = 1140159421557780510
+ADMIN_IDS = [1140159421557780510, 1099139930648752138, 993149349058072607]
 
 @discord_client.event
 async def on_ready():
@@ -558,14 +558,14 @@ async def on_message_edit(before: discord.Message, after: discord.Message):
                     return
 
 async def unsecure(interaction: Interaction) -> bool:
-    if interaction.channel.id != CHANNEL_ID and interaction.user.id != ADMIN_ID:
+    if interaction.channel.id != CHANNEL_ID and not interaction.user.id in ADMIN_IDS:
         await interaction.response.send_message(f"for safety reasons you can only use this command here: <#{CHANNEL_ID}>")
         return True
     return False
 
 async def admin(interaction: Interaction) -> bool:
-    if interaction.user.id != ADMIN_ID:
-        await interaction.response.send_message(f"for safety reasons only the admin can use this command: <@{ADMIN_ID}>")
+    if not interaction.user.id in ADMIN_IDS:
+        await interaction.response.send_message(f"for safety reasons only the admin can use this command: {', '.join(['<@' + str(id) + '>' for id in ADMIN_IDS])}")
         return True
     return False
 
