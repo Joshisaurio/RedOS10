@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
     res.sendFile(`${__dirname}/public/index.html`);
 });
 
-app.post("/check", (req, res) => {
+app.post("/member", (req, res) => {
     if (String(req.body.password) == String(process.env.PASSWORD)) {
         res.sendFile(`${__dirname}/public/member.html`);
     } else {
