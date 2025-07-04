@@ -413,6 +413,9 @@ The os object has some attributes and methodes to interact with the project.
 - `os.warn(text)` log warning to the debugger
 - `os.error(text)` log error to the debugger
 
+## Apps
+- `os.run_code(app_name, code_string)`
+
 ## Time:
 - `os.year`
 - `os.month`
