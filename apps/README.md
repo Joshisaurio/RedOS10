@@ -481,6 +481,8 @@ when finished the callback function is called
 - `os.ask_draco(prompt, callback)` calls the local assistant
 - `os.ask_llm(prompt, callback)` calls the large language model via python server and api
 - `os.save_all(callback)` saves all settings to the server
+- `os.search(query, callback)` searches duckduckgo
+- `os.website(url, callback)` opens the url
 
 ## Filesystem
 - `os.read_file(path)`

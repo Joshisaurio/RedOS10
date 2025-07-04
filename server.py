@@ -20,6 +20,10 @@ from datetime import datetime, timedelta, timezone
 import json
 import math
 import subprocess
+import requests
+from bs4 import BeautifulSoup
+import urllib.parse
+import trafilatura
 
 LOG_TO_FILE = True
 
@@ -358,6 +362,69 @@ def app_llm_list(username: str, password: str) -> list:
         llm_list.append(llm_messages.get(str(message_id), {}).get("text", "None"))
     return llm_list
 
+
+@methode("search")
+def app_search(query: str) -> list:
+    if utilities.is_profane(query):
+        return ["Don't search for profane words.", "", ""]
+    url = f"https://duckduckgo.com/html/?q={urllib.parse.quote(query)}&kp=1"
+    resp = requests.get(url)
+    soup = BeautifulSoup(resp.text, "html.parser")
+
+    if soup.find("div", class_="anomaly-modal__mask"):
+        return ["Search limit reached. Try again in a few minutes.", "", ""]
+    
+    return_list = []
+
+    for result in soup.find_all("div", class_="result"):
+        link_tag = result.find("a", class_="result__a")
+        snippet_tag = result.find("a", class_="result__snippet")
+        
+        if link_tag:
+            # Titeltext
+            title = link_tag.get_text(strip=True)
+
+            # Saubere URL
+            parsed = urllib.parse.urlparse(link_tag["href"])
+            uddg_value = urllib.parse.parse_qs(parsed.query).get("uddg", [None])[0]
+            if not uddg_value:
+                continue  # falls kein uddg vorhanden ist, überspringen
+            clean_url = urllib.parse.unquote(uddg_value)
+
+            # Vorschautext
+            snippet = snippet_tag.get_text(strip=True) if snippet_tag else ""
+
+            if not utilities.is_profane(title + " ; " + clean_url + " ; " + snippet):
+                return_list.append(title)
+                return_list.append(clean_url)
+                return_list.append(snippet)
+
+    return return_list
+
+@methode("website")
+def app_search(url: str) -> list:
+    if utilities.is_profane(url):
+        return ["Don't open profane websites."]
+    if not (url.startswith("https://") or url.startswith("http://")):
+        url = "https://" + url
+    html = requests.get(url).text
+    result = trafilatura.extract(
+        html,
+        include_comments=False,
+        include_tables=False,
+        no_fallback=True
+    )
+
+    if result is None:
+        return ["The website isn't readable"]
+
+    if len(result) > 1000:
+        result = result[:1000]
+
+    if utilities.is_profane(result):
+        return ["Don't open profane websites."]
+
+    return [result]
 
 ########################################################
 
