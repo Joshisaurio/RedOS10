@@ -4,6 +4,7 @@
 def init() {
     global window = window()
     window.center()
+    window.minSize(320, 100)
 
     tabs = tabs()
     tabs.fill()
@@ -207,23 +208,23 @@ def init() {
     cust_options_label.marginTop = 10
     cust_vbox.add(cust_options_label)
 
-    global fullHours = switch("Use 24-Hour time", "toggleFullHours()")
+    global fullHours = switch("Use 24-Hour time", "os.set_full_hours(!os.full_hours)")
     fullHours.state = os.full_hours
     cust_vbox.add(fullHours)
 
-    global startWeekOnSunday = switch("Start week on Sunday", "toggleEffectEight()")
+    global startWeekOnSunday = switch("Start week on Sunday", "os.set_effect(8, !os.get_effect(8))")
     startWeekOnSunday.state = os.get_effect(8)
     cust_vbox.add(startWeekOnSunday)
 
-    global showSeconds = switch("Show seconds", "toggleEffectSix()")
+    global showSeconds = switch("Show seconds", "os.set_effect(6, !os.get_effect(6))")
     showSeconds.state = os.get_effect(6)
     cust_vbox.add(showSeconds)
 
-    global trail_effect = switch("Enable mouse trail", "toggleEffectFour()")
+    global trail_effect = switch("Enable mouse trail", "os.set_effect(4, !os.get_effect(4))")
     trail_effect.state = os.get_effect(4)
     cust_vbox.add(trail_effect)
 
-    global click_effect = switch("Enable click effect", "toggleEffectFive()")
+    global click_effect = switch("Enable click effect", "os.set_effect(5, !os.get_effect(5))")
     click_effect.state = os.get_effect(5)
     cust_vbox.add(click_effect)
     
@@ -298,19 +299,19 @@ def init() {
     sys_option_title.marginTop = 10
     sys_vbox.add(sys_option_title)
 
-    global showFps = switch("Show FPS", "toggleEffectOne()")
+    global showFps = switch("Show FPS", "os.set_effect(1, !os.get_effect(1))")
     showFps.state = os.get_effect(1)
     sys_vbox.add(showFps)
 
-    global showDelta = switch("Show deltaTime", "toggleEffectTwo()")
+    global showDelta = switch("Show deltaTime", "os.set_effect(2, !os.get_effect(2))")
     showDelta.state = os.get_effect(2)
     sys_vbox.add(showDelta)
 
-    global showAnimTime = switch("Show animTime", "toggleEffectThree()")
+    global showAnimTime = switch("Show animTime", "os.set_effect(3, !os.get_effect(3))")
     showAnimTime.state = os.get_effect(3)
     sys_vbox.add(showAnimTime)
 
-    global showPreinstalled = switch("Show pre-installed apps list", "toggleEffectSeven()")
+    global showPreinstalled = switch("Show pre-installed apps list", "os.set_effect(7, !os.get_effect(7))")
     showPreinstalled.state = os.get_effect(7)
     sys_vbox.add(showPreinstalled)
 
@@ -389,7 +390,7 @@ def init() {
     info_soft_title.wrap = 1
     info_vbox.add(info_soft_title)
 
-    info_soft_version = label("Red OS v2.13", 11)
+    info_soft_version = label("Red OS v2.14", 11)
     info_soft_draco = label("Draco v1.2", 11)
     info_soft_scratch = label("Made with Scratch 3.0", 11)
 
@@ -477,35 +478,19 @@ def frame() {
 
     //test_title.text = "Current theme: " + os.theme
 
-    if (os.theme == "dark") {
-        theme_dark.theme = "#FF4060"
-    } else {
-        theme_dark.theme = 0.1
-    }
+    theme_dark.theme = get_color(os.theme == "dark")
 
-    if (os.theme == "light") {
-        theme_light.theme = "#FF4060"
-    } else {
-        theme_light.theme = 0.1
-    }
+    
+    theme_light.theme = get_color(os.theme == "light")
 
-    if (os.theme == "scheduled") {
-        theme_scheduled.theme = "#FF4060"
-    } else {
-        theme_scheduled.theme = 0.1
-    }
+    
+    theme_scheduled.theme = get_color(os.theme == "scheduled")
 
-    if (os.volume==0) {
-        vol_off.theme = "#FF4060"
-    } else {
-        vol_off.theme = 0.1
-    }
 
-    if (os.volume>0) {
-        vol_on.theme = "#FF4060"
-    } else {
-        vol_on.theme = 0.1
-    }
+    vol_off.theme = get_color(os.volume==0)
+
+
+    vol_on.theme = get_color(os.volume>0)
 
     if (data_state==0) {
         data_button.text = "Save"
@@ -520,39 +505,13 @@ def frame() {
     // CUSTOMIZATION //
     ///////////////////
 
-    if (os.theme == "dark") {
-        cust_theme_dark.theme = "#FF4060"
-    } else {
-        cust_theme_dark.theme = 0.1
-    }
+    cust_theme_dark.theme = get_color(os.theme == "dark")
+    cust_theme_light.theme = get_color(os.theme == "light")
+    cust_theme_scheduled.theme = get_color(os.theme == "scheduled")
 
-    if (os.theme == "light") {
-        cust_theme_light.theme = "#FF4060"
-    } else {
-        cust_theme_light.theme = 0.1
-    }
-
-    if (os.theme == "scheduled") {
-        cust_theme_scheduled.theme = "#FF4060"
-    } else {
-        cust_theme_scheduled.theme = 0.1
-    }
-
-    if (os.bg=="BG1") {
-        cust_bgOne.theme = "#FF4060"
-    } else {
-        cust_bgOne.theme = 0.1
-    }
-    if (os.bg=="BG2") {
-        cust_bgTwo.theme = "#FF4060"
-    } else {
-        cust_bgTwo.theme = 0.1
-    }
-    if (os.bg=="BG3") {
-        cust_bgThree.theme = "#FF4060"
-    } else {
-        cust_bgThree.theme = 0.1
-    }
+    cust_bgOne.theme = get_color(os.bg=="BG1")
+    cust_bgTwo.theme = get_color(os.bg=="BG2")
+    cust_bgThree.theme = get_color(os.bg=="BG3")
 
     trail_effect.state = os.get_effect(4)
     click_effect.state = os.get_effect(5)
@@ -573,17 +532,9 @@ def frame() {
     // SYSTEM //
     ////////////
 
-    if (os.volume==0) {
-        sys_vol_off.theme = "#FF4060"
-    } else {
-        sys_vol_off.theme = 0.1
-    }
 
-    if (os.volume>0) {
-        sys_vol_on.theme = "#FF4060"
-    } else {
-        sys_vol_on.theme = 0.1
-    }
+    sys_vol_off.theme = get_color(os.volume==0)
+    sys_vol_on.theme = get_color(os.volume>0)
 
     if (data_state==0) {
         sys_data_button.text = "Save"
@@ -594,12 +545,17 @@ def frame() {
     }
 
     showFps.state = os.get_effect(1)
-
     showDelta.state = os.get_effect(2)
-
     showAnimTime.state = os.get_effect(3)
-
     showPreinstalled.state = os.get_effect(7)
+}
+
+def get_color(condition) {
+    if (condition) {
+        return "#FF4060"
+    } else {
+        return 0.1
+    }
 }
 
 def enable_dark_mode() {
@@ -617,17 +573,17 @@ def enable_scheduled_mode() {
     data_state = 0
 }
 
-def volume_off () {
+def volume_off() {
     os.set_volume(0)
     os.print("Set volume to 0")
 }
 
-def volume_on () {
+def volume_on() {
     os.set_volume(100)
     os.print("Set volume to 100")
 }
 
-def save_data () {
+def save_data() {
     if (os.guest == 0) {
         data_state = 1
         os.print("Saving data...")
@@ -643,51 +599,15 @@ def data_saved (info) {
     os.print("Data saved")
 }
 
-def bgOne {
+def bgOne() {
     os.set_bg("BG1")
     data_state = 0
 }
-def bgTwo {
+def bgTwo() {
     os.set_bg("BG2")
     data_state = 0
 }
-def bgThree {
+def bgThree() {
     os.set_bg("BG3")
     data_state = 0
-}
-
-def toggleEffectOne {
-    os.set_effect(1, !os.get_effect(1))
-}
-
-def toggleEffectTwo {
-    os.set_effect(2, !os.get_effect(2))
-}
-
-def toggleEffectThree {
-    os.set_effect(3, !os.get_effect(3))
-}
-
-def toggleEffectFour {
-    os.set_effect(4, !os.get_effect(4))
-}
-
-def toggleEffectFive {
-    os.set_effect(5, !os.get_effect(5))
-}
-
-def toggleEffectSix {
-    os.set_effect(6, !os.get_effect(6))
-}
-
-def toggleEffectSeven {
-    os.set_effect(7, !os.get_effect(7))
-}
-
-def toggleEffectEight {
-    os.set_effect(8, !os.get_effect(8))
-}
-
-def toggleFullHours {
-    os.set_full_hours(!os.full_hours)
 }

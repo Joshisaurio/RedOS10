@@ -5,8 +5,11 @@ def init() {
 
     global window = window()
     window.center()
+    window.title = "Calendar"
+    window.minSize(210, 180)
 
     tabs = tabs()
+    tabs.sideWidth = 60
     tabs.fill()
 
     tabs.tab = 1

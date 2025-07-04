@@ -65,6 +65,7 @@ Attributes:
 - `length`
 
 Methodes:
+- `get(index)` return the letter at that index, starting at 0
 - `contains(substring)`
 - `beginswith(prefix)`
 - `endswith(suffix)`
@@ -176,6 +177,10 @@ Numbers:
 Type conversion:
 - `str(number)`
 - `number(string)`
+- `type(something)` return `"number"`, `"string"`, `"element"` or `"list"`
+
+Variables:
+- `exists(variable_name)` variable_name is a string
 
 ## System functions
 
@@ -322,6 +327,7 @@ Constructor:
 
 Attributes:
 - `tab` index starting by 1 (0 for no tab)
+- `sideWidth` width of the left side of the tabs container
 
 Methodes:
 - `add(element, tabName)`

@@ -3,7 +3,7 @@ def init() {
     window.minSize(300, 200)
     window.center()
 
-    tabs = tabs()
+    global tabs = tabs()
     tabs.fill()
     tabs.tab = 1
 
@@ -136,6 +136,8 @@ def frame() {
     stopwatch_label.text = time_to_format(stopwatch)
 
     timer_canvas.data = timer
+
+    window.title = list("Clock", "Timer", "Stopwatch", "World Clock").get(tabs.tab-1)
 }
 
 def time_to_format(time) {

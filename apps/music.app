@@ -12,6 +12,7 @@ def init() {
     tabs = tabs()
     tabs.marginBottom = 30
     tabs.fill()
+    tabs.sideWidth = 70
     tabs.tab = 4
     window.add(tabs)
     

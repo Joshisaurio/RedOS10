@@ -3,10 +3,12 @@
 def init () {
     global window = window()
     window.center()
+    window.minSize(180, 100)
 
     tabs = tabs()
     tabs.fill()
     tabs.tab = 1
+    tabs.sideWidth = 60
 
     //////////
     // HOME //

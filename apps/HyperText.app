@@ -8,6 +8,7 @@
 //on start of the app
 def init() {
     global window = window(100, 150)
+    window.minSize(150, 150)
     global window_state = "start"
 
     //vars for smooth scaling
@@ -50,41 +51,6 @@ def frame() {
 
     } elif (window_state == "newfile") {
 
-    } elif (window_state == "openfile") {
-        w_openfile_file_scroll.delete_children()
-        if (os.list_folder("red_os/user/HyperText Documents")) {
-            folder_content = ""
-            folder_content = os.list_folder("red_os/user/HyperText Documents")
-            os.print(folder_content)
-            os.print(os.list_folder("red_os/user/HyperText Documents"))
-            folder_content_idx = 1
-            depth_idx = 0
-            while(folder_content_idx != -1) {
-                folder_part = split_string_into_substring_by_string(folder_content, "^°²³", folder_content_idx)
-                if (folder_part == 1) {
-                    folder_content_idx += 1
-                    folder_part = split_string_into_substring_by_string(folder_content, "^°²³", folder_content_idx)
-                    if (depth_idx == 0) {
-                        content_length = length_of(os.read_file("red_os/user/HyperText Documents/" + folder_part + ".app"))
-                        edit_date = os.read_file("red_os/user/HyperText Documents/" + project_data_file)
-                        w_openfile_file_scroll.add(file(folder_part, "red_os/user/HyperText Documents", content_length, edit_date))
-                    }
-                    depth_idx += 1
-                } elif (folder_part == 0) {
-                    depth_idx -= 1
-                }
-                folder_content_idx += 1
-                if (split_string_into_substring_by_string(folder_content, "^°²³", folder_content_idx) == "") {
-                    folder_content_idx = -1
-                }
-            }
-        }
-        else {  
-            w_openfile_nofiles = label("No Files")
-            w_openfile_nofiles.margin(30)
-            w_openfile_nofiles.align = 0.5
-            w_openfile_file_scroll.add(w_openfile_nofiles)
-        }
     }
 }
 
@@ -117,14 +83,6 @@ def resize() {
 
 //////////////////////CALLBACKS///////////////////////
 
-//when the newfile button is clicked in start window
-def w_start_newfile() {
-    open_newfile_window()
-}
-//when the openfile button is clicked in start window
-def w_start_openfile() {
-    open_openfile_window()
-}
 //when the create buttons is clicked in newfile window
 def w_newfile_create() {
     project_name = w_newfile_filename.text
@@ -142,10 +100,7 @@ def w_newfile_create() {
     }
     open_editor_window()
 }
-//when the cancel button is clicked in newfile window
-def w_newfile_cancel() {
-    open_start_window()
-}
+
 //when a file is clicked in openfile window
 def w_openfile_fileclicked() {
     project_content = os.read(project_path + "/" + project_name + ".app")
@@ -178,12 +133,12 @@ def open_start_window() {
     w_start_buttons = hcontainer()
     w_start_buttons.margin("", 10, 10)
     w_start_buttons.height = "shrink"
-    w_start_new_button = button("New File", "w_start_newfile()")
+    w_start_new_button = button("New File", "open_newfile_window()")
     w_start_new_button.marginRight = 5
     w_start_new_button.minHeight = 25
     w_start_new_button.theme = primary_color
     w_start_buttons.add(w_start_new_button)
-    w_start_open_button = button("Open File", "w_start_openfile()")
+    w_start_open_button = button("Open File", "open_openfile_window()")
     w_start_open_button.marginLeft = 5
     w_start_open_button.theme = primary_color
     w_start_open_button.minHeight = 25
@@ -194,31 +149,14 @@ def open_start_window() {
 }
 //the openfile window is opened when user wants to choose a file in the redos/user folder
 def open_openfile_window() {
-    window_state = "openfile"
-    window.delete_children()
-    start_resize(200, 250)
-
-    w_openfile_main = container()
-    w_openfile_title = title("All HyperText files:")
-    w_openfile_main.add(w_openfile_title)
-
-    w_openfile_file_container = container()
-    w_openfile_file_container.theme = background_brighter
-    global w_openfile_file_scroll = vScrollContainer()
-    w_openfile_file_scroll.margin(5)
-    w_openfile_file_container.add(w_openfile_file_scroll)
-    w_openfile_file_container.margin(35, 10, 42)
-    w_openfile_file_container.fill()
-    w_openfile_main.add(w_openfile_file_container)
-
-    w_openfile_cancel = button("Cancel", "w_newfile_cancel()")
-    w_openfile_cancel.margin("", 10, 10)
-    w_openfile_cancel.theme = primary_color
-    w_openfile_cancel.minHeight = 22
-    w_openfile_main.add(w_openfile_cancel)
-
-    window.add(w_openfile_main)
+    os.run_code("filesystem", "open_file(\".app\", \"" + root_path + "\", \"HyperText\", \"open_file\")")
 }
+
+def open_file(path) {
+    os.print("File selected:")
+    os.print(path)
+}
+
 //the newfile window is opened when user wants to create a new file
 def open_newfile_window() {
     window_state = "newfile"
@@ -264,7 +202,7 @@ def open_newfile_window() {
     w_newfile_create.minHeight = 20
     w_newfile_create.theme = primary_color
     w_newfile_buttons.add(w_newfile_create)
-    w_newfile_cancel = button("Cancel", "w_newfile_cancel()")
+    w_newfile_cancel = button("Cancel", "open_start_window()")
     w_newfile_cancel.marginLeft = 2
     w_newfile_cancel.theme = primary_color
     w_newfile_cancel.minHeight = 20
@@ -308,72 +246,9 @@ def open_editor_window() {
 
 ////////////////USEFULL HELPER FUNCTIONS////////////////
 
-//splits a string into parts (you select which part with substring_idx)
-def split_string_into_substring_by_string(string, split_string, substring_idx) {
-    temp = ""
-    substring_idx_i = 0
-    string_i = 1
-    split_string_i = 1
-    while (string_i <= length_of(string)) {
-        while (letter(string_i, string) == letter(split_string_i, split_string)) {
-            string_i += 1
-            if (string_i > length_of(string)) {
-                return temp
-            }
-            split_string_i += 1
-        }
-        if (split_string_i > length_of(split_string)) {
-            substring_idx_i += 1
-            if (substring_idx_i == substring_idx) {
-                return temp
-            }
-            temp = ""
-        }
-        split_string_i = 1
-        temp = temp + letter(string_i, string)
-        string_i += 1
-    }
-    temp = temp + letter(string_i, string)
-    return temp
-}
 //returns a preformatted title object
 def title(text) {
     title = label(text, 15)
     title.margin(10, 10, "")
     return title
-}
-//returns a preformatted file object
-def file(name, path, number_tokens, last_edited) {
-    container = container()
-    container.onClick = "w_openfile_fileclicked()"
-    container.height = 36
-    container.width = "fill"
-    container.theme = 0
-    container.margin(3)
-    namel = label(name, 12)
-    namel.margin(6, 6, "")
-    namel.align = 0
-    container.add(namel)
-    last_editedl = label(last_edited, 12)
-    last_editedl.margin(6, 6, "")
-    last_editedl.align = 1
-    container.add(last_editedl)
-
-    pathl = label(path, 8)
-    pathl.margin("", 6, 6)
-    pathl.align = 0
-    container.add(pathl)
-    number_tokensl = label(str(number_tokens), 8)
-    number_tokensl.margin("", 6, 6)
-    number_tokensl.align = 1
-    container.add(number_tokensl)
-
-    line = container()
-    line.margin("", 0, 0)
-    line.height = 3
-    line.width = "fill"
-    line.theme = primary_color
-    //container.add(line)
-
-    return container
 }
