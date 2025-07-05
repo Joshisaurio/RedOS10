@@ -415,6 +415,7 @@ The os object has some attributes and methodes to interact with the project.
 
 ## Apps
 - `os.run_code(app_name, code_string)`
+- `os.calculate(expression_string, callback)` delay of one frame
 
 ## Time:
 - `os.year`
