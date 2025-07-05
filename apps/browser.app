@@ -44,6 +44,10 @@ def on_enter() {
 }
 
 def display_results(results) {
+    if (results.length == 1) {
+        display_website(results.get(0))
+        return
+    }
     content.delete_children()
     content.scrollUp()
     i = 0

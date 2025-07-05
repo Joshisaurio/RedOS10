@@ -24,6 +24,8 @@ import requests
 from bs4 import BeautifulSoup
 import urllib.parse
 import trafilatura
+import ipaddress
+import socket
 
 LOG_TO_FILE = True
 
@@ -363,16 +365,97 @@ def app_llm_list(username: str, password: str) -> list:
     return llm_list
 
 
+PRIVATE_NETS = [
+    ipaddress.ip_network("127.0.0.0/8"),       # loopback
+    ipaddress.ip_network("10.0.0.0/8"),        # private
+    ipaddress.ip_network("172.16.0.0/12"),     # private + docker bridge
+    ipaddress.ip_network("192.168.0.0/16"),    # private
+    ipaddress.ip_network("169.254.0.0/16"),    # link-local
+    ipaddress.ip_network("::1/128"),           # IPv6 loopback
+    ipaddress.ip_network("fe80::/10"),         # IPv6 link-local
+    ipaddress.ip_network("fc00::/7"),          # IPv6 private
+]
+
+BLOCKED_HOSTNAMES = {
+    "localhost",
+    "ip6-localhost",
+    "host.docker.internal",
+}
+
+def is_ip_private(ip: str) -> bool:
+    addr = ipaddress.ip_address(ip)
+    if (addr.is_private
+        or addr.is_loopback
+        or addr.is_link_local
+        or addr.is_reserved
+        or addr.is_multicast):
+        return True
+    for net in PRIVATE_NETS:
+        if addr in net:
+            return True
+    return False
+
+def resolve_hostname(hostname: str) -> str:
+    try:
+        infos = socket.getaddrinfo(hostname, None)
+        for family, _, _, _, sockaddr in infos:
+            if family == socket.AF_INET:
+                return sockaddr[0]
+        return infos[0][4][0]
+    except Exception:
+        raise ReturnError(f"Could not resolve hostname: {hostname}")
+
+
+def fetch_response(url: str, timeout: float = 5.0) -> str:
+    try:
+        if not (url.startswith("https://") or url.startswith("http://")):
+            url = "https://" + url
+        
+        parsed = urllib.parse.urlparse(url)
+        if parsed.scheme not in {"http", "https"}:
+            raise ReturnError("Only HTTP/HTTPS is allowed")
+        if not parsed.hostname:
+            raise ReturnError("Invalid URL without hostname")
+        
+        hostname = parsed.hostname.lower()
+        if hostname in BLOCKED_HOSTNAMES:
+            raise ReturnError("Blocked private hostname")
+        
+        ip = resolve_hostname(hostname)
+        if is_ip_private(ip):
+            raise ReturnError("Blocked internal/private IP")
+    
+        response = requests.get(url, timeout=timeout)
+        response.raise_for_status()
+    except requests.exceptions.MissingSchema:
+        raise ReturnError("Invalid URL (missing Schema?)")
+    except requests.exceptions.InvalidURL:
+        raise ReturnError("Invalid URL")
+    except requests.exceptions.ConnectionError:
+        raise ReturnError("Connection Error (DNS, Network?)")
+    except requests.exceptions.Timeout:
+        raise ReturnError("Timeout")
+    except requests.exceptions.HTTPError as e:
+        raise ReturnError(f"HTTP Error: {e.response.status_code}")
+    except requests.exceptions.SSLError:
+        raise ReturnError("SSL Error")
+    except ReturnError as e:
+        raise e
+    except Exception as e:
+        error_server()
+        raise ReturnError("Some Error occured. Please report this to @KROKOBIL")
+    return response.text
+
 @methode("search")
 def app_search(query: str) -> list:
     if utilities.is_profane(query):
-        return ["Don't search for profane words.", "", ""]
+        raise ReturnError("Don't search for profane words.")
     url = f"https://duckduckgo.com/html/?q={urllib.parse.quote(query)}&kp=1"
-    resp = requests.get(url)
-    soup = BeautifulSoup(resp.text, "html.parser")
+    html = fetch_response(url)
+    soup = BeautifulSoup(html, "html.parser")
 
     if soup.find("div", class_="anomaly-modal__mask"):
-        return ["Search limit reached. Try again in a few minutes.", "", ""]
+        raise ReturnError("Search limit reached. Try again in a few minutes.")
     
     return_list = []
 
@@ -381,17 +464,14 @@ def app_search(query: str) -> list:
         snippet_tag = result.find("a", class_="result__snippet")
         
         if link_tag:
-            # Titeltext
             title = link_tag.get_text(strip=True)
 
-            # Saubere URL
             parsed = urllib.parse.urlparse(link_tag["href"])
             uddg_value = urllib.parse.parse_qs(parsed.query).get("uddg", [None])[0]
             if not uddg_value:
-                continue  # falls kein uddg vorhanden ist, überspringen
+                continue
             clean_url = urllib.parse.unquote(uddg_value)
 
-            # Vorschautext
             snippet = snippet_tag.get_text(strip=True) if snippet_tag else ""
 
             if not utilities.is_profane(title + " ; " + clean_url + " ; " + snippet):
@@ -402,12 +482,11 @@ def app_search(query: str) -> list:
     return return_list
 
 @methode("website")
-def app_search(url: str) -> list:
+def app_website(url: str) -> list:
     if utilities.is_profane(url):
-        return ["Don't open profane websites."]
-    if not (url.startswith("https://") or url.startswith("http://")):
-        url = "https://" + url
-    html = requests.get(url).text
+        raise ReturnError("Don't open profane websites")
+    html = fetch_response(url)
+
     result = trafilatura.extract(
         html,
         include_comments=False,
@@ -416,13 +495,13 @@ def app_search(url: str) -> list:
     )
 
     if result is None:
-        return ["The website isn't readable"]
+        raise ReturnError("The website isn't readable")
 
     if len(result) > 1000:
         result = result[:1000]
 
     if utilities.is_profane(result):
-        return ["Don't open profane websites."]
+        raise ReturnError("Don't open profane websites")
 
     return [result]
 
