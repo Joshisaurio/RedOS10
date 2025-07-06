@@ -70,6 +70,7 @@ Methodes:
 - `beginswith(prefix)`
 - `endswith(suffix)`
 - `split(separator)` returns a list
+- `slice(start, end)` returns a string from start (inclusive) to end (exclusive)
 
 ### Text Formatting
 
