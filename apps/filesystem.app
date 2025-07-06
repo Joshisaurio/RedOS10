@@ -5,6 +5,7 @@ def init_vars() {
     global _NORMAL = 0
     global _OPEN = 1
     global _SAVE = 2
+    global _DELETED = -1
     
     if (!exists("windows_list")) {
         global windows_list = list()
@@ -14,7 +15,7 @@ def init_vars() {
 def init() {
     init_vars()
 
-    create_window(_NORMAL, "red_os/apps", "", "")
+    create_window(_NORMAL, "red_os/apps", "", "", "")
 }
 
 def create_window(type, path, extension, callbackApp, callbackCode) {
@@ -24,9 +25,21 @@ def create_window(type, path, extension, callbackApp, callbackCode) {
     window.center()
     window.minSize(200, 65)
 
+    tabs = tabs()
+    tabs.margin(20, "", 20, 0)
+    tabs.width = 70
+    tabs.sideWidth = tabs.width
+    tabs.onClick = "click_tab(" + window_i + ")"
+    window.add(tabs)
+
+    tab_path_list = list()
+    add_tab(tabs, tab_path_list, "user", "red_os/user")
+    add_tab(tabs, tab_path_list, "apps", "red_os/apps")
+    add_tab(tabs, tab_path_list, "HyperText", "red_os/user/HyperText Documents")
+
     file_container = vScrollContainer()
     file_container.fill()
-    file_container.margin(20, "", 20, 5)
+    file_container.margin(20, "", 20, tabs.width + 5)
     window.add(file_container)
     
     up_bar = hcontainer()
@@ -45,13 +58,33 @@ def create_window(type, path, extension, callbackApp, callbackCode) {
     new_folder.margin(2)
     up_bar.add(new_folder)
 
-    bottom_bar = hcontainer()
+    if (type == _SAVE) {
+        bottom_bar = container()
+    } else {
+        bottom_bar = hcontainer()
+    }
     bottom_bar.margin("", 0, 0, 0)
     bottom_bar.size("fill", 20)
     bottom_bar.theme = 0.1
     window.add(bottom_bar)
+    
+    list = list(type, window, file_container, up_bar, bottom_bar, path, 0, 0, 0, 0, 0, 0, extension, callbackApp, callbackCode, tabs, tab_path_list)
+    
+    if (type == _SAVE) {
+        save_filename = input()
+        save_filename.size("fill")
+        save_filename.margin(2, 60, 2, 2)
+        save_filename.onEnter = "file_clicked_save(" + window_i + ")"
+        bottom_bar.add(save_filename)
 
-    list = list(type, window, file_container, up_bar, bottom_bar, path, 0, 0, 0, 0, 0, 0, extension, callbackApp, callbackCode)
+        save_button = button("save", save_filename.onEnter)
+        save_button.size(60, "fill")
+        save_button.margin(2, 2, 2, "")
+        save_button.theme = "#FF4060"
+        bottom_bar.add(save_button)
+        list.add(save_filename)
+    }
+
     windows_list.add(list)
 
     load_path(window_i, path)
@@ -61,6 +94,10 @@ def create_window(type, path, extension, callbackApp, callbackCode) {
 
 def load_path(window_i, path) {
     windows_list.get(window_i).set(5, path) // path
+    update_all_windows()
+}
+
+def update_all_windows() {
     i = 0
     while (i < windows_list.length) {
         update_window(i)
@@ -70,11 +107,15 @@ def load_path(window_i, path) {
 
 def update_window(window_i) {
     list = windows_list.get(window_i)
+    type = list.get(0)
+    if (type == _DELETED) { return }
     list.set(6, 0) // selected_file
     list.set(9, 0) // selected_i
     list.set(7, 0) // rename_input
-    type = list.get(0)
     path = list.get(5)
+    tabs = list.get(15)
+    tabs_path_list = list.get(16)
+    tabs.tab = tabs_path_list.find(path)+1
     path_list = path.split("/")
     if (path_list.length < 2) {
         list.get(1).title = "Filesystem" // window
@@ -83,9 +124,19 @@ def update_window(window_i) {
     }
     file_container = list.get(2)
     file_container.delete_children() // file_container
-    list.get(4).delete_children() // bottom_bar
-    folder_list = os.list_folder(path)
+    if (type != _SAVE) {
+        list.get(4).delete_children() // bottom_bar
+    }
     file_element_list = list()
+    if (!os.exists_path(path)) {
+        path_does_not_exist = label("\\ipath does not exist\\i")
+        path_does_not_exist.size("shrink")
+        path_does_not_exist.margin(20)
+        file_container.add(path_does_not_exist)
+        list.set(8, file_element_list)
+        return
+    }
+    folder_list = os.list_folder(path)
     i = 0
     depth = 0
     while (i < folder_list.length) {
@@ -105,7 +156,9 @@ def update_window(window_i) {
             } else {
                 file = container()
                 file.size("fill", "shrink")
-                file.onClick = "click_file(" + window_i + ", " + file_element_list.length + ", " + i + ")"
+                if (folder_list.get(i) == _FOLDER || type != _SAVE) {
+                    file.onClick = "click_file(" + window_i + ", " + file_element_list.length + ", " + i + ")"
+                }
                 file_container.add(file)
                 file_element_list.add(file)
                 
@@ -149,18 +202,31 @@ def update_window(window_i) {
     list.set(8, file_element_list)
 }
 
+def add_tab(tabs, tab_path_list, name, path) {
+    container = container()
+    tabs.add(container, name)
+    tab_path_list.add(path)
+}
+
+def click_tab(window_i) {
+    list = windows_list.get(window_i)
+    tabs = list.get(15)
+    tab_path_list = list.get(16)
+    load_path(window_i, tab_path_list.get(tabs.tab-1))
+}
+
 def click_file(window_i, file_index, i) {
     list = windows_list.get(window_i)
     type = list.get(0)
     file_element_list = list.get(8)
     file = file_element_list.get(file_index)
     selected_file = list.get(6)
-    // if (rename_input != 0) {
-    //     if (file != selected_file) {
-    //         renameEnter()
-    //     }
-    //     return
-    // }
+    if (list.get(7) != 0) { // rename_input
+        if (file != selected_file) {
+            renameEnter()
+        }
+        return
+    }
     path = list.get(5)
     folder_list = os.list_folder(path)
     list.set(9, i)
@@ -175,21 +241,16 @@ def click_file(window_i, file_index, i) {
             if (selected_type == _FOLDER) {
                 load_path(window_i, path + "/" + folder_list.get(i+1))
             } elif (selected_type == _FILE) {
-                if (selected_name.endswith(".img")) {
-                    os.warn("There is no app to open image files")
-                } elif (selected_name.endswith(".song")) {
-                    os.warn("There is no app to open song files")
-                } elif (selected_name.endswith(".app")) {
-                    os.warn("There is no app to open app files")
-                } else {
-                    os.warn("There is no app to open text files")
-                }
+                file_clicked_open(selected_name)
+                list.set(6, 0)
             }
             return
         }
     }
     list.set(6, file) // selected_file
     file.theme = 0.2
+
+    if (type == _SAVE) { return }
 
     // make bottom bar
     bottom_bar = list.get(4)
@@ -321,21 +382,57 @@ def open(window_i) {
     selected_type = folder_list.get(list.get(9))
     selected_name = folder_list.get(list.get(9)+1)
     selected_path = path + "/" + selected_name
-
-    os.print(selected_type, type)
     
     if (selected_type == _FOLDER) {
         load_path(window_i, selected_path)
     } elif (selected_type == _FILE) {
         if (type == _OPEN) {
-            os.print(list.get(13))
-            os.print(list.get(14))
             os.run_code(list.get(13), list.get(14) + "(\"" + selected_path + "\")")
+        } elif (type == _NORMAL) {
+            file_clicked_open(selected_name)
         }
     }
+}
+
+def file_clicked_open(filename) {
+    if (filename.endswith(".img")) {
+        os.warn("There is no app to open image files")
+    } elif (filename.endswith(".song")) {
+        os.warn("There is no app to open song files")
+    } elif (filename.endswith(".app")) {
+        os.open_app(filename.slice(0,-4))
+    } else {
+        os.warn("There is no app to open text files")
+    }
+}
+
+def file_clicked_save(window_i) {
+    list = windows_list.get(window_i)
+    path = list.get(5)
+    filename = list.get(17).text
+    extension = list.get(12)
+    data = list.get(18)
+    if (!filename.endswith(extension)) {
+        filename += extension
+    }
+    path += "/" + filename
+    if (os.exists_path(path)) {
+        os.error("path already exists")
+        return
+    }
+    os.write_file(path, data)
+    list.get(1).delete()
+    list.set(0, _DELETED)
+    update_all_windows()
 }
 
 def open_file(extension, path, callbackApp, callbackCode) {
     init_vars()
     list = create_window(_OPEN, path, extension, callbackApp, callbackCode)
+}
+
+def save_file(extension, path, data, callbackApp, callbackCode) {
+    init_vars()
+    list = create_window(_SAVE, path, extension, callbackApp, callbackCode)
+    list.add(data)
 }

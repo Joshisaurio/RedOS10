@@ -416,6 +416,7 @@ The os object has some attributes and methodes to interact with the project.
 ## Apps
 - `os.run_code(app_name, code_string)`
 - `os.calculate(expression_string, callback)` delay of one frame
+- `os.open_app(app_name)`
 
 ## Time:
 - `os.year`
@@ -437,7 +438,7 @@ The os object has some attributes and methodes to interact with the project.
 - `os.set_theme(str)` sets the theme
 - `os.set_volume(number)` sets the volume (0-100)
 - `os.set_full_hours(number)` sets if 24-hour format should be used, 0 or 1
-- `os.save_all()` saves all settings to the server
+- `os.save_all(callback)` saves all settings to the server
 - `os.full_hours` returns 0 or 1, if 1 the OS will display time in 24-hour format.
 - `os.theme` returns "Dark", "Light", or "Scheduled"
 - `os.theme_string` returns theme name, so "dark"
@@ -486,6 +487,7 @@ when finished the callback function is called
 - `os.website(url, callback)` opens the url
 
 ## Filesystem
+- `os.exists_path(path)`
 - `os.read_file(path)`
 - `os.write_file(path, content)`
 - `os.delete_file(path)`

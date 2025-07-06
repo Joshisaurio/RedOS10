@@ -325,11 +325,6 @@ def app_discord_list(username: str, password: str) -> list:
         discord_list.append(discord_messages.get(str(message_id), {}).get("text", "None"))
     return discord_list
 
-@methode("sly.search")
-def app_sly_search(text) -> list:
-    # code goes here :)
-    return [text]
-
 llm_messages = utilities.Storage("saves/llm.json")
 @methode("llm.post")
 def app_llm_post(username: str, password: str, text: str, new_conversation: str = "0") -> list:
