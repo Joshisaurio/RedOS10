@@ -26,6 +26,7 @@ import urllib.parse
 import trafilatura
 import ipaddress
 import socket
+import re
 
 LOG_TO_FILE = True
 
@@ -377,6 +378,23 @@ BLOCKED_HOSTNAMES = {
     "host.docker.internal",
 }
 
+
+my_ipv4_pattern = None
+my_ipv6_pattern = None
+def get_my_ip():
+    global my_ipv4_pattern, my_ipv6_pattern
+    resp = requests.get('https://api.ipify.org')
+    resp.raise_for_status()
+    octets = resp.text.strip().split('.')
+    my_ipv4_pattern = r'\b' + r'\.'.join(
+        fr'0*{int(octet)}' for octet in octets
+    ) + r'\b'
+
+    resp = requests.get('https://ifconfig.me/ip')
+    resp.raise_for_status()
+    text = resp.text.strip()
+    my_ipv6_pattern = re.escape(text)
+
 def is_ip_private(ip: str) -> bool:
     addr = ipaddress.ip_address(ip)
     if (addr.is_private
@@ -439,7 +457,11 @@ def fetch_response(url: str, timeout: float = 5.0) -> str:
     except Exception as e:
         error_server()
         raise ReturnError("Some Error occured. Please report this to @KROKOBIL")
-    return response.text
+    if (my_ipv4_pattern is None): get_my_ip()
+    html = response.text
+    if re.search(my_ipv4_pattern, html) or re.search(my_ipv6_pattern, html):
+        raise ReturnError(f"Blocked website for privacy reasons")
+    return html
 
 @methode("search")
 def app_search(query: str) -> list:
