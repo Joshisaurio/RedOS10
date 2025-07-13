@@ -228,7 +228,7 @@ def open_editor_window() {
     w_editor_editscriptcontainer.margin(30, 10, 10)
     w_editor_editscriptcontainer.theme = background_brighter
     w_editor_editscriptcontainer.height = "fill"
-    global w_editor_editscriptinput = input(project_content, 13, 0, 1)
+    global w_editor_editscriptinput = editor(project_content, 13, 0)
     w_editor_editscriptinput.margin(10, 10, "")
     w_editor_editscriptinput.fill()
     w_editor_editscriptcontainer.add(w_editor_editscriptinput)

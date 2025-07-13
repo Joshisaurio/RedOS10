@@ -5,10 +5,12 @@ def init () {
     window.center()
     window.minSize(180, 100)
 
-    tabs = tabs()
+    global tabs = tabs()
     tabs.fill()
-    tabs.tab = 1
+    tabs.tab = 2
     tabs.sideWidth = 60
+    tabs.onClick = "tabs_click()"
+    global last_tab = 0
 
     //////////
     // HOME //
@@ -32,25 +34,27 @@ def init () {
     title1.margin(10, 5, "", 10)
     note1container.add(title1)
 
-    note1 = vscrollcontainer()
+    global note1 = editor("", 12)
     note1.theme = 0.1
     note1.margin(30, 5, 5, 5)
     note1.fill()
     note1container.add(note1)
 
-    text_field = input("", 12)
-    text_field.wrap = 1
-    //text_field.minHeight = 200
-    //text_field.minWidth = 200
-    text_field.margin(5)
-    text_field.fill()
-    text_field.focus = 1
-    note1.add(text_field)
-
-
     window.add(tabs)
+
+    tabs_click()
 }
 
 def frame () {
 
+}
+
+def tabs_click() {
+    if (tabs.tab == last_tab) {
+        return
+    }
+    if (tabs.tab == 2) {
+        note1.focus()
+    }
+    last_tab = tabs.tab
 }

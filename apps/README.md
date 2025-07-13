@@ -353,7 +353,7 @@ Attributes:
 
 ## Input
 
-Inherited from `Label` and `HContainer`
+Inherited from `Label` and `HScrollContainer`
 
 Constructor:
 - `input()`
@@ -363,12 +363,23 @@ Constructor:
 - `input(text, size, align, wrap)`
 
 Attributes:
-- `focus` if the input is selected
+- `focus` if the input is selected, don't set it manually
 - `onEnter` callback
 
 Methodes:
+- `focus()`
 - `scrollDown()` for hContainer it scrolls to the right
 - `scrollUp()` for hContainer it scrolls to the left
+
+## Editor
+
+Inherited from `Input` and `VScrollContainer`
+
+Constructor:
+- `editor()`
+- `editor(text)`
+- `editor(text, size)`
+- `editor(text, size, align)`
 
 ## Button
 
