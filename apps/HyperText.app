@@ -29,7 +29,9 @@ def init() {
     global project_path = ""
     global root_path = "red_os/user/HyperText Documents" // Suggestion for Spieletyp, imo red_os/user/Documents/Hypertext makes more sense
 
-    os.add_folder("red_os/user", "HyperText Documents")
+    if(!os.exists_path("red_os/user/HyperText Documents")) {
+        os.add_folder("red_os/user", "HyperText Documents")
+    }
 
     //autosave_interval and timer
     autosave = 10000 //-1 for no autosaving / 10 secs in ms
@@ -49,8 +51,22 @@ def frame() {
         os.write_file(project_path + "/" + project_name + ".app", project_content)
     } elif (window_state == "start") {
 
-    } elif (window_state == "newfile") {
-
+    } elif (window_state == "openfile") {
+        w_openfile_file_scroll.delete_children()
+        folder_content = os.list_folder("red_os/user/HyperText Documents")
+        if (folder_content.length > 0) {
+            folder_content_idx = 0
+            while (folder_content_idx < folder_content.length) {
+                os.print(folder_content.get(folder_content_idx))
+                folder_content_idx += 1
+            }
+        }
+        else {  
+            w_openfile_nofiles = label("No Files")
+            w_openfile_nofiles.margin(30)
+            w_openfile_nofiles.align = 0.5
+            w_openfile_file_scroll.add(w_openfile_nofiles)
+        }
     }
 }
 
@@ -83,7 +99,7 @@ def resize() {
 
 //////////////////////CALLBACKS///////////////////////
 
-//when the create buttons is clicked in newfile window
+//when the create button is clicked in newfile window
 def w_newfile_create() {
     project_name = w_newfile_filename.text
     project_path = root_path + "/" + project_name
@@ -149,12 +165,30 @@ def open_start_window() {
 }
 //the openfile window is opened when user wants to choose a file in the redos/user folder
 def open_openfile_window() {
-    os.run_code("filesystem", "open_file(\".app\", \"" + root_path + "\", \"HyperText\", \"open_file\")")
-}
+    window_state = "openfile"
+    window.delete_children()
+    start_resize(200, 250)
 
-def open_file(path) {
-    os.print("File selected:")
-    os.print(path)
+    w_openfile_main = container()
+    w_openfile_title = title("All HyperText files:")
+    w_openfile_main.add(w_openfile_title)
+
+    w_openfile_file_container = container()
+    w_openfile_file_container.theme = background_brighter
+    global w_openfile_file_scroll = vScrollContainer()
+    w_openfile_file_scroll.margin(5)
+    w_openfile_file_container.add(w_openfile_file_scroll)
+    w_openfile_file_container.margin(35, 10, 42)
+    w_openfile_file_container.fill()
+    w_openfile_main.add(w_openfile_file_container)
+
+    w_openfile_cancel = button("Cancel", "w_openfile_cancel()")
+    w_openfile_cancel.margin("", 10, 10)
+    w_openfile_cancel.theme = primary_color
+    w_openfile_cancel.minHeight = 22
+    w_openfile_main.add(w_openfile_cancel)
+
+    window.add(w_openfile_main)
 }
 
 //the newfile window is opened when user wants to create a new file
@@ -251,4 +285,40 @@ def title(text) {
     title = label(text, 15)
     title.margin(10, 10, "")
     return title
+}
+
+//returns a preformatted file object
+def file(name, path, number_tokens, last_edited) {
+    container = container()
+    container.onClick = "w_openfile_fileclicked"
+    container.height = 36
+    container.width = "fill"
+    container.theme = 0
+    container.margin(3)
+    namel = label(name, 12)
+    namel.margin(6, 6, "")
+    namel.align = 0
+    container.add(namel)
+    last_editedl = label(last_edited, 12)
+    last_editedl.margin(6, 6, "")
+    last_editedl.align = 1
+    container.add(last_editedl)
+
+    pathl = label(path, 8)
+    pathl.margin("", 6, 6)
+    pathl.align = 0
+    container.add(pathl)
+    number_tokensl = label(str(number_tokens), 8)
+    number_tokensl.margin("", 6, 6)
+    number_tokensl.align = 1
+    container.add(number_tokensl)
+
+    line = container()
+    line.margin("", 0, 0)
+    line.height = 3
+    line.width = "fill"
+    line.theme = primary_color
+    //container.add(line)
+
+    return container
 }
