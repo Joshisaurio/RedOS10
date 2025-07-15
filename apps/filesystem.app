@@ -241,7 +241,7 @@ def click_file(window_i, file_index, i) {
             if (selected_type == _FOLDER) {
                 load_path(window_i, path + "/" + folder_list.get(i+1))
             } elif (selected_type == _FILE) {
-                file_clicked_open(selected_name)
+                file_clicked_open(list, selected_path, selected_name)
                 list.set(6, 0)
             }
             return
@@ -386,23 +386,25 @@ def open(window_i) {
     if (selected_type == _FOLDER) {
         load_path(window_i, selected_path)
     } elif (selected_type == _FILE) {
-        if (type == _OPEN) {
-            os.run_code(list.get(13), list.get(14) + "(\"" + selected_path + "\")")
-        } elif (type == _NORMAL) {
-            file_clicked_open(selected_name)
-        }
+        file_clicked_open(list, selected_path, selected_name)
     }
 }
 
-def file_clicked_open(filename) {
-    if (filename.endswith(".img")) {
-        os.warn("There is no app to open image files")
-    } elif (filename.endswith(".song")) {
-        os.warn("There is no app to open song files")
-    } elif (filename.endswith(".app")) {
-        os.open_app(filename.slice(0,-4))
-    } else {
-        os.warn("There is no app to open text files")
+def file_clicked_open(list, selected_path, selected_name) {
+    type = list.get(0)
+    if (type == _OPEN) {
+        os.run_code(list.get(13), list.get(14) + "(\"" + selected_path + "\")")
+        list.get(1).delete()
+    } elif (type == _NORMAL) {
+        if (selected_name.endswith(".img")) {
+            os.warn("There is no app to open image files")
+        } elif (selected_name.endswith(".song")) {
+            os.warn("There is no app to open song files")
+        } elif (selected_name.endswith(".app")) {
+            os.open_app(selected_name.slice(0,-4))
+        } else {
+            os.warn("There is no app to open text files")
+        }
     }
 }
 

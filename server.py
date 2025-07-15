@@ -256,12 +256,13 @@ def app_set_settings(username: str, password: str, *args) -> list:
         user_data["settings"] = {}
     i = 0
     while i+1 < len(args):
-        user_data["settings"][args[i]] = args[i+1]
+        if args[i] != "admin":
+            user_data["settings"][args[i]] = args[i+1]
         i += 2
     return [username]
 
 def get_settings(user_data: dict) -> list:
-    settings = []
+    settings = ["admin", user_data.get("admin", False)]
     for key, value in user_data.get("settings", {}).items():
         settings.append(key)
         settings.append(value)
@@ -307,7 +308,7 @@ def app_discord_post(username: str, password: str, text: str) -> list:
         user_data["ban"] = (datetime.now(timezone.utc) + timedelta(minutes=10)).replace(microsecond=0).strftime(utilities.FORMAT)
         user_data["ban_reason"] = "Profane message to discord"
         raise ReturnError("profane")
-    message_id = send_discord_message(user_data["username"], text)
+    message_id = send_discord_message_from_user(user_data["username"], text)
     discord = user_data.get("discord")
     if discord is None:
         user_data["discord"] = []
@@ -522,6 +523,95 @@ def app_website(url: str) -> list:
 
     return [result]
 
+
+appstore = utilities.Storage("saves/appstore.json", 1)
+if (not appstore.get("public")): appstore["public"] = {}
+if (not appstore.get("requested")): appstore["requested"] = {}
+
+@methode("appstore_get_all")
+def app_appstore_get_all(_) -> list:
+    all_apps = []
+    for app in appstore.get("public", {}).values():
+        all_apps.append(app["name"])
+        all_apps.append(app["username"])
+        all_apps.append(app["icon"])
+    return all_apps
+
+@methode("appstore_get_requested")
+def app_appstore_get_all(username: str, password: str) -> list:
+    user_data = login(username, password)
+    if (not user_data.get("admin", False)): raise ReturnError("Admin account required")
+    all_apps = []
+    for app in appstore.get("requested", {}).values():
+        all_apps.append(app["name"])
+        all_apps.append(app["username"])
+        all_apps.append(app["icon"])
+    return all_apps
+
+@methode("appstore_get_app")
+def app_appstore_get_app(app_id: str) -> list:
+    app = appstore["public"].get(app_id, None)
+    if (not app): raise ReturnError("App not found")
+    return [app["name"], app["icon"], app["code"]]
+
+@methode("appstore_get_requested_app")
+def app_appstore_get_requested_app(username: str, password: str, app_name: str) -> list:
+    user_data = login(username, password)
+    if (not user_data.get("admin", False)): raise ReturnError("Admin account required")
+
+    app = appstore["requested"].get(app_name, None)
+    if (not app): raise ReturnError("App not found")
+    return [app["name"], app["icon"], app["code"]]
+
+@methode("appstore_approve_app")
+def app_appstore_approve_app(username: str, password: str, app_name: str) -> list:
+    user_data = login(username, password)
+    if (not user_data.get("admin", False)): raise ReturnError("Admin account required")
+    
+    app = appstore["requested"].get(app_name, None)
+    if (not app): raise ReturnError("App not found")
+    appstore["public"][app_name] = app
+    del appstore["requested"][app_name]
+    return []
+
+@methode("appstore_reject_app")
+def app_appstore_reject_app(username: str, password: str, app_name: str) -> list:
+    user_data = login(username, password)
+    if (not user_data.get("admin", False)): raise ReturnError("Admin account required")
+    
+    app = appstore["requested"].get(app_name, None)
+    if (not app): raise ReturnError("App not found")
+    del appstore["requested"][app_name]
+    return []
+
+@methode("appstore_add")
+def app_appstore_add(username: str, password: str, app_name: str, app_icon: str, app_code: str) -> list:
+    user_data = login(username, password)
+    if utilities.is_profane(app_name + ": " + app_code):
+        log_server(f"Profane app uploaded by {user_data['username']}: {app_name + ': ' + app_code}")
+        user_data["ban"] = (datetime.now(timezone.utc) + timedelta(minutes=10)).replace(microsecond=0).strftime(utilities.FORMAT)
+        user_data["ban_reason"] = "Profane app uploaded"
+        raise ReturnError("profane")
+    if len(app_name.replace(" ", "")) == 0:
+        raise ReturnError("App name is empty")
+    app = {
+        "name": app_name,
+        "username": user_data["username"],
+        "icon": app_icon,
+        "code": app_code
+    }
+    old_app = appstore["requested"].get(app_name)
+    if not old_app: old_app = appstore["public"].get(app_name)
+    if old_app:
+        if old_app["username"] != app["username"]:
+            raise ReturnError("Another user owns this app.")
+    appstore["requested"][app_name] = app
+    if old_app:
+        send_discord_message(f"**{username}** updated the app *{app_name}*")
+    else:
+        send_discord_message(f"**{username}** uploaded a new app *{app_name}*")
+    return []
+
 ########################################################
 
 ### shutdown ###
@@ -559,7 +649,7 @@ DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 LLM_TOKEN = os.getenv("LLM_TOKEN")
 WEATHER_TOKEN = os.getenv("WEATHER_TOKEN")
 
-if RSA_N is None or RSA_D is None or DISCORD_TOKEN is None:
+if RSA_N is None or RSA_D is None or DISCORD_TOKEN is None or LLM_TOKEN is None or WEATHER_TOKEN is None:
     log_server(f"No env variables set ({', '.join([name for name, var in {'RSA_N': RSA_N, 'RSA_D': RSA_D, 'DISCORD_TOKEN': DISCORD_TOKEN, 'LLM_TOKEN': LLM_TOKEN, 'WEATHER_TOKEN': WEATHER_TOKEN}.items() if var is None])})")
     shutdown()
     quit()
@@ -742,8 +832,15 @@ async def help_command(interaction: Interaction):
         "* `/project-get` – List all connected projects\n"
         "* `/project-add <project-id>` – Connect a new project with the given ID\n"
         "* `/project-remove <project-id>` – Remove a project\n"
-        "* `/project-lock <project-id>` – Lock the project, so it cannot be removed. Only use this command for the official project. A lock can only be removed by KROKOBIL!\n"
+        "* `/project-lock <project-id>` – Lock the project, so it cannot be removed. Only use this command for the official project.\n"
         "* `/music <song-name>` (append mp3 file) – Split the mp3 file in small parts\n"
+
+        "**Admin Commands:**\n"
+        "* `/project-unlock <project-id>` – Unlock the project\n"
+        "* `/shutdown` – Shut down the server\n"
+        "* `/restart` – Restart the server\n"
+        "* `/admin <username>` – Gives the user admin rights in the project\n"
+        "* `/admin-remove <username>` – Removes admin rights in the project\n"
     )
 
 @discord_tree.command(name="ping", description="Echo back your message")
@@ -815,7 +912,7 @@ async def command_project_lock(interaction: Interaction, project_id: str):
     general["projects"][idx] = (project_id, True)
     await interaction.response.send_message(f"locked project with id `{project_id}`\n{get_projects_list()}")
 
-@discord_tree.command(name="project-unlock", description="Unlock the project, can only be used by KROKOBIL!")
+@discord_tree.command(name="project-unlock", description="Unlock the project, can only be used by admins!")
 async def command_project_unlock(interaction: Interaction, project_id: str):
     if await admin(interaction): return
     idx = 0
@@ -828,14 +925,14 @@ async def command_project_unlock(interaction: Interaction, project_id: str):
     general["projects"][idx] = (project_id, False)
     await interaction.response.send_message(f"unlocked project with id `{project_id}`\n{get_projects_list()}")
 
-@discord_tree.command(name="shutdown", description="Shut down the server, can only be used by KROKOBIL!")
+@discord_tree.command(name="shutdown", description="Shut down the server, can only be used by admins!")
 async def command_shutdown(interaction: Interaction):
     if await admin(interaction): return
     await interaction.response.send_message("The server is now shutting down safely.")
     log_server("shut down by discord message")
     shutdown()
 
-@discord_tree.command(name="restart", description="Restart the server, can only be used by KROKOBIL!")
+@discord_tree.command(name="restart", description="Restart the server, can only be used by admins!")
 async def command_restart(interaction: Interaction):
     if await admin(interaction): return
     await interaction.response.send_message("The server is now restarting safely.")
@@ -873,14 +970,32 @@ async def command_music(interaction: Interaction, song_name: str, song_file: Att
 
     await interaction.edit_original_response(content = f"Success:\n```\n{output}\n```", attachments=[discord.File(f"music/songs/{song_name}.zip")])
 
+@discord_tree.command(name="admin", description="Gives the user admin rights in the project, can only be used by KROKOBIL!")
+async def command_admin(interaction: Interaction, username: str):
+    if await admin(interaction): return
+    user_data = users.get(username.lower(), None)
+    if not user_data:
+        await interaction.response.send_message(f"user {username} does not exist")
+    user_data["admin"] = True
+    await interaction.response.send_message(f"add admin: {username}")
+
+@discord_tree.command(name="admin-remove", description="Removes admin rights in the project, can only be used by KROKOBIL!")
+async def command_admin_remove(interaction: Interaction, username: str):
+    if await admin(interaction): return
+    user_data = users.get(username.lower(), None)
+    if not user_data:
+        await interaction.response.send_message(f"user {username} does not exist")
+    user_data["admin"] = False
+    await interaction.response.send_message(f"remove admin: {username}")
+
 def run_discord_bot():
     asyncio.set_event_loop(bot_loop)
     bot_loop.run_until_complete(discord_client.start(DISCORD_TOKEN))
 
 
-def send_discord_message(username, text):
+def send_discord_message_from_user(username, text):
     if not discord_client.is_ready():
-        log_server("Bot ist noch nicht bereit!")
+        log_server("Bot ist not ready yet")
         return
     
     async def send():
@@ -890,6 +1005,21 @@ def send_discord_message(username, text):
         msg = await channel.send(msg_text)
 
         discord_messages[str(msg.id)] = {"username": username, "text": text, "responses": {}}
+        return msg.id
+
+    future = asyncio.run_coroutine_threadsafe(send(), bot_loop)
+    return future.result()
+
+def send_discord_message(text):
+    if not discord_client.is_ready():
+        log_server("Bot ist not ready yet")
+        return
+    
+    async def send():
+        channel = discord_client.get_channel(CHANNEL_ID) or await discord_client.fetch_channel(CHANNEL_ID)
+        
+        msg = await channel.send(text)
+
         return msg.id
 
     future = asyncio.run_coroutine_threadsafe(send(), bot_loop)

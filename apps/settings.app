@@ -372,6 +372,9 @@ def init() {
     if (os.guest == 0) {
         info_sys_account.text = "Account: " + os.username
     }
+    if (os.admin) {
+        info_sys_account.text += " \\b\\iadmin\\i\\b"
+    }
     info_sys_language = label("Powered by RedScript", 11)
 
     info_sys_round.wrap = 1

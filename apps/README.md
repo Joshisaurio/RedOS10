@@ -56,6 +56,7 @@ Methodes:
 - `delete(index)` or `remove(index)` removes the item at the given index from the list
 - `find(item)` or `index(item)` returns the index of the given item or -1 if it is not in the list
 - `copy()` returns a copy of the list (not a deep copy, so any item in the list is still the same)
+- `join(separator)` returns a string of all elements
 
 ## Strings
 
@@ -161,7 +162,8 @@ Assignment operators:
 
 # Functions
 
-The `callback` parameter is the function name as a string.
+The `callback` parameter is the function name as a string, e.g. `"example"`.
+The `onClick`, `onEnter`, `onClose`, ... parameter is code as a string, e.g. `"example()"`. This can be complex code.
 
 Numbers:
 - `floor(number)`
@@ -257,6 +259,7 @@ Attributes:
 - `minHeight`
 - `mode`
 - `title`
+- `onClose` callback code
 
 Methodes:
 - `pos(x, y)`
@@ -265,6 +268,7 @@ Methodes:
 - `minSize(size)` size*size
 - `minSize(width, height)`
 - `center()`
+- `focus()`
 
 ## Container
 
@@ -282,7 +286,7 @@ Attributes:
 - `marginRight`
 - `marginBottom`
 - `marginLeft`
-- `onClick` callback function
+- `onClick` callback code
 - `theme`
 
 Methodes:
@@ -364,7 +368,7 @@ Constructor:
 
 Attributes:
 - `focus` if the input is selected, don't set it manually
-- `onEnter` callback
+- `onEnter` callback code
 
 Methodes:
 - `focus()`
@@ -429,6 +433,7 @@ The os object has some attributes and methodes to interact with the project.
 - `os.run_code(app_name, code_string)`
 - `os.calculate(expression_string, callback)` delay of one frame
 - `os.open_app(app_name)`
+- `os.compile_app(app_name)` compiles the file at `red_os/apps/app_name.app`
 
 ## Time:
 - `os.year`
@@ -457,6 +462,7 @@ The os object has some attributes and methodes to interact with the project.
 - `os.background` or `os.bg` returns wallpaper name (as of 2.10, "BG1-3")
 - `os.volume` returns volume level
 - `os.username` returns username of the current account
+- `os.admin` returns 1 if user is admin
 - `os.guest` returns 1 if user is guest
 - `os.turbowarp` returns 1 if the project is running in Turbowarp
 
@@ -490,14 +496,6 @@ These are the current effects as of v2.10. **DO NOT REORDER**, they rely on thei
 - `os.music_interpreter` interpreter of current song
 - `os.music_is_playing`
 
-## Cloud
-when finished the callback function is called
-- `os.ask_draco(prompt, callback)` calls the local assistant
-- `os.ask_llm(prompt, callback)` calls the large language model via python server and api
-- `os.save_all(callback)` saves all settings to the server
-- `os.search(query, callback)` searches duckduckgo
-- `os.website(url, callback)` opens the url
-
 ## Filesystem
 - `os.exists_path(path)`
 - `os.read_file(path)`
@@ -512,3 +510,18 @@ when finished the callback function is called
 - `os.duplicate_folder(path, new_name)`
 - `os.move_folder(path, to_folder)`
 - `os.rename_folder(path, new_name)`
+
+## Cloud
+when finished the callback function is called
+- `os.ask_draco(prompt, callback)` calls the local assistant
+- `os.ask_llm(prompt, callback)` calls the large language model via python server and api
+- `os.save_all(callback)` saves all settings to the server
+- `os.search(query, callback)` searches duckduckgo
+- `os.website(url, callback)` opens the url
+- `os.appstore_get_all(callback)` returns a flat list [name, username, icon, ...]
+- `os.appstore_get_requested(callback)` app that need to be reviewed by admins
+- `os.appstore_get_app(app_name, callback)` returns parameters app_name, icon, code
+- `os.appstore_get_requested_app(app_name, callback)`
+- `os.appstore_approve_app(app_name, callback)` can only be called by admins, adds app to public apps
+- `os.appstore_reject_app(app_name, callback)` can only be called by admins, removes app to requested apps
+- `os.appstore_add(app_name, icon, code, callback)` adds or updates an existing app, needs to be reviewed
