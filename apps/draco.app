@@ -82,7 +82,7 @@ def send() {
             chat.add(draco)
         }
     }
-    draco = bubble("\l", 0)
+    draco = bubble("\\l", 0)
     chat.add(draco)
     chat.scrollDown()
     
