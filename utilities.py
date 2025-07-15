@@ -36,17 +36,15 @@ def dont_print(func, *args, **kwargs):
 
 class StorageBase(dict):
 
-    parent: "StorageBase"
+    parent: "StorageBase" = None
 
     def __init__(self, value: dict = {}, parent: "StorageBase" = None, *args, **kwargs):
         super().__init__(value, *args, **kwargs)
-        if parent:
-            self.filename = "StorageBase"
+        if parent is not None:
             self.parent = parent
         else:
-            if not isinstance(self, StorageBase):
+            if not isinstance(self, Storage):
                 raise ValueError("parent should not be None")
-            self.parent = self
     
     def load(self):
         for key, value in self.items():

@@ -588,7 +588,7 @@ def app_appstore_reject_app(username: str, password: str, app_name: str) -> list
 def app_appstore_add(username: str, password: str, app_name: str, app_icon: str, app_code: str) -> list:
     user_data = login(username, password)
     if utilities.is_profane(app_name + ": " + app_code):
-        log_server(f"Profane app uploaded by {user_data['username']}: {app_name + ": " + app_code}")
+        log_server(f"Profane app uploaded by {user_data['username']}: {app_name + ': ' + app_code}")
         user_data["ban"] = (datetime.now(timezone.utc) + timedelta(minutes=10)).replace(microsecond=0).strftime(utilities.FORMAT)
         user_data["ban_reason"] = "Profane app uploaded"
         raise ReturnError("profane")
