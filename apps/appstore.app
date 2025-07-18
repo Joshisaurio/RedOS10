@@ -394,7 +394,9 @@ def installed(app_name, icon, code) {
         os.write_file(app_list_path, apps_list.join("\\n"))
     }
     all_apps_loaded(all_apps)
-    admin_all_apps_loaded(admin_all_apps)
+    if (os.admin) {
+        admin_all_apps_loaded(admin_all_apps)
+    }
     os.write_file("red_os/apps/" + app_name + ".app", code)
     os.compile_app(app_name)
 }

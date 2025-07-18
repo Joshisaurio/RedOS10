@@ -6,7 +6,7 @@ def init() {
     chat.margin(10)
     chat.marginBottom = 35
 
-    draco = bubble("Hello there! I’m Draco, RedOS’s virtual assistant. How can I help you today?", 0)
+    draco = bubble("Hello there! I'm Draco, RedOS's virtual assistant. How can I help you today?", 0)
     chat.add(draco)
 
     window.add(chat)
