@@ -70,22 +70,10 @@ def init() {
     volume_title.marginTop = 10
     home_vbox.add(volume_title)
 
-    vol_container = hContainer()
-    vol_container.size("fill", "shrink")
-    vol_container.marginX(0, 0)
-    home_vbox.add(vol_container)
-
-    global vol_off = button("Volume off", "volume_off()")
-    vol_off.minHeight = 20
-    vol_off.minWidth = 60
-    vol_off.margin("5","5","5","0")
-    vol_container.add(vol_off)
-
-    global vol_on = button("Volume on", "volume_on()")
-    vol_on.minHeight = 20
-    vol_on.minWidth = 60
-    vol_on.margin("5","5","5","0")
-    vol_container.add(vol_on)
+    global vol_slider = slider(0.1, "os.set_volume(vol_slider.value*100)")
+    vol_slider.size("fill", 20)
+    vol_slider.marginX(5)
+    home_vbox.add(vol_slider)
 
     // SAVE DATA
 
@@ -276,22 +264,10 @@ def init() {
     sys_vol_title.marginTop = 10
     sys_vbox.add(sys_vol_title)
 
-    sys_vol_container = hContainer()
-    sys_vol_container.size("fill", "shrink")
-    sys_vol_container.marginX(0, 0)
-    sys_vbox.add(sys_vol_container)
-
-    global sys_vol_off = button("Volume off", "volume_off()")
-    sys_vol_off.minHeight = 20
-    sys_vol_off.minWidth = 60
-    sys_vol_off.margin("5","5","5","0")
-    sys_vol_container.add(sys_vol_off)
-
-    global sys_vol_on = button("Volume on", "volume_on()")
-    sys_vol_on.minHeight = 20
-    sys_vol_on.minWidth = 60
-    sys_vol_on.margin("5","5","5","0")
-    sys_vol_container.add(sys_vol_on)
+    global sys_vol_slider = slider(0.1, "os.set_volume(sys_vol_slider.value*100)")
+    sys_vol_slider.size("fill", 20)
+    sys_vol_slider.marginX(5)
+    sys_vbox.add(sys_vol_slider)
 
     // OTHER OPTIONS
 
@@ -393,7 +369,7 @@ def init() {
     info_soft_title.wrap = 1
     info_vbox.add(info_soft_title)
 
-    info_soft_version = label("Red OS v2.14", 11)
+    info_soft_version = label("Red OS v2.16", 11)
     info_soft_draco = label("Draco v1.2", 11)
     info_soft_scratch = label("Made with Scratch 3.0", 11)
 
@@ -489,11 +465,7 @@ def frame() {
     
     theme_scheduled.theme = get_color(os.theme == "scheduled")
 
-
-    vol_off.theme = get_color(os.volume==0)
-
-
-    vol_on.theme = get_color(os.volume>0)
+    vol_slider.value = os.volume/100
 
     if (data_state==0) {
         data_button.text = "Save"
@@ -535,9 +507,7 @@ def frame() {
     // SYSTEM //
     ////////////
 
-
-    sys_vol_off.theme = get_color(os.volume==0)
-    sys_vol_on.theme = get_color(os.volume>0)
+    sys_vol_slider.value = os.volume/100
 
     if (data_state==0) {
         sys_data_button.text = "Save"
@@ -574,16 +544,6 @@ def enable_light_mode() {
 def enable_scheduled_mode() {
     os.set_theme("scheduled")
     data_state = 0
-}
-
-def volume_off() {
-    os.set_volume(0)
-    os.print("Set volume to 0")
-}
-
-def volume_on() {
-    os.set_volume(100)
-    os.print("Set volume to 100")
 }
 
 def save_data() {

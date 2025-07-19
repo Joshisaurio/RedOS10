@@ -16,7 +16,6 @@ def init() {
     tab1.add(title)
 
     global time_label = label("", 16, 0.5)
-    time_label.monospace = true
     time_label.margin("")
     time_label.marginBottom = 40
     tab1.add(time_label)
@@ -42,8 +41,7 @@ def init() {
     global timer = 0
     global timer_is_running = false
 
-    global timer_label = Label("00:00:00", 16, 0.5)
-    timer_label.monospace = true
+    global timer_label = Label(time_to_format(0), 16, 0.5)
     timer_label.margin(0, "", 14)
     tab2.add(timer_label)
 
@@ -78,8 +76,7 @@ def init() {
     global stopwatch = 0
     global stopwatch_is_running = false
 
-    global stopwatch_label = label("00:00:00.00", 28, 0.5)
-    stopwatch_label.monospace = true
+    global stopwatch_label = label(time_to_format(0), 28, 0.5)
     stopwatch_label.margin(28, 8, "")
     tab3.add(stopwatch_label)
 
@@ -153,10 +150,10 @@ def time_to_format(time) {
     if (minutes < 10) {
         minutes = "0" + minutes
     }
-    format = minutes + ":" + seconds + ":" + centiseconds
+    format = "\\o" + minutes + "\\o:\\o" + seconds + "\\o:\\o" + centiseconds + "\\o"
     if (time >= 3600) {
         hours = floor(time/3600 % 60)
-        format = hours + ":" + format
+        format = "\\o" + hours + "\\o:" + format
     }
     return format
     
@@ -197,7 +194,6 @@ def stopwatch_lap() {
     lap.add(lapCountLabel)
     
     lapTimeLabel = label(stopwatch_label.text)
-    lapTimeLabel.monospace = true
     lapTimeLabel.align = 1
     lapTimeLabel.margin("", 4, "", "")
     lap.add(lapTimeLabel)

@@ -224,7 +224,6 @@ def frame() {
 
     if (os.music_length - os.music_progress < 0.1) {
         os.music_start(playlist_queue.get(playlist_queue.index(os.music_song_id) + 1))
-        os.music_set_progress(0) 
     }
 }
 

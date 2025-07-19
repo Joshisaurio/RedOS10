@@ -351,7 +351,6 @@ def admin_view_app(i) {
     second_window.add(code_container)
 
     global code_label = label("\\iLoading App \\l\\i", 8, 0, 1)
-    // code_label.monospace = true
     code_container.add(code_label)
 
     global buttons = hContainer()

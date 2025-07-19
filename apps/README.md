@@ -75,14 +75,15 @@ Methodes:
 
 ### Text Formatting
 
-Strings use the escape character `\`:
-- `"\\"` -> `\`
-- `"\n"` -> new line
-- `"\l"` -> three animated dots
-- `"\m...\m"` -> marker
-- `"\b...\b"` -> **bold**
-- `"\i...\i"` -> ***italic***
-- `"\u...\u"` -> <ins>underline</ins>
+Strings use the escape character `\`. Since the program itself is a string, you have to double it: `\\`:
+- `"\\\\"` -> `\\` -> `\`
+- `"\\n"` -> `\n` -> new line
+- `"\\l"` -> `\l` -> three animated dots
+- `"\\m...\\m"` -> `\m...\m` -> marker
+- `"\\b...\\b"` -> `\b...\b` -> **bold**
+- `"\\i...\\i"` -> `\i...\i` -> ***italic***
+- `"\\u...\\u"` -> `\u...\u` -> <ins>underline</ins>
+- `"\\o...\\o"` -> `\o...\o` -> `monospace`
 
 internal:
 - `\s...\s` -> display selected text
@@ -353,7 +354,6 @@ Attributes:
 - `size` Font size
 - `align`
 - `wrap`
-- `monospace`
 
 ## Input
 
@@ -405,6 +405,19 @@ Constructor:
 
 Attrbutes:
 - `state` 0 or 1
+
+## Slider
+
+Inherited from `Label`
+
+Constructor:
+- `slider()`
+- `slider(value)`
+- `slider(value, onSlide)`
+
+Attrbutes:
+- `value` between 0 and 1
+- `onSlide` callback code
 
 ## Costume
 
