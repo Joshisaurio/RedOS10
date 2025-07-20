@@ -145,7 +145,7 @@ def app_system_signup(username: str, password: str) -> list:
     if user_data: raise ReturnError("user already exists", user_data["username"])
 
     password_hash = bcrypt.hashpw(password.lower().encode(), bcrypt.gensalt()).decode()
-    users[username.lower()] = {"username": user.username, "password": password_hash, "created": utilities.get_now_str(), "last_login": utilities.get_now_str()}
+    users[username.lower()] = {"username": user.username, "password": password_hash, "created": utilities.get_now_str(), "last_login": utilities.get_now_str(), "messages": []}
     if len(users.keys()) in [100, 500, 1000, 5000, 10000]:
         log_server(f"!!! Welcome our {len(users.keys())}th user: {user.username}")
     return return_login_data(users[username.lower()])
@@ -299,6 +299,7 @@ def app_weather(city_name: str) -> list:
 discord_messages = utilities.Storage("saves/discord.json")
 @methode("discord.post")
 def app_discord_post(username: str, password: str, text: str) -> list:
+    text = bytes(text, "utf-8").decode("unicode_escape")
     username = username.lower()
     user_data = login(username, password)
     check_verified(user_data)
@@ -314,18 +315,36 @@ def app_discord_post(username: str, password: str, text: str) -> list:
         user_data["discord"] = []
         discord = user_data["discord"]
     discord.append(message_id)
-    return app_discord_list(username, password)
+    return []
 
-@methode("discord.list")
-def app_discord_list(username: str, password: str) -> list:
+@methode("messages.get")
+def app_messages_get(username: str, password: str) -> list:
     username = username.lower()
     user_data = login(username, password)
-    discord = user_data.get("discord", [])
-    discord_list = []
-    for message_id in discord:
-        discord_list.append(message_id)
-        discord_list.append(discord_messages.get(str(message_id), {}).get("text", "None"))
-    return discord_list
+    messages: list = user_data.get("messages", [])
+    if (len(messages) == 0):
+        messages.append([utilities.get_days_since_2000(utilities.from_timestamp(user_data["created"])), "welcome"])
+    messages.sort()
+    user_data["messages"] = messages
+    message_list = []
+    for message in messages:
+        message_summary = None
+        message_content = None
+        match message[1]:
+            case "welcome":
+                message_summary = "Welcome"
+                message_content = f"Hello {user_data["username"]},\nWelcome to Red OS!"
+            case "discord":
+                message_summary = "Support"
+                discord_message = discord_messages.get(str(message[2]))
+                if discord_message is None: continue
+                your_message = discord_message["text"]
+                response_message = discord_message["responses"].get(message[3])["text"]
+                if response_message is None: continue
+                message_content = f"{response_message}\n\n\\i\\bYour message:\\b\n{your_message}\\i"
+        if message_content is None: continue
+        message_list.append(f"\\b{message_summary}\\b \\i{utilities.get_date_str(message[0])}\\i\n{message_content}")
+    return message_list
 
 llm_messages = utilities.Storage("saves/llm.json")
 @methode("llm.post")
@@ -789,7 +808,12 @@ async def on_message(message: discord.Message):
         if utilities.is_profane(message.content):
             await message.add_reaction("❌")
             return
-        discord_messages[str(message.reference.message_id)]["responses"][str(message.id)] = {"username": message.author.display_name, "text": message.content}
+        discord_message = discord_messages[str(message.reference.message_id)]
+        discord_message["responses"][str(message.id)] = {"username": message.author.display_name, "text": message.content}
+        user_data = get_user_data(discord_message["username"])
+        messages: list = user_data.get("messages", [])
+        messages.append([utilities.get_days_since_2000(), "discord", str(message.reference.message_id), str(message.id)])
+        user_data["messages"] = messages
         await message.add_reaction("✅")
 
 @discord_client.event

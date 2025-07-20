@@ -4,6 +4,7 @@ def init () {
     global window = window()
     window.center()
     window.minSize(180, 100)
+    window.title = "Notes"
 
     global tabs = tabs()
     tabs.fill()

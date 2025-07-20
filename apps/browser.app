@@ -2,6 +2,7 @@ def init() {
     global window = window()
     window.center()
     window.minSize(200, 200)
+    window.title = "Browser"
 
     search_bar = container()
     search_bar.margin(0, 0, "", 0)

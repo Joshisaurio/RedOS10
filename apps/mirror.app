@@ -2,6 +2,7 @@ def init() {
     global window = window()
     window.center()
     window.mode = "camera"
+    window.title = "Mirror"
 
     global shutter = container()
     shutter.fill()

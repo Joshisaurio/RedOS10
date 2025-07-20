@@ -9,6 +9,7 @@
 def init() {
     global window = window(100, 150)
     window.minSize(150, 150)
+    window.title = "HyperText"
     global window_state = "start"
 
     //vars for smooth scaling

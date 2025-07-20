@@ -11,8 +11,10 @@ start_date = datetime(2000, 1, 1, tzinfo=timezone.utc)
 
 FORMAT = "%Y-%m-%d %H:%M:%S"
 
-def get_days_since_2000():
-	return (datetime.now(timezone.utc) - start_date).total_seconds() / (24 * 60 * 60)
+def get_days_since_2000(date = None):
+    if date is None:
+        date = datetime.now(timezone.utc)
+    return (date - start_date).total_seconds() / (24 * 60 * 60)
 
 def get_date_str(days_since_2000):
 	return (start_date + timedelta(days=float(days_since_2000))).replace(microsecond=0).strftime(FORMAT)

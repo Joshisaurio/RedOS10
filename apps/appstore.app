@@ -3,6 +3,7 @@ def init () {
     window.center()
     window.minSize(180, 100)
     window.onClose = "window_closed()"
+    window.title = "Appstore"
 
     global tabs = tabs()
     tabs.fill()

@@ -2,6 +2,7 @@ def init() {
     global window = window()
     window.center()
     window.minSize(200, 200)
+    window.title = "Calculator"
 
     input_bar = container()
     input_bar.margin(0, 0, "", 0)
@@ -31,5 +32,7 @@ def frame() {
 }
 
 def display_result(result_text) {
-    result.text = result_text
+    if (type(result) == "element") {
+        result.text = result_text
+    }
 }

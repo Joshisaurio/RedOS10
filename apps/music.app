@@ -5,6 +5,7 @@ def init() {
     global window = window(400, 250)
     window.minSize(400, 250)
     window.center()
+    window.title = "Music"
 
     global current_queue_index = 0
     global playlist_queue = song_ids
