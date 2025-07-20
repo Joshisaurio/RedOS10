@@ -333,7 +333,7 @@ def app_messages_get(username: str, password: str) -> list:
         match message[1]:
             case "welcome":
                 message_summary = "Welcome"
-                message_content = f"Hello {user_data["username"]},\nWelcome to Red OS!"
+                message_content = f"Hello {user_data['username']},\nWelcome to Red OS!"
             case "discord":
                 message_summary = "Support"
                 discord_message = discord_messages.get(str(message[2]))
