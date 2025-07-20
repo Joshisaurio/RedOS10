@@ -45,8 +45,20 @@ def init() {
     global is_uploading = false
 }
 
+def frame() {
+    if (!os.guest) {
+        if (is_uploading == false) {
+            if (send_editor.text.length > 10) {
+                send_button.theme = "#FF4060"
+            } else {
+                send_button.theme = 0.2
+            }
+        }
+    }
+}
+
 def send_message() {
-    if (is_uploading == false) {
+    if (is_uploading == false && send_editor.text.length > 10) {
         is_uploading = true
         os.support_post(send_editor.text, "send_success")
         send_button.text = "\\l"
