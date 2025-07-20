@@ -302,7 +302,7 @@ def app_discord_post(username: str, password: str, text: str) -> list:
     text = bytes(text, "utf-8").decode("unicode_escape")
     username = username.lower()
     user_data = login(username, password)
-    check_verified(user_data)
+    # check_verified(user_data)
     check_ban(user_data)
     if utilities.is_profane(text):
         log_server(f"Profane message to discord by {user_data['username']}: {text}")
@@ -324,7 +324,7 @@ def app_messages_get(username: str, password: str) -> list:
     messages: list = user_data.get("messages", [])
     if (len(messages) == 0):
         messages.append([utilities.get_days_since_2000(utilities.from_timestamp(user_data["created"])), "welcome"])
-    messages.sort()
+    messages.sort(reverse=True)
     user_data["messages"] = messages
     message_list = []
     for message in messages:
