@@ -102,7 +102,7 @@ def init() {
     } else {
         data_button.theme = 0.2
     }
-    data_button.marginX("", 0)
+    data_button.marginX(0, "")
     home_vbox.add(data_button)
     
     ///////////////////
@@ -239,7 +239,7 @@ def init() {
     } else {
         cust_data_button.theme = 0.2
     }
-    cust_data_button.marginX("", 0)
+    cust_data_button.marginX(0, "")
     cust_vbox.add(cust_data_button)
 
     ////////////
@@ -314,7 +314,7 @@ def init() {
     } else {
         sys_data_button.theme = 0.2
     }
-    sys_data_button.marginX("", 0)
+    sys_data_button.marginX(0, "")
     sys_vbox.add(sys_data_button)
 
 
@@ -370,7 +370,7 @@ def init() {
     info_soft_title.wrap = 1
     info_vbox.add(info_soft_title)
 
-    info_soft_version = label("Red OS v2.17", 11)
+    info_soft_version = label("Red OS v2.18", 11)
     info_soft_draco = label("Draco v1.2", 11)
     info_soft_scratch = label("Made with Scratch 3.0", 11)
 

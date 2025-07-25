@@ -1,11 +1,14 @@
 def init() {
+    global city_names = list("Rome",             "Berlin",             "New York",        "London",        "Tokyo")
+    global city_infos = list("Capital of Italy", "Capital of Germany", "City in the USA", "Capital of GB", "Capital of Japan")
+    global city_utcs  = list(2,                  2,                    -4,                 1,               9)
+
     global window = window()
     window.minSize(300, 200)
     window.center()
 
     global tabs = tabs()
     tabs.fill()
-    tabs.tab = 1
 
     // CLOCK
     tab1 = container()
@@ -39,11 +42,17 @@ def init() {
     tab2.add(title)
     
     global timer = 0
+    global total_timer = 0
     global timer_is_running = false
+    global timer_is_edit_mode = true
 
-    global timer_label = Label(time_to_format(0), 16, 0.5)
-    timer_label.margin(0, "", 14)
-    tab2.add(timer_label)
+    global timer_inner = container()
+    timer_inner.margin(28, "", 48)
+    timer_inner.size(100)
+    timer_inner.minSize(100)
+    tab2.add(timer_inner)
+
+    create_timer_input()
 
     global timer_canvas = costume("#timer", 112)
     timer_canvas.margin(28, 0, 48)
@@ -114,27 +123,139 @@ def init() {
     title.margin(8, "", "", 8)
     tab4.add(title)
     
+    global globe_canvas = costume("#globe", 96)
+    globe_canvas.margin(30, 0, 70)
+    tab4.add(globe_canvas)
+
+    global globe_show_instructions = true
+
+    global city_name = label("Hover over a red dot", 14)
+    city_name.margin("", 10, 45)
+    tab4.add(city_name)
     
+    global city_info = label("to see information", 14)
+    city_info.margin("", 10, 25)
+    tab4.add(city_info)
+    
+    global city_time = label("and the current time", 14)
+    city_time.margin("", 10, 5)
+    tab4.add(city_time)
+
     window.add(tabs)
 }
 
 def frame() {
     time_mode.state = os.full_hours
-
     time_label.text = os.time_seconds_str
+
+    timer_button_toggle.theme = "#FF4060"
     if (timer_is_running) {
-        timer += os.delta
+        timer -= os.delta
+        if (timer <= 0) {
+            alert()
+            timer_cancel()
+        } else {
+            timer_label.text = time_to_format(timer)
+            timer_canvas.data = timer/total_timer
+        }
+    } elif (timer_is_edit_mode) {
+        parse(timer_hours_input, 99)
+        parse(timer_minutes_input, 59)
+        parse(timer_seconds_input, 59)
+        if ((60*60*number(timer_hours_input.text) + 60*number(timer_minutes_input.text) + number(timer_seconds_input.text)) <= 0) {
+            timer_button_toggle.theme = 0.1
+        }
     }
-    timer_label.text = time_to_format(timer)
     
     if (stopwatch_is_running) {
         stopwatch += os.delta
     }
     stopwatch_label.text = time_to_format(stopwatch)
 
-    timer_canvas.data = timer
+    if (globe_canvas.data == "") {
+        if (!globe_show_instructions) {
+            city_name.text = ""
+            city_info.text = ""
+            city_time.text = ""
+        }
+    } else {
+        globe_show_instructions = false
+        index = city_names.find(globe_canvas.data)
+        city_name.text = "\\b\\u" + city_names.get(index) + "\\u\\b"
+        city_info.text = "\\i" + city_infos.get(index) + "\\i"
+        hours = (os.hour - os.timezone + city_utcs.get(index)) % 24
+        if (os.full_hours) {
+            ampm = ""
+        } else {
+            if (hours > 11) {
+                ampm = " PM"
+            } else {
+                ampm = " AM"
+            }
+            if (hours > 12) {
+                hours -= 12
+            }
+        }
+        hours = str(hours)
+        if (hours.length == 1) {
+            hours = "0" + hours
+        }
+        minutes = str(os.minute)
+        if (minutes.length == 1) {
+            minutes = "0" + minutes
+        }
+        utc = city_utcs.get(index)
+        if (utc > 0) {
+            utc = "+" + utc
+        }
+        city_time.text = "\\o" + hours + "\\o:\\o" + minutes + "\\o" + ampm + " (UTC" + utc + ")"
+    }
 
     window.title = list("Clock", "Timer", "Stopwatch", "World Clock").get(tabs.tab-1)
+}
+
+def parse(input, max) {
+    int = parse_digits(input.text)
+    int = str(min(max(int, 0), max))
+    if (int.length == 1) {
+        int = "0" + int
+    }
+    input.text = str(int)
+}
+
+def create_timer_label() {
+    timer_is_edit_mode = false
+    timer_inner.delete_children()
+    global timer_label = Label(time_to_format(0), 16, 0.5)
+    timer_inner.add(timer_label)
+}
+
+def create_timer_input() {
+    timer_is_edit_mode = true
+    timer_inner.delete_children()
+
+    global timer_hours_input = input("00", 16)
+    timer_hours_input.theme = 0.1
+    timer_hours_input.marginX(5, 68)
+    timer_inner.add(timer_hours_input)
+
+    global timer_minutes_input = input("01", 16)
+    timer_minutes_input.theme = 0.1
+    timer_minutes_input.marginX(35, 38)
+    timer_inner.add(timer_minutes_input)
+
+    global timer_seconds_input = input("00", 16)
+    timer_seconds_input.theme = 0.1
+    timer_seconds_input.marginX(65, 8)
+    timer_inner.add(timer_seconds_input)
+
+    timer_label_1 = label(":", 16)
+    timer_label_1.marginLeft = 32
+    timer_inner.add(timer_label_1)
+    
+    timer_label_2 = label(":", 16)
+    timer_label_2.marginLeft = 61
+    timer_inner.add(timer_label_2)
 }
 
 def time_to_format(time) {
@@ -152,7 +273,7 @@ def time_to_format(time) {
     }
     format = "\\o" + minutes + "\\o:\\o" + seconds + "\\o:\\o" + centiseconds + "\\o"
     if (time >= 3600) {
-        hours = floor(time/3600 % 60)
+        hours = floor((time/3600) % 60)
         format = "\\o" + hours + "\\o:" + format
     }
     return format
@@ -160,9 +281,18 @@ def time_to_format(time) {
 }
 
 def timer_toggle() {
+    if (timer_is_edit_mode && timer_button_toggle.theme == 0.1) { return }
     timer_is_running = !timer_is_running
     if (timer_is_running) {
         timer_button_toggle.text = "Pause"
+        if (timer_is_edit_mode) {
+            parse(timer_hours_input, 99)
+            parse(timer_minutes_input, 59)
+            parse(timer_seconds_input, 59)
+            total_timer = 60*60*number(timer_hours_input.text) + 60*number(timer_minutes_input.text) + number(timer_seconds_input.text)
+            timer = total_timer
+            create_timer_label()
+        }
     } else {
         timer_button_toggle.text = "Start"
     }
@@ -172,6 +302,54 @@ def timer_cancel() {
     timer_is_running = false
     timer = 0
     timer_button_toggle.text = "Start"
+    timer_canvas.data = 0
+    if (!timer_is_edit_mode) {
+        create_timer_input()
+        timer_hours_input.text = floor((total_timer/3600) % 60)
+        if (timer_hours_input.text.length == 1) { timer_hours_input.text = "0" + timer_hours_input.text }
+        timer_minutes_input.text = floor((total_timer/60) % 60)
+        if (timer_minutes_input.text.length == 1) { timer_minutes_input.text = "0" + timer_minutes_input.text }
+        timer_seconds_input.text = floor(total_timer % 60)
+        if (timer_seconds_input.text.length == 1) { timer_seconds_input.text = "0" + timer_seconds_input.text }
+    }
+    total_timer = 0
+}
+
+def alert() {
+    if (!exists("alert_window")) {
+        global alert_window = 0
+    }
+
+    if (type(alert_window) == "element") {
+        alert_window.delete_children()
+        alert_window.focus()
+    } else {
+        alert_window = window(140, 60)
+        alert_window.mode = "no resize"
+        alert_window.center()
+        alert_window.title = "Timer finished"
+        alert_window.onClose = "alert_close()"
+    }
+
+    alert_label = label("\\bTimer finished\\b", 16, 0.5)
+    alert_label.marginTop = 10
+    alert_window.add(alert_label)
+
+    alert_button = button("close")
+    alert_button.theme = "#FF4060"
+    alert_button.marginBottom = 8
+    alert_button.width = 50
+    alert_button.onClick = "alert_close()"
+    alert_window.add(alert_button)
+
+    os.play_sound("Ring Tone")
+}
+
+def alert_close() {
+    if (type(alert_window) == "element") {
+        alert_window.delete()
+    }
+    os.stop_sound("Ring Tone")
 }
 
 def stopwatch_toggle() {
