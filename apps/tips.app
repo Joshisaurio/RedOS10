@@ -82,6 +82,10 @@ def create_app_window() {
     draco_text = label(app_content, 11)
     draco_text.wrap = 1
     draco_vbox.add(draco_text)
+
+    app_button = button("Open the Red OS docs", "os.open_app(\"docs\")")
+    app_button.theme = "#FF4060"
+    draco_vbox.add(app_button)
 }
 
 def create_quick_window() {

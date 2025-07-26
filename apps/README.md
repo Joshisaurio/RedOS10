@@ -17,7 +17,7 @@ def init() {
 }
 ```
 
-# Developement
+# Development
 
 All apps are in the `apps` folder. You can edit the `.app` files with any text editor. Run the `apps.convert.py` python file to generate `apps.preinstalled.txt`. Open the Scratch project and go to the `Program` sprite. Show the `apps.preinstalled` list and import `apps.preinstalled.txt`. Restart the project.
 

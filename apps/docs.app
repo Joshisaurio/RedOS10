@@ -18,8 +18,8 @@ def init() {
     add_section(1, "Introduction", "This coding language was developed by KROKOBIL for Red OS 10 to easily create apps with dynamic layout. It is based on python, but it uses curly brackets. The language is compiled to a list of tokens that the project can easily execute.")
     add_section(1, "Hello World", "\\mdef init() {\\n    global window = window()\\n    window.center()\\n\\n    title = label(\"Hello World\", 20, 0.5)\\n    \\n    window.add(title)\\n}\\m")
 
-    add_tab("Developement")
-    add_section(1, "Developement", "All apps are in the \\mapps\\m folder. You can edit the \\m.app\\m files with any text editor. Run the \\mapps.convert.py\\m python file to generate \\mapps.preinstalled.txt\\m. Open the Scratch project and go to the \\mProgram\\m sprite. Show the \\mapps.preinstalled\\m list and import \\mapps.preinstalled.txt\\m. Restart the project.")
+    add_tab("Development")
+    add_section(1, "Development", "All apps are in the \\mapps\\m folder. You can edit the \\m.app\\m files with any text editor. Run the \\mapps.convert.py\\m python file to generate \\mapps.preinstalled.txt\\m. Open the Scratch project and go to the \\mProgram\\m sprite. Show the \\mapps.preinstalled\\m list and import \\mapps.preinstalled.txt\\m. Restart the project.")
 
     add_tab("Data Types")
     add_section(1, "Variables", "A variable can be created and set like in python:\\mcount = 1\\nname = \"Scratch Cat\"\\ncount += 1\\m\\n\\nA variable is only defined inside the current function. If you want to create/set a global variable, use the \\mglobal\\m keyword. \\mglobal score = 0\\m")
