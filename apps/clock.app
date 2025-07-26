@@ -1,7 +1,7 @@
 def init() {
-    global city_names = list("Rome",             "Berlin",             "New York",        "London",        "Tokyo")
-    global city_infos = list("Capital of Italy", "Capital of Germany", "City in the USA", "Capital of GB", "Capital of Japan")
-    global city_utcs  = list(2,                  2,                    -4,                 1,               9)
+    global city_names = list("Rome",             "Berlin",             "New York",        "London",        "Tokyo",            "Mexico City",       "Miami",           "Rio de Janeiro", "Cape Town",               "Mumbai",        "Cairo")
+    global city_infos = list("Capital of Italy", "Capital of Germany", "City in the USA", "Capital of GB", "Capital of Japan", "Capital of Mexico", "City in Florida", "City in Brazil", "Capital of South Africa", "City in India", "Capital of Egypt")
+    global city_utcs  = list(2,                  2,                    -4,                 1,               9,                 -6,                  -4,                -3,               2,                         5.5,             3)
 
     global window = window()
     window.minSize(300, 200)
@@ -183,7 +183,9 @@ def frame() {
         index = city_names.find(globe_canvas.data)
         city_name.text = "\\b\\u" + city_names.get(index) + "\\u\\b"
         city_info.text = "\\i" + city_infos.get(index) + "\\i"
-        hours = (os.hour - os.timezone + city_utcs.get(index)) % 24
+        time = (60 * (os.hour - os.timezone + city_utcs.get(index)) + os.minute) % (24*60)
+        hours = floor(time/60)
+        minutes = time % 60
         if (os.full_hours) {
             ampm = ""
         } else {
@@ -200,15 +202,21 @@ def frame() {
         if (hours.length == 1) {
             hours = "0" + hours
         }
-        minutes = str(os.minute)
+        minutes = str(minutes)
         if (minutes.length == 1) {
             minutes = "0" + minutes
         }
         utc = city_utcs.get(index)
+        if ((utc % 1) != 0) {
+            utc_minutes = ":" + (utc % 1)*60
+            utc = floor(utc)
+        } else {
+            utc_minutes = ""
+        }
         if (utc > 0) {
             utc = "+" + utc
         }
-        city_time.text = "\\o" + hours + "\\o:\\o" + minutes + "\\o" + ampm + " (UTC" + utc + ")"
+        city_time.text = "\\o" + hours + "\\o:\\o" + minutes + "\\o" + ampm + " (UTC" + utc + utc_minutes + ")"
     }
 
     window.title = list("Clock", "Timer", "Stopwatch", "World Clock").get(tabs.tab-1)
