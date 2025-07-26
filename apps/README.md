@@ -181,6 +181,7 @@ Numbers:
 Type conversion:
 - `str(number)`
 - `number(string)`
+- `parse_digits(string)` returns a string with all non-digits removed
 - `type(something)` return `"number"`, `"string"`, `"element"` or `"list"`
 
 Variables:
@@ -508,6 +509,10 @@ These are the current effects as of v2.10. **DO NOT REORDER**, they rely on thei
 - `os.music_name` name of current song
 - `os.music_interpreter` interpreter of current song
 - `os.music_is_playing`
+
+## Sound
+- `os.start_sound(sound_name)` starts the sound in the audioRenderer sprite
+- `os.stop_sound(sound_name)` stops the sound if it is playing
 
 ## Filesystem
 - `os.exists_path(path)`
