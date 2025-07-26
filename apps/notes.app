@@ -1,5 +1,3 @@
-// @Joshisaurio's note app
-
 def init () {
     global window = window()
     window.center()

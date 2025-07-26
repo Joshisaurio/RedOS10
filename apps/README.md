@@ -32,7 +32,7 @@ name = "Scratch Cat"
 count += 1
 ```
 
-A variable is only defined inside the current function. If you want to create/set a global variable, use the ```global``` keyword. 
+A variable is only defined inside the current function. If you want to create/set a global variable, use the `global` keyword. 
 ```python
 global score = 0
 ```
