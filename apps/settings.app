@@ -25,11 +25,11 @@ def init() {
     home_vbox.margin(10)
     tab1.add(home_vbox)
 
-    home_title = label("Home", 13)
+    home_title = label("\\bHome \\b", 13)
     home_vbox.add(home_title)
 
     // THEMES
-    theme_title = label("Theme", 12)
+    theme_title = label("\\bTheme \\b", 12)
     theme_title.marginTop = 10
     home_vbox.add(theme_title)
 
@@ -67,7 +67,7 @@ def init() {
 
     // VOLUME //
     
-    volume_title = label("Volume", 12)
+    volume_title = label("\\bVolume \\b", 12)
     volume_title.marginTop = 10
     home_vbox.add(volume_title)
 
@@ -78,7 +78,7 @@ def init() {
 
     // SAVE DATA
 
-    data_title = label("Save Data", 12)
+    data_title = label("\\bSave Data \\b", 12)
     data_title.marginTop = 10
     home_vbox.add(data_title)
 
@@ -119,11 +119,11 @@ def init() {
     cust_vbox.margin(10)
     tab2.add(cust_vbox)
 
-    cust_title = label("Customization", 13)
+    cust_title = label("\\bCustomization\\b", 13)
     cust_vbox.add(cust_title)
 
     // THEMES
-    cust_theme_title = label("Theme", 12)
+    cust_theme_title = label("\\bTheme\\b", 12)
     cust_theme_title.marginTop = 10
     cust_vbox.add(cust_theme_title)
 
@@ -159,7 +159,7 @@ def init() {
 
     // WALLPAPER
 
-    cust_wallpaper_title = label("Wallpaper", 12)
+    cust_wallpaper_title = label("\\bWallpaper\\b", 12)
     cust_wallpaper_title.marginTop = 10
     cust_vbox.add(cust_wallpaper_title)
 
@@ -193,7 +193,7 @@ def init() {
 
     // OTHER OPTIONS
 
-    cust_options_label = label("Other", 11)
+    cust_options_label = label("\\bOther \\b", 11)
     cust_options_label.marginTop = 10
     cust_vbox.add(cust_options_label)
 
@@ -219,7 +219,7 @@ def init() {
     
     // SAVE DATA
 
-    cust_data_title = label("Save Data", 12)
+    cust_data_title = label("\\bSave Data \\b", 12)
     cust_data_title.marginTop = 10
     cust_vbox.add(cust_data_title)
 
@@ -256,12 +256,12 @@ def init() {
     sys_vbox.margin(10)
     tab3.add(sys_vbox)
 
-    sys_title = label("System", 13)
+    sys_title = label("\\bSystem \\b", 13)
     sys_vbox.add(sys_title)
 
     // VOLUME //
     
-    sys_vol_title = label("Volume", 12)
+    sys_vol_title = label("\\bVolume \\b", 12)
     sys_vol_title.marginTop = 10
     sys_vbox.add(sys_vol_title)
 
@@ -272,7 +272,7 @@ def init() {
 
     // OTHER OPTIONS
 
-    sys_option_title = label("Developer options", 12)
+    sys_option_title = label("\\bDeveloper options \\b", 12)
     sys_option_title.marginTop = 10
     sys_vbox.add(sys_option_title)
 
@@ -294,7 +294,7 @@ def init() {
 
     // SAVE DATA
 
-    sys_data_title = label("Save Data", 12)
+    sys_data_title = label("\\bSave Data \\b", 12)
     sys_data_title.marginTop = 10
     sys_vbox.add(sys_data_title)
 
@@ -332,15 +332,15 @@ def init() {
     info_vbox.margin(10)
     tab4.add(info_vbox)
 
-    info_title = label("About Red OS", 13)
+    info_title = label("\\bAbout Red OS\\b", 13)
     info_vbox.add(info_title)
 
-    info_sys_title = label("System information", 12)
+    info_sys_title = label("\\bSystem information\\b", 12)
     info_sys_title.marginTop = 10
     info_sys_title.wrap = 1
     info_vbox.add(info_sys_title)
 
-    info_sys_round = label("Red OS - Round 5 edition", 11)
+    info_sys_round = label("Red OS - OS Wars submission", 11)
     info_sys_turbowarp = label("Running on Scratch", 11)
     if (os.turbowarp == 1) {
         info_sys_turbowarp.text = "Running on Turbowarp"
@@ -365,7 +365,7 @@ def init() {
     info_vbox.add(info_sys_language)
 
 
-    info_soft_title = label("Software", 12)
+    info_soft_title = label("\\bSoftware\\b", 12)
     info_soft_title.marginTop = 10
     info_soft_title.wrap = 1
     info_vbox.add(info_soft_title)
@@ -385,26 +385,26 @@ def init() {
 
     window.add(tabs)
 
-    info_cred_title = label("Credits", 12)
+    info_cred_title = label("\\bCredits\\b", 12)
     info_cred_title.marginTop = 10
     info_cred_title.wrap = 1
     info_vbox.add(info_cred_title)
 
-    cred_leaders_title = label("Team leaders:", 11)
+    cred_leaders_title = label("\\bTeam leaders:\\b", 11)
     cred_josh = label("@Joshisaurio - Leader", 10)
     cred_citrus = label("Citrus - Leader", 10)
     cred_kroko = label("@Krokobil - Leader", 10)
 
-    cred_coders_title = label("Coders:", 11)
+    cred_coders_title = label("\\bCoders:\\b", 11)
     cred_spiel = label("@SpieleTyp - Code Leader", 10)
     cred_chez = label("@chez_muffin_boi - Coder", 10)
     cred_nerd = label("Notanerd - Coder", 10)
 
-    cred_designers_title = label("Designers:", 11)
+    cred_designers_title = label("\\bDesigners:\\b", 11)
     cred_muz=label("@muzlovescereal- Design leader", 10)
     cred_shine=label("Highshine- Designer", 10)
     
-    cred_formers_title= label("Former members:", 11)
+    cred_formers_title= label("\\bFormer members:\\b", 11)
     cred_patrixx = label("Patrixx - Former leader", 10)
     cred_eterk = label("@CaptainEterk - Former coder", 10)
     cred_fuzzee = label("@Fuzzee_animations - Former coder", 10)
@@ -471,7 +471,7 @@ def frame() {
     if (data_state==0) {
         data_button.text = "Save"
     } elif (data_state==1) {
-        data_button.text = "Saving..."
+        data_button.text = "Saving \\l"
     } elif (data_state==2) {
         data_button.text = "Saved"
     }
@@ -499,7 +499,7 @@ def frame() {
     if (data_state==0) {
         cust_data_button.text = "Save"
     } elif (data_state==1) {
-        cust_data_button.text = "Saving..."
+        cust_data_button.text = "Saving \\l"
     } elif (data_state==2) {
         cust_data_button.text = "Saved"
     }
@@ -513,7 +513,7 @@ def frame() {
     if (data_state==0) {
         sys_data_button.text = "Save"
     } elif (data_state==1) {
-        sys_data_button.text = "Saving..."
+        sys_data_button.text = "Saving \\l"
     } elif (data_state==2) {
         sys_data_button.text = "Saved"
     }
