@@ -15,7 +15,7 @@ def init_vars() {
 def init() {
     init_vars()
 
-    create_window(_NORMAL, "red_os/apps", "", "", "")
+    create_window(_NORMAL, "red_os/user", "", "", "")
 }
 
 def create_window(type, path, extension, callbackApp, callbackCode) {
@@ -35,7 +35,7 @@ def create_window(type, path, extension, callbackApp, callbackCode) {
     tab_path_list = list()
     add_tab(tabs, tab_path_list, "user", "red_os/user")
     add_tab(tabs, tab_path_list, "apps", "red_os/apps")
-    add_tab(tabs, tab_path_list, "HyperText", "red_os/user/HyperText Documents")
+    add_tab(tabs, tab_path_list, "HyperText", "red_os/user/HyperText")
 
     file_container = vScrollContainer()
     file_container.fill()
@@ -403,7 +403,7 @@ def file_clicked_open(list, selected_path, selected_name) {
         } elif (selected_name.endswith(".app")) {
             os.open_app(selected_name.slice(0,-4))
         } else {
-            os.warn("There is no app to open text files")
+            os.run_code("notes", "open(\"" + selected_path + "\", \"" + selected_name + "\")")
         }
     }
 }
@@ -423,6 +423,7 @@ def file_clicked_save(window_i) {
         return
     }
     os.write_file(path, data)
+    os.run_code(list.get(13), list.get(14) + ",\"" + path + "\",\"" + filename + "\")")
     list.get(1).delete()
     list.set(0, _DELETED)
     update_all_windows()

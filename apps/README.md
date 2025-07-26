@@ -71,6 +71,7 @@ Methodes:
 - `beginswith(prefix)`
 - `endswith(suffix)`
 - `split(separator)` returns a list
+- `split_newline()` returns a list of the string splitted by actual new lines `\n`, and not `\\n`
 - `slice(start, end)` returns a string from start (inclusive) to end (exclusive)
 
 ### Text Formatting
@@ -449,7 +450,7 @@ The os object has some attributes and methodes to interact with the project.
 - `os.open_app(app_name)`
 - `os.compile_app(app_name)` compiles the file at `red_os/apps/app_name.app`
 
-## Time:
+## Time
 - `os.year`
 - `os.month`
 - `os.date`
@@ -543,3 +544,9 @@ when finished the callback function is called
 - `os.appstore_approve_app(app_name, callback)` can only be called by admins, adds app to public apps
 - `os.appstore_reject_app(app_name, callback)` can only be called by admins, removes app to requested apps
 - `os.appstore_add(app_name, icon, code, callback)` adds or updates an existing app, needs to be reviewed
+
+## Import and Export List
+- `os.show_list(list)`
+- `os.hide_list()`
+- `os.get_list()`
+- `os.list_visible`
