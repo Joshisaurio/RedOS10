@@ -370,7 +370,7 @@ def init() {
     info_soft_title.wrap = 1
     info_vbox.add(info_soft_title)
 
-    info_soft_version = label("Red OS v2.19", 11)
+    info_soft_version = label("Red OS v2.20", 11)
     info_soft_draco = label("Draco v1.2", 11)
     info_soft_scratch = label("Made with Scratch 3.0", 11)
 
