@@ -313,8 +313,12 @@ def toggle_export_list() {
     if (os.list_visible) {
         // Import
         list = os.get_list()
-        list.delete(0)
-        w_editor_editscriptinput.text = list.join("\\n")
+        if (list.length > 0) {
+            if (list.get(0) == "") {
+                list.delete(0)
+            }
+            w_editor_editscriptinput.text = list.join("\\n")
+        }
         w_editor_editscriptinput.focus = false
         os.hide_list()
         w_editor_settingsexportbutton.text = "Export"
