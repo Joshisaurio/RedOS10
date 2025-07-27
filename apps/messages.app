@@ -34,7 +34,7 @@ def init() {
 
     send_label = label("The following text is sent to our team. Don't share any private or inappropriate information!")
     send_label.wrap = true
-    send_label.margin(0, 5, "", 5)
+    send_label.margin(5, 5, "", 5)
     send.add(send_label)
 
     global send_button = button("send message", "send_message()")
