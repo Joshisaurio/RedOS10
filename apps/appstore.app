@@ -243,7 +243,7 @@ def matches_search(search_phrases, item) {
 }
 
 def upload_file_button_clicked() {
-    root_path = "red_os/user/HyperText Documents"
+    root_path = "red_os/user/HyperText"
     os.run_code("filesystem", "open_file(\".app\", \"" + root_path + "\", \"appstore\", \"upload_file_open_file\")")
 }
 
