@@ -276,7 +276,7 @@ def open_editor_window() {
     w_editor_settingsnamelabel.margin(5)
     w_editor_settingsmain.add(w_editor_settingsnamelabel)
 
-    w_editor_settingsruninfolabel = label("The button below will change the app's code immediately. However, you may want to stop the app first to allow any changes to take effect.", 10, 0, 1)
+    w_editor_settingsruninfolabel = label("The button below will change the app's code immediately. However, you may want to stop the app first to allow all changes to take effect.", 10, 0, 1)
     w_editor_settingsruninfolabel.margin(10, 5, 3)
     w_editor_settingsmain.add(w_editor_settingsruninfolabel)
 
