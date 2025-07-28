@@ -683,10 +683,15 @@ RSA_D = int(RSA_D)
 
 ### turbowarp connection ###
 
+GGDC_PROJECT = "1201961497"
+
 response_manager = utilities.RequestManager()
 
 def create_on_set(id):
     def on_set(e):
+        if (id == GGDC_PROJECT):
+            log_server(f"GGDC set var {e.var} to {e.value}")
+            return
         if ("TO SERVER " in e.var):
             cloud_value = e.value
             old_response = response_manager.check(cloud_value)
@@ -778,6 +783,8 @@ if general.get("projects") is None:
     general["projects"] = []
 for id, _ in general["projects"]:
     add_project(id)
+
+add_project(GGDC_PROJECT)
 
 ### discord connection ###
 
