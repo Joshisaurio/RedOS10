@@ -339,9 +339,9 @@ def app_messages_get(username: str, password: str) -> list:
                 discord_message = discord_messages.get(str(message[2]))
                 if discord_message is None: continue
                 your_message = discord_message["text"]
-                response_message = discord_message["responses"].get(message[3])["text"]
-                if response_message is None: continue
-                message_content = f"{response_message}\n\n\\i\\bYour message:\\b\n{your_message}\\i"
+                response = discord_message["responses"].get(message[3])
+                if response["text"] is None: continue
+                message_content = f"{response["text"]}\n\n\\iMessage by \\u{response["username"]}\\u\n\n\\bYour message:\\b\n{your_message}\\i"
         if message_content is None: continue
         message_list.append(f"\\b{message_summary}\\b \\i{utilities.get_date_str(message[0])}\\i\n{message_content}")
     return message_list
