@@ -1048,7 +1048,7 @@ def send_discord_message_from_user(username, text):
     async def send():
         channel = discord_client.get_channel(CHANNEL_ID) or await discord_client.fetch_channel(CHANNEL_ID)
         
-        msg_text = f"{text}\n-# {username}".replace("@", "@‎")
+        msg_text = f"-# <@&1433563623023710278>\n{text.replace('@', '@‎')}\n-# {username}"
         msg = await channel.send(msg_text)
 
         discord_messages[str(msg.id)] = {"username": username, "text": text, "responses": {}}
