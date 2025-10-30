@@ -309,6 +309,19 @@ def app_discord_post(username: str, password: str, text: str) -> list:
         user_data["ban"] = (datetime.now(timezone.utc) + timedelta(minutes=10)).replace(microsecond=0).strftime(utilities.FORMAT)
         user_data["ban_reason"] = "Profane message to discord"
         raise ReturnError("profane")
+    if "rate_limit_time" in user_data:
+        last_rate_limit_time = utilities.from_timestamp(user_data["rate_limit_time"]) - datetime.now(timezone.utc)
+        if last_rate_limit_time > timedelta():
+            user_data["rate_limit_count"] += 1
+            if user_data["rate_limit_count"] > 5:
+                log_server(f"Rate limited {user_data['username']}: {text}")
+                raise ReturnError("rate limit reached. Try again in 5 minutes.")
+        else:
+            user_data["rate_limit_time"] = (datetime.now(timezone.utc) + timedelta(minutes=5)).replace(microsecond=0).strftime(utilities.FORMAT)
+    else:
+        user_data["rate_limit_time"] = (datetime.now(timezone.utc) + timedelta(minutes=1)).replace(microsecond=0).strftime(utilities.FORMAT)
+        user_data["rate_limit_count"] = 1
+    
     message_id = send_discord_message_from_user(user_data["username"], text)
     discord = user_data.get("discord")
     if discord is None:
@@ -1035,7 +1048,7 @@ def send_discord_message_from_user(username, text):
     async def send():
         channel = discord_client.get_channel(CHANNEL_ID) or await discord_client.fetch_channel(CHANNEL_ID)
         
-        msg_text = f"{text}\n-# {username}"
+        msg_text = f"{text}\n-# {username}".replace("@", "@‎")
         msg = await channel.send(msg_text)
 
         discord_messages[str(msg.id)] = {"username": username, "text": text, "responses": {}}
