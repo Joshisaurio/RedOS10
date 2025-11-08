@@ -777,9 +777,9 @@ def add_project(id):
     log_server(f"turbowarp add: {id}")
     cloud[id] = scratchattach.get_tw_cloud(id, purpose="Red OS 10", contact="https://scratch.mit.edu/users/KROKOBIL")
     events[id] = cloud[id].events()
-    events[id].event(create_on_ready(id))
-    events[id].event(create_on_reconnect(id))
-    events[id].event(create_on_set(id))
+    events[id].event(create_on_ready(id), thread=True)
+    events[id].event(create_on_reconnect(id), thread=True)
+    events[id].event(create_on_set(id), thread=True)
     events[id].running = True
     events[id]._thread = threading.Thread(target=events[id]._updater, args=(), daemon=True)
     events[id]._thread.start()
