@@ -322,7 +322,7 @@ def app_discord_post(username: str, password: str, text: str) -> list:
         user_data["rate_limit_time"] = (datetime.now(timezone.utc) + timedelta(minutes=1)).replace(microsecond=0).strftime(utilities.FORMAT)
         user_data["rate_limit_count"] = 1
     
-    message_id = send_discord_message_from_user(user_data["username"], text)
+    message_id = send_discord_message_from_user(user_data, text)
     discord = user_data.get("discord")
     if discord is None:
         user_data["discord"] = []
@@ -1040,7 +1040,7 @@ def run_discord_bot():
     bot_loop.run_until_complete(discord_client.start(DISCORD_TOKEN))
 
 
-def send_discord_message_from_user(username, text):
+def send_discord_message_from_user(user_data, text):
     if not discord_client.is_ready():
         log_server("Bot ist not ready yet")
         return
@@ -1048,10 +1048,10 @@ def send_discord_message_from_user(username, text):
     async def send():
         channel = discord_client.get_channel(CHANNEL_ID) or await discord_client.fetch_channel(CHANNEL_ID)
         
-        msg_text = f"-# <@&1433563623023710278>\n{text.replace('@', '@‎')}\n-# {username}"
+        msg_text = f"-# <@&1433563623023710278>\n{text.replace('@', '@‎')}\n-# {user_data['username']}{' (verified)' if user_data.get('verified') else ''}"
         msg = await channel.send(msg_text)
 
-        discord_messages[str(msg.id)] = {"username": username, "text": text, "responses": {}}
+        discord_messages[str(msg.id)] = {"username": user_data["username"], "text": text, "responses": {}}
         return msg.id
 
     future = asyncio.run_coroutine_threadsafe(send(), bot_loop)
