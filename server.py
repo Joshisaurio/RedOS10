@@ -27,6 +27,7 @@ import trafilatura
 import ipaddress
 import socket
 import re
+import io
 
 LOG_TO_FILE = True
 
@@ -619,6 +620,9 @@ def app_appstore_reject_app(username: str, password: str, app_name: str) -> list
     del appstore["requested"][app_name]
     return []
 
+def discord_safe(text: str) -> str:
+    return text.replace('@', '@‎')
+
 @methode("appstore_add")
 def app_appstore_add(username: str, password: str, app_name: str, app_icon: str, app_code: str) -> list:
     user_data = login(username, password)
@@ -629,6 +633,8 @@ def app_appstore_add(username: str, password: str, app_name: str, app_icon: str,
         raise ReturnError("profane")
     if len(app_name.replace(" ", "")) == 0:
         raise ReturnError("App name is empty")
+    if len(app_code.replace(" ", "").replace("\\n", "")) == 0:
+        raise ReturnError("App code is empty")
     app = {
         "name": app_name,
         "username": user_data["username"],
@@ -641,10 +647,7 @@ def app_appstore_add(username: str, password: str, app_name: str, app_icon: str,
         if old_app["username"] != app["username"]:
             raise ReturnError("Another user owns this app.")
     appstore["requested"][app_name] = app
-    if old_app:
-        send_discord_message(f"**{username}** updated the app *{app_name}*")
-    else:
-        send_discord_message(f"**{username}** uploaded a new app *{app_name}*")
+    send_discord_message(f"-# <@&1433563623023710278>\n**{username}**{' (verified)' if user_data.get('verified') else ''} {'updated' if old_app else 'uploaded'} the app *{discord_safe(app_name)}*", files=[discord.File(io.BytesIO(app_code.encode()), filename=app_name+".txt")])
     return []
 
 ########################################################
@@ -1048,7 +1051,7 @@ def send_discord_message_from_user(user_data, text):
     async def send():
         channel = discord_client.get_channel(CHANNEL_ID) or await discord_client.fetch_channel(CHANNEL_ID)
         
-        msg_text = f"-# <@&1433563623023710278>\n{text.replace('@', '@‎')}\n-# {user_data['username']}{' (verified)' if user_data.get('verified') else ''}"
+        msg_text = f"-# <@&1433563623023710278>\n{discord_safe(text)}\n-# {user_data['username']}{' (verified)' if user_data.get('verified') else ''}"
         msg = await channel.send(msg_text)
 
         discord_messages[str(msg.id)] = {"username": user_data["username"], "text": text, "responses": {}}
@@ -1057,7 +1060,7 @@ def send_discord_message_from_user(user_data, text):
     future = asyncio.run_coroutine_threadsafe(send(), bot_loop)
     return future.result()
 
-def send_discord_message(text):
+def send_discord_message(text, files:list[discord.File]=None):
     if not discord_client.is_ready():
         log_server("Bot ist not ready yet")
         return
@@ -1065,7 +1068,7 @@ def send_discord_message(text):
     async def send():
         channel = discord_client.get_channel(CHANNEL_ID) or await discord_client.fetch_channel(CHANNEL_ID)
         
-        msg = await channel.send(text)
+        msg = await channel.send(text, files=files)
 
         return msg.id
 
