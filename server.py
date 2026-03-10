@@ -567,7 +567,9 @@ if (not appstore.get("requested")): appstore["requested"] = {}
 @methode("appstore_get_all")
 def app_appstore_get_all(_) -> list:
     all_apps = []
-    for app in appstore.get("public", {}).values():
+    public_apps = list(appstore.get("public", {}).values())
+    public_apps.reverse()
+    for app in public_apps:
         all_apps.append(app["name"])
         all_apps.append(app["username"])
         all_apps.append(app["icon"])
@@ -578,7 +580,9 @@ def app_appstore_get_all(username: str, password: str) -> list:
     user_data = login(username, password)
     if (not user_data.get("admin", False)): raise ReturnError("Admin account required")
     all_apps = []
-    for app in appstore.get("requested", {}).values():
+    requested_apps = list(appstore.get("requested", {}).values())
+    requested_apps.reverse()
+    for app in requested_apps:
         all_apps.append(app["name"])
         all_apps.append(app["username"])
         all_apps.append(app["icon"])
@@ -647,7 +651,9 @@ def app_appstore_add(username: str, password: str, app_name: str, app_icon: str,
         if old_app["username"] != app["username"]:
             raise ReturnError("Another user owns this app.")
     appstore["requested"][app_name] = app
-    send_discord_message(f"-# <@&1433563623023710278>\n**{username}**{' (verified)' if user_data.get('verified') else ''} {'updated' if old_app else 'uploaded'} the app *{discord_safe(app_name)}*", files=[discord.File(io.BytesIO(app_code.encode()), filename=app_name+".txt")])
+    app_code_display = app_code.replace("\\\\", "\\").replace("\\n", "\n")
+    ping = '-# <@&1433563623023710278>\n'
+    send_discord_message(f"{ping if '@silent' not in app_name else ''}**{username}**{' (verified)' if user_data.get('verified') else ''} {'updated' if old_app else 'uploaded'} the app *{discord_safe(app_name)}*", files=[discord.File(io.BytesIO(app_code_display.encode()), filename=app_name+".txt")])
     return []
 
 ########################################################
@@ -1051,7 +1057,8 @@ def send_discord_message_from_user(user_data, text):
     async def send():
         channel = discord_client.get_channel(CHANNEL_ID) or await discord_client.fetch_channel(CHANNEL_ID)
         
-        msg_text = f"-# <@&1433563623023710278>\n{discord_safe(text)}\n-# {user_data['username']}{' (verified)' if user_data.get('verified') else ''}"
+        ping = '-# <@&1433563623023710278>\n'
+        msg_text = f"{ping if '@silent' not in text else ''}{discord_safe(text)}\n-# {user_data['username']}{' (verified)' if user_data.get('verified') else ''}"
         msg = await channel.send(msg_text)
 
         discord_messages[str(msg.id)] = {"username": user_data["username"], "text": text, "responses": {}}
