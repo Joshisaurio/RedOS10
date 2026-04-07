@@ -1,6 +1,3 @@
-// Settings by @Joshisaurio
-// Still unfinished, sorry
-
 def init() {
     global window = window()
     window.center()

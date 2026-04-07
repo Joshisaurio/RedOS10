@@ -15,8 +15,15 @@ def init() {
     window.add(tabs)
 
     add_tab("Introduction")
-    add_section(1, "Introduction", "This coding language was developed by KROKOBIL for Red OS 10 to easily create apps with dynamic layout. It is based on python, but it uses curly brackets. The language is compiled to a list of tokens that the project can easily execute.")
-    add_section(1, "Hello World", "\\mdef init() {\\n    global window = window()\\n    window.center()\\n\\n    title = label(\"Hello World\", 20, 0.5)\\n    window.add(title)\\n}\\m")
+    add_section(1, "Introduction", "This coding language was developed by KROKOBIL for Red OS 10 to easily create apps with dynamic layout. It is similar to Python, but uses curly brackets. The language is compiled into a list of tokens that the project can easily execute.")
+    add_section(1, "Hello World", "Here's a basic script demonstrating Redscript:\\n\\mdef init() {\\n    global window = window()\\n    window.center()\\n\\n    title = label(\"Hello World\", 20, 0.5)\\n    window.add(title)\\n}\\m")
+
+    add_tab("Environment setup")
+    add_section(1, "Introduction", "There are 2 main ways to develop for Red OS 10: With the default editor (HyperText), or with Visual Studio Code. Click on a title below to learn more. If you can use Github and VSCode, then we recommend that you use it. However, if you're starting out, HyperText is good enough.")
+    add_section(0, "Using HyperText", "Using HyperText for Red OS development is simple: Click the \\m</>\\m icon to open it, then click new file, select a name, and click create. We recommend that you leave the \\muse template\\m switch on. After doing this, you should be greeted with a new editor window with code ready to run. You can code here, following this documentation.\\nWe recommend that you save your code frequently to a real file in your computer. To do this, go to the settings tab and click \\mimport\\m. Then, right click on the list that was opened, and click on export. Finally, click on the red \\mimport\\m button again to close the list. To import, repeat this process but click import in the list's right click menu.\\nFinally, to run your app, simply click the \\mcompile and run\\m button in the settings app. Congratulations! You can now use HyperText.")
+    add_section(0, "Using VSCode (#1 - Minimal)", "While HyperText is good enough for most code editing purposes, it can be mildly inconvenient which is why we recommend that you use Visual Studio Code instead. Please keep in mind that this guide assumes that you have used VSCode before, so we will not be teaching you how to use it. Instead, we will show you how you can make it work with RedScript.")
+    add_section(0, "Using VSCode (#2 - Full)", "VScode tutorial goes here.")
+
 
     add_tab("Data Types")
     add_section(1, "Variables", "A variable can be created and set like in python:\\mcount = 1\\nname = \"Scratch Cat\"\\ncount += 1\\m\\n\\nA variable is only defined inside the current function. If you want to create/set a global variable, use the \\mglobal\\m keyword. \\mglobal score = 0\\m")
