@@ -226,7 +226,7 @@ def app_pfp(username: str) -> list:
             color_str += "{:02d}".format(int(round(float(channel)/255*99)))
         return color_str
 
-    pixel_list = list(image.getdata())
+    pixel_list = list(image.get_flattened_data())
     palette = image.getpalette()
     pixel_set = [color2str(tuple(palette[i:i+3])) for i in range(0, len(palette), 3)]
     index_len = int(math.log10(len(pixel_set)))+1
