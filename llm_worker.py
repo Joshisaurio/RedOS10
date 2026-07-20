@@ -18,7 +18,7 @@ def main():
 
     try:
         response = requests.post(
-            url="https://router.huggingface.co/nscale/v1/chat/completions",
+            url="https://router.huggingface.co/v1/chat/completions",
             headers={
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json",
